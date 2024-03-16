@@ -1,8 +1,8 @@
-using UnityEngine;
+using BeABachelor.Play.Items;
 
 namespace BeABachelor.Play.Player
 {
-    public interface IPlayable
+    public interface IPlayable : IItemCollectable
     {
         
     }

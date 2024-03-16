@@ -6,6 +6,10 @@ namespace BeABachelor.Play.DI
     {
         public override void InstallBindings()
         {
+            Container
+                .BindInterfacesAndSelfTo<PlaySceneManager>()
+                .FromNew()
+                .AsSingle();
         }
     }
 }

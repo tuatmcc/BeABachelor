@@ -23,8 +23,11 @@ namespace BeABachelor.Play
             switch (_gameManager.PlayType)
             {
                 case PlayType.Solo:
+                    // プレーヤーを配置する処理
                     break;
                 case PlayType.Multi:
+                    // プレイヤーを配置する処理
+                    // 片方はRemoteで操作される
                     break;
             }
         }
