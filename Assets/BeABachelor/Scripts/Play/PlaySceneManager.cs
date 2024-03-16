@@ -15,6 +15,10 @@ namespace BeABachelor.Play
             {
                 Debug.Log("Started Play Scene without selecting PlayType, so start with solo play");
                 _gameManager.PlayType = PlayType.Solo;
+                if(_gameManager.PlayerType == PlayerType.NotSelected)
+                {
+                    _gameManager.PlayerType = PlayerType.Hakken;
+                }
             }
             switch (_gameManager.PlayType)
             {
