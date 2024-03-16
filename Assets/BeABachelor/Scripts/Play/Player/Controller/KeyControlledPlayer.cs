@@ -4,6 +4,9 @@ namespace BeABachelor.Play.Player
 {
     public class KeyControlledPlayer : MonoBehaviour, IPlayable
     {
-        
+        private void Start()
+        {
+            
+        }
     }
 }
