@@ -16,7 +16,7 @@ namespace BeABachelor
             get => GameState;
             set 
             {
-                GameState = value;
+                _gameState = value;
                 OnGameStateChanged?.Invoke(GameState);
             }
         }
@@ -29,12 +29,13 @@ namespace BeABachelor
             get => Score;
             set
             {
-                Score = value;
+                _score = value;
                 OnScoreChanged?.Invoke(Score);
             }
         }
 
         private GameState _gameState;
+        private int _score;
 
         public void Initialize()
         {
