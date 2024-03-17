@@ -20,7 +20,7 @@ namespace BeABachelor.Play
                 _gameManager.PlayType = PlayType.Solo;
                 if(_gameManager.PlayerType == PlayerType.NotSelected)
                 {
-                    _gameManager.PlayerType = PlayerType.Hakken;
+                    _gameManager.PlayerType = PlayerType.Kouken;
                 }
             }
             // プレイタイプごとにスクリプトを選択

@@ -10,6 +10,8 @@ public class MainCamera : MonoBehaviour
     [Inject] GameManager _gameManager;
     [Inject] PlaySceneManager _playSceneManager;
 
+    private float flag = 1;
+
     private void Awake()
     {
         _gameManager.OnGameStateChanged += SetTarget;
@@ -21,7 +23,7 @@ public class MainCamera : MonoBehaviour
 
     void Update()
     {
-        transform.position = target.transform.position - target.transform.forward * 10 + target.transform.up * 5;
+            transform.position = target.transform.position - new Vector3(0.0f, -7.0f, 15.0f * flag);
     }
 
     private void OnDestroy()
@@ -34,6 +36,17 @@ public class MainCamera : MonoBehaviour
         if(gameState == GameState.Playing)
         {
             target = _playSceneManager.GetPlayerObject();
+
+            // とりあえず名前解決
+            if(target.name == "HakkenPlayer")
+            {
+                flag = 1.0f;
+            }
+            else
+            {
+                flag = -1.0f;
+                transform.localEulerAngles += new Vector3(0, 180, 0);
+            }
         }
     }
 }
