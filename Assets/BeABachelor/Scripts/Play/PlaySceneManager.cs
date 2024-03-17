@@ -57,8 +57,14 @@ namespace BeABachelor.Play
                     }
                     break;
             }
-        }
 
+            _gameManager.GameState = GameState.Playing;
+        }
+               
+        public GameObject GetPlayerObject()
+        {
+            return _gameManager.PlayerType == PlayerType.Hakken ? hakken : kouken;
+        }
 
     }
 }

@@ -26,7 +26,9 @@ namespace BeABachelor.Play.Player
             if(_gameManager.GameState == GameState.Playing)
             {
                 var inputMoveAxis = move.ReadValue<Vector2>();
-                transform.position += (transform.forward * inputMoveAxis.x + transform.right * inputMoveAxis.y) * Time.deltaTime;
+                transform.position += 
+                    (transform.forward * inputMoveAxis.y + transform.right * inputMoveAxis.x) * Time.deltaTime 
+                    * DefaultPlaySceneParams.DefaultSpeed * (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f);
             }
         }
     }
