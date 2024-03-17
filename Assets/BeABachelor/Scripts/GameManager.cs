@@ -13,7 +13,7 @@ namespace BeABachelor
 
         public GameState GameState 
         { 
-            get => GameState;
+            get => _gameState;
             set 
             {
                 _gameState = value;
@@ -26,7 +26,7 @@ namespace BeABachelor
 
         public int Score
         {
-            get => Score;
+            get => _score;
             set
             {
                 _score = value;
