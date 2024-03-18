@@ -11,13 +11,15 @@ namespace BeABachelor
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
 
+        public bool Connected { get; set; }
+
         public GameState GameState 
         { 
             get => _gameState;
             set 
             {
                 _gameState = value;
-                OnGameStateChanged?.Invoke(GameState);
+                OnGameStateChanged?.Invoke(_gameState);
             }
         }
 
@@ -30,7 +32,7 @@ namespace BeABachelor
             set
             {
                 _score = value;
-                OnScoreChanged?.Invoke(Score);
+                OnScoreChanged?.Invoke(_score);
             }
         }
 
@@ -49,6 +51,7 @@ namespace BeABachelor
 
         public void Reset()
         {
+            Connected = false;
             GameState = GameState.Title;
             PlayerType = PlayerType.NotSelected;
             PlayType = PlayType.NotSelected;
