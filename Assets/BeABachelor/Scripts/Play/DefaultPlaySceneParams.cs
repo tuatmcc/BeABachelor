@@ -11,7 +11,8 @@ namespace BeABachelor.Play
         public static float RunningSpeed = 1.5f;
         // 向きを変えたときの回転速度
         public static float RotateSpeed = 10.0f;
-
+        // 始めのカウントダウンの長さ
+        public static int CountLength = 5;
         public enum Direction
         {
             PLUS = 1,
