@@ -10,6 +10,7 @@ namespace BeABachelor.Play
     public class PlaySceneManager : MonoBehaviour
     {
         public event Action<int> OnCountChanged;
+        public event Action<int> OnTimeChanged;
 
         [Inject] GameManager _gameManager;
 
@@ -23,20 +24,34 @@ namespace BeABachelor.Play
             {
                 _count = value;
                 OnCountChanged?.Invoke(_count);
-                Debug.Log($"Count changed {_count}");
+                Debug.Log($"Count changed : {_count}");
+            }
+        }
+
+        public int MainTimer
+        {
+            get => _timer;
+            set
+            {
+                _timer = value;
+                OnTimeChanged?.Invoke(_timer);
+                // Debug.Log($"Timer : {MainTimer}");
             }
         }
 
         private int _count;
+        private int _timer;
 
         private CancellationTokenSource _cts;
+        private bool _counting;
+        private long _startTime;
 
         public void Start()
         {
             // 未選択の場合
             if(_gameManager.PlayType == PlayType.NotSelected)
             {
-                Debug.Log("Started Play Scene without selecting PlayType, so start with solo play");
+                Debug.Log("Started Play Scene without selecting PlayType, so start with Solo play");
                 _gameManager.PlayType = PlayType.Solo;
                 if(_gameManager.PlayerType == PlayerType.NotSelected)
                 {
@@ -78,26 +93,40 @@ namespace BeABachelor.Play
                     break;
             }
 
-            Count = DefaultPlaySceneParams.CountLength;
+            Count = DefaultPlaySceneParams.CountLengthSceond;
+            MainTimer = DefaultPlaySceneParams.PlayLengthSecond;
 
-            _cts = new CancellationTokenSource();
+            _gameManager.OnGameStateChanged += OnGameStateChanged;
+
+            _cts = new();
             WaitConnectionAsync( _cts.Token ).Forget();
+        }
 
-            _gameManager.GameState = GameState.Playing;
+        private void Update()
+        {
+            if (_counting)
+            {
+                
+            }
         }
 
         private void OnDestroy()
         {
             _cts?.Cancel();
+            _gameManager.OnGameStateChanged -= OnGameStateChanged;
         }
 
         private void OnGameStateChanged(GameState gameState)
         {
             switch (gameState)
             {
+                case GameState.CountDown:
+                    _cts = new();
+                    StartCountdownAsync( _cts.Token ).Forget();
+                    break;
                 case GameState.Playing:
-                    _cts = new CancellationTokenSource();
-                    
+                    _cts = new();
+                    StartPlayAsync(_cts.Token).Forget();
                     break;
             }
         }
@@ -119,9 +148,21 @@ namespace BeABachelor.Play
         {
             while(Count > 0)
             {
-                await UniTask.Delay(1000);
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken : token);
                 Count--;
             }
+            _gameManager.GameState = GameState.Playing;
+        }
+
+        private async UniTask StartPlayAsync(CancellationToken token)
+        {
+            while(MainTimer > 0)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+                MainTimer--;
+            }
+
+            _gameManager.GameState = GameState.Finished;
         }
 
         public GameObject GetPlayerObject()

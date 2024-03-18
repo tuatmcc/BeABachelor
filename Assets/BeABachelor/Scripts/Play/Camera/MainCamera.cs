@@ -33,7 +33,7 @@ public class MainCamera : MonoBehaviour
 
     private void SetTarget(GameState gameState)
     {
-        if(gameState == GameState.Playing)
+        if(gameState == GameState.CountDown)
         {
             target = _playSceneManager.GetPlayerObject();
 
