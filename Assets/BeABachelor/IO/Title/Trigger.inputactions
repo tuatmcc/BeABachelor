@@ -1,0 +1,34 @@
+{
+    "name": "SpaceClick",
+    "maps": [
+        {
+            "name": "Transition",
+            "id": "b3fe0175-cb5b-48be-8cae-788e481ed839",
+            "actions": [
+                {
+                    "name": "KeyDown",
+                    "type": "Button",
+                    "id": "649f428c-6bf5-4dca-a8bb-18a4a99ce5bb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "f0a3be96-1a86-435f-8a3c-a611a7272749",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyDown",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
