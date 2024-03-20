@@ -9,6 +9,8 @@ namespace BeABachelor.Play
         public static float DefaultSpeed = 10.0f;
         // 走っているときの移動速度倍率
         public static float RunningSpeed = 1.5f;
+        // スタミナを使い切った時の移動速度倍率
+        public static float NoStaminaSpeed = 0.7f;
         // 向きを変えたときの回転速度
         public static float RotateSpeed = 10.0f;
         // 始めのカウントダウンの長さ

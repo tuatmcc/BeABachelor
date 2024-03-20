@@ -2,6 +2,7 @@ using BeABachelor.Play.Items;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
+using Cysharp.Threading.Tasks; 
 
 namespace BeABachelor.Play.Player
 {
