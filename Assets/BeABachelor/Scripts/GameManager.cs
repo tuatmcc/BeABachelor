@@ -1,12 +1,13 @@
 using System;
 using Zenject;
+using BeABachelor.Interface;
 
 namespace BeABachelor
 {
     /// <summary>
     /// ゲームの状態を管理するクラス
     /// </summary>
-    public class GameManager : IInitializable, IDisposable
+    public class GameManager : IGameManager, IInitializable, IDisposable
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
