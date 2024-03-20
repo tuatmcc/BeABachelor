@@ -8,6 +8,7 @@ namespace BeABachelor
         Title,
         Setting,
         Ready,
+        CountDown,
         Playing,
         Finished,
         Result,
