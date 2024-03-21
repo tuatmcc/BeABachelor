@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using BeABachelor.Networking.Play.Test;
 using Cysharp.Threading.Tasks;
+using R3;
 using UnityEngine;
 
 namespace BeABachelor.Networking.Play
@@ -24,6 +25,9 @@ namespace BeABachelor.Networking.Play
         private Action<int> _tickProcess;
         private int _processedTick = 0;
         private CancellationTokenSource _cancellationTokenSource;
+        private NetworkState _networkState = NetworkState.Preamble;
+        
+        public NetworkState GetNetworkState => _networkState;
         
         private void Awake()
         {
@@ -34,21 +38,35 @@ namespace BeABachelor.Networking.Play
             _endPoint = new IPEndPoint(_ipAddress, _endpointPort);
             _tickProcess = _gameManager.IsHakken() ? HakkenTickProcess : KokenTickProcess;
             _cancellationTokenSource = new CancellationTokenSource();
+            _networkState = NetworkState.Preamble;
+            
+            StartPreamble().Forget();
             ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
         }
 
         private void Update()
         {
-            var tick = _gameManager.GetTickCount();
-            if (tick < _processedTick)
+            switch (_networkState)
             {
-                return;
-            }
+                case NetworkState.Preamble:
+                    break;
+                case NetworkState.Playing:
+                    var tick = _gameManager.GetTickCount();
+                    if (tick < _processedTick)
+                    {
+                        return;
+                    }
             
-            var tickData = new TickData(tick, _gameManager.GetEnableItems(), _gameManager.GetPlayerPosition(), _gameManager.GetEnemyPosition());
-            _playerTickData[tick] = tickData;
-            SendData(tickData);
-            _processedTick++;
+                    var tickData = new TickData(tick, _gameManager.GetEnableItems(), _gameManager.GetPlayerPosition(), _gameManager.GetEnemyPosition());
+                    _playerTickData[tick] = tickData;
+                    SendData(tickData);
+                    _processedTick++;
+                    break;
+                case NetworkState.Ended:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         private void Disable()
@@ -62,10 +80,25 @@ namespace BeABachelor.Networking.Play
             Disable();
         }
 
-        private async UniTask Preamble(CancellationToken cancellationToken)
+        private async UniTask StartPreamble()
         {
+            var preambleTokenSource = new CancellationTokenSource();
+            // Send preamble
+            Observable.Interval(TimeSpan.FromSeconds(0.1), preambleTokenSource.Token).Subscribe(_ =>
+            {
+                _udpClient.Send(new []{(byte)1}, 1, _endPoint);
+            });
             
+            // Receive preamble
+            UdpReceiveResult data;
+            do
+            {
+                data = await _udpClient.ReceiveAsync();
+            } while (data.Buffer[0] == 1);
+            preambleTokenSource.Cancel();
+            _networkState = NetworkState.Playing;
         }
+
 
         private void SendData(InteractionObject interactionObject)
         {
