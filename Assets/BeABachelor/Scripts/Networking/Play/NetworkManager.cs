@@ -28,6 +28,7 @@ namespace BeABachelor.Networking.Play
         private NetworkState _networkState = NetworkState.Preamble;
         
         public NetworkState GetNetworkState => _networkState;
+        private int _tickDataSize;
         
         private void Awake()
         {
@@ -144,6 +145,10 @@ namespace BeABachelor.Networking.Play
             while (!cancellationToken.IsCancellationRequested)
             {
                 var data = await _udpClient.ReceiveAsync();
+                if (data.Buffer.Length != _tickDataSize)
+                {
+                    continue;
+                }
                 using BinaryReader reader = new(new MemoryStream(data.Buffer));
                 var flag = reader.ReadByte();
                 if (flag == 0)
