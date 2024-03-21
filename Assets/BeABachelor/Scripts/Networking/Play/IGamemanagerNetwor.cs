@@ -16,5 +16,6 @@ namespace BeABachelor.Networking.Play
         Vector3 GetEnemyPosition();
         void SetEnemyPosition(Vector3 position);
         bool IsHakken();
+        void GameStart();
     }
 }

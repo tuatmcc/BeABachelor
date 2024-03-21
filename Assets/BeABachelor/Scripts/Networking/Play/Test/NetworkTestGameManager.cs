@@ -8,6 +8,7 @@ namespace BeABachelor.Networking.Play.Test
     {
         private int tickCount;
         private int score;
+        private bool _isRunning = false;
         [SerializeField] private GameObject player;
         [SerializeField] private GameObject enemy;
         [SerializeField] private PlayerType playerType;
@@ -37,6 +38,8 @@ namespace BeABachelor.Networking.Play.Test
         
         private void FixedUpdate()
         {
+            if (!_isRunning)
+                return;
             tickCount++;
             var playerPosition = player.transform.localPosition;
             playerPosition += new Vector3(_left ? -speed : _right ? speed : 0.0f, _up ? speed : _down ? -speed : 0.0f, 0.0f);
@@ -142,6 +145,11 @@ namespace BeABachelor.Networking.Play.Test
         public bool IsHakken()
         {
             return playerType == PlayerType.Hakken;
+        }
+
+        public void GameStart()
+        {
+            _isRunning = true;
         }
     }
 }

@@ -62,6 +62,11 @@ namespace BeABachelor.Networking.Play
             Disable();
         }
 
+        private async UniTask Preamble(CancellationToken cancellationToken)
+        {
+            
+        }
+
         private void SendData(InteractionObject interactionObject)
         {
             if (interactionObject is TickData tickData)
