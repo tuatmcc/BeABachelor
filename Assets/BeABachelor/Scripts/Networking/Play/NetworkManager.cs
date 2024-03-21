@@ -91,11 +91,11 @@ namespace BeABachelor.Networking.Play
             Debug.Log("Start Preambling");
             
             // Receive preamble
-            UdpReceiveResult data;
+            byte[] data;
             do
             {
-                data = await _udpClient.ReceiveAsync();
-            } while (data.Buffer[0] == 1);
+                data = _udpClient.Receive(ref _endPoint);
+            } while (data[0] == 1);
             Debug.Log("Start");
             preambleTokenSource.Cancel();
             _networkState = NetworkState.Playing;
