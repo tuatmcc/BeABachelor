@@ -99,7 +99,7 @@ namespace BeABachelor
             {
                 // mState = PlaySettingState.PlayMode;
                 // mGameManager++;
-                Debug.Log("Confirm");
+                Debug.Log("Confirmed");
             }
             else if (context.action.name == "Right")
             {
@@ -157,7 +157,6 @@ namespace BeABachelor
                     mConfirmSelector.SetActive(true);
                     break;
             }
-            Debug.Log(mState);
         }
     }
 }
