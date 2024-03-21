@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public interface ITitleManager
+namespace BeABachelor
 {
-    void Awake();
-    void OnEnable();
-    void OnDisable();
-    void OnKeyDown(InputAction.CallbackContext context);
+    public interface ITitleManager
+    {
+        void Awake();
+        void OnEnable();
+        void OnDisable();
+        void OnKeyDown(InputAction.CallbackContext context);
+    }
 }
