@@ -1,0 +1,74 @@
+{
+    "name": "Select",
+    "maps": [
+        {
+            "name": "Selector",
+            "id": "41421192-c653-44f4-b2b1-3ace3dcffe0d",
+            "actions": [
+                {
+                    "name": "Left",
+                    "type": "Button",
+                    "id": "47cdb09a-4475-45ae-8e99-da6ba640c14f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Right",
+                    "type": "Button",
+                    "id": "64c5b319-7f69-456d-958a-ba89ce71b985",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Release",
+                    "type": "Button",
+                    "id": "e9eb6124-4b98-44bc-9d29-d363d74836ff",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "df60a67b-a1b8-4e81-a68d-dcdd6c938175",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Left",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "177e9715-e685-4795-ba48-08c0152eaf61",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fc58df81-b6fb-4c33-9eac-c25be3acde7b",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "Press(behavior=1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Release",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
