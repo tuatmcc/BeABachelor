@@ -150,6 +150,8 @@ namespace BeABachelor.Networking.Play
                     continue;
                 }
                 using BinaryReader reader = new(new MemoryStream(data.Buffer));
+                // 開始のフラグ
+                reader.ReadByte();
                 var flag = reader.ReadByte();
                 if (flag == 0)
                 {
