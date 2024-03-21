@@ -199,6 +199,7 @@ namespace BeABachelor.Networking.Play
         
         private void KokenTickProcess(int tick)
         {
+            while(!_playerTickData.ContainsKey(tick)){}
             var tickData = _playerTickData[tick];
             var enemyTickData = _opponentTickData[tick];
             bool[] enableItems = _gameManager.GetEnableItems();
