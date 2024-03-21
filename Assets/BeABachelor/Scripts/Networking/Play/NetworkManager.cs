@@ -39,7 +39,8 @@ namespace BeABachelor.Networking.Play
             _tickProcess = _gameManager.IsHakken() ? HakkenTickProcess : KokenTickProcess;
             _cancellationTokenSource = new CancellationTokenSource();
             _networkState = NetworkState.Preamble;
-            
+            // flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
+            _tickDataSize = 1 + 4 + 12 + 12 + 4 + _gameManager.GetEnableItems().Length;
             StartPreamble().Forget();
         }
 
@@ -108,9 +109,7 @@ namespace BeABachelor.Networking.Play
         {
             if (interactionObject is TickData tickData)
             {
-                Debug.Log($"SendData: {tickData.EnableItems[0]} {tickData.EnableItems[1]} {tickData.EnableItems[2]} {tickData.EnableItems[3]} {tickData.EnableItems[4]}");
-                // flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
-                using MemoryStream stream = new(1 + 4 + 12 + 12 + 4 + tickData.EnableItems.Length);
+                using MemoryStream stream = new(_tickDataSize);
                 stream.WriteByte(0);
                 stream.Write(BitConverter.GetBytes(tickData.TickCount));
                 stream.Write(BitConverter.GetBytes(tickData.PlayerPosition.x));
@@ -132,7 +131,7 @@ namespace BeABachelor.Networking.Play
             {
                 var rerequest = (Rerequest)interactionObject;
                 // flag + tickCount
-                using MemoryStream stream = new(1 + 4);
+                using MemoryStream stream = new(5);
                 stream.WriteByte(1);
                 stream.Write(BitConverter.GetBytes(rerequest.TickCount));
                 var data = stream.ToArray();
