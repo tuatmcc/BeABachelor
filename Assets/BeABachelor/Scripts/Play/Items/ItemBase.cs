@@ -9,7 +9,7 @@ namespace BeABachelor.Play.Items
     /// </summary>
     public abstract class ItemBase : MonoBehaviour
     {
-        [SerializeField] private int ItemID { get; set; }
+        [SerializeField] public int ItemID { get; set; }
 
         public virtual bool DestroyOnItemCollectorHit => true;
 
