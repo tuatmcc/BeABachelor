@@ -99,6 +99,7 @@ namespace BeABachelor.Networking.Play
             Debug.Log("Start");
             preambleTokenSource.Cancel();
             _networkState = NetworkState.Playing;
+            _gameManager.GameStart();
             ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
         }
 
