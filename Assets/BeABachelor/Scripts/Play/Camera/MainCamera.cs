@@ -1,4 +1,5 @@
 using BeABachelor;
+using BeABachelor.Interface;
 using BeABachelor.Play;
 using UnityEngine;
 using Zenject;
@@ -7,7 +8,7 @@ public class MainCamera : MonoBehaviour
 {
     [SerializeField] private GameObject target;
 
-    [Inject] GameManager _gameManager;
+    [Inject] IGameManager _gameManager;
     [Inject] PlaySceneManager _playSceneManager;
 
     private float flag = 1;

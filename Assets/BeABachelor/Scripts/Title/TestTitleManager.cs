@@ -1,3 +1,4 @@
+using BeABachelor.Interface;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace BeABachelor
     [RequireComponent(typeof(PlayerInput))]
     public class TestTitleManager : MonoBehaviour, ITitleManager
     {
-        [Inject] private GameManager mGameManager;
+        [Inject] private IGameManager mGameManager;
         private PlayerInput mPlayerInput;
 
         public void Awake()
