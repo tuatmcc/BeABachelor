@@ -1,4 +1,4 @@
-﻿namespace BeABachelor.Networking
+﻿namespace BeABachelor.Networking.Play
 {
     public record Rerequest : InteractionObject
     {

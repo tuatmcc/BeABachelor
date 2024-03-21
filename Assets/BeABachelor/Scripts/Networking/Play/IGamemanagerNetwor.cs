@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace BeABachelor.Networking
+namespace BeABachelor.Networking.Play
 {
     public interface IGamemanagerNetwor
     {

@@ -4,13 +4,11 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
-using BeABachelor.Networking.Test;
+using BeABachelor.Networking.Play.Test;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Profiling;
 
-namespace BeABachelor.Networking
+namespace BeABachelor.Networking.Play
 {
     public class NetworkManager : MonoBehaviour
     {

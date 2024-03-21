@@ -1,7 +1,6 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace BeABachelor.Networking.Test
+namespace BeABachelor.Networking.Play.Test
 {
     public class NetworkTestPlayer : MonoBehaviour
     {

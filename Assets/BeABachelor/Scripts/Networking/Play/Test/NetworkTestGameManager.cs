@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BeABachelor.Networking.Test
+namespace BeABachelor.Networking.Play.Test
 {
     public class NetworkTestGameManager : MonoBehaviour, IGamemanagerNetwor
     {
