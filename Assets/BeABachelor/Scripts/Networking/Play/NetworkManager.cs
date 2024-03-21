@@ -97,7 +97,7 @@ namespace BeABachelor.Networking.Play
             do
             {
                 data = await _udpClient.ReceiveAsync();
-            } while (data.Buffer.Length != 1 && data.Buffer[0] != 1);
+            } while (data.Buffer[0] != 1);
             Debug.Log("Start");
             preambleTokenSource.Cancel();
             _networkState = NetworkState.Playing;
@@ -111,7 +111,7 @@ namespace BeABachelor.Networking.Play
             if (interactionObject is TickData tickData)
             {
                 using MemoryStream stream = new(_tickDataSize);
-                stream.WriteByte(0);
+                stream.WriteByte(1);
                 stream.Write(BitConverter.GetBytes(tickData.TickCount));
                 stream.Write(BitConverter.GetBytes(tickData.PlayerPosition.x));
                 stream.Write(BitConverter.GetBytes(tickData.PlayerPosition.y));
