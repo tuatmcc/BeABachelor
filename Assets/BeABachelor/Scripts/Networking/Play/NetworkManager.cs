@@ -40,8 +40,8 @@ namespace BeABachelor.Networking.Play
             _tickProcess = _gameManager.IsHakken() ? HakkenTickProcess : KokenTickProcess;
             _cancellationTokenSource = new CancellationTokenSource();
             _networkState = NetworkState.Preamble;
-            // flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
-            _tickDataSize = 1 + 4 + 12 + 12 + 4 + _gameManager.GetEnableItems().Length;
+            // startFlag + flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
+            _tickDataSize = 1 + 1 + 4 + 12 + 12 + 4 + _gameManager.GetEnableItems().Length;
             StartPreamble().Forget();
         }
 
