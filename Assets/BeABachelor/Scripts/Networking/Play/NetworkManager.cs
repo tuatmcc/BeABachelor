@@ -112,6 +112,7 @@ namespace BeABachelor.Networking.Play
             {
                 using MemoryStream stream = new(_tickDataSize);
                 stream.WriteByte(1);
+                stream.WriteByte(0);
                 stream.Write(BitConverter.GetBytes(tickData.TickCount));
                 stream.Write(BitConverter.GetBytes(tickData.PlayerPosition.x));
                 stream.Write(BitConverter.GetBytes(tickData.PlayerPosition.y));
