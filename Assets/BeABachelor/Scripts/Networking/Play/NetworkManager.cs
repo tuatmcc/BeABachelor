@@ -83,10 +83,12 @@ namespace BeABachelor.Networking.Play
         {
             var preambleTokenSource = new CancellationTokenSource();
             // Send preamble
+            Debug.Log("Start Preamble");
             Observable.Interval(TimeSpan.FromSeconds(0.1), preambleTokenSource.Token).Subscribe(_ =>
             {
                 _udpClient.Send(new []{(byte)1}, 1, _endPoint);
             });
+            Debug.Log("Start Preambling");
             
             // Receive preamble
             UdpReceiveResult data;
@@ -94,6 +96,7 @@ namespace BeABachelor.Networking.Play
             {
                 data = await _udpClient.ReceiveAsync();
             } while (data.Buffer[0] == 1);
+            Debug.Log("Start");
             preambleTokenSource.Cancel();
             _networkState = NetworkState.Playing;
             ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
