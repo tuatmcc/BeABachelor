@@ -41,7 +41,6 @@ namespace BeABachelor.Networking.Play
             _networkState = NetworkState.Preamble;
             
             StartPreamble().Forget();
-            ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
         }
 
         private void Update()
@@ -97,6 +96,7 @@ namespace BeABachelor.Networking.Play
             } while (data.Buffer[0] == 1);
             preambleTokenSource.Cancel();
             _networkState = NetworkState.Playing;
+            ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
         }
 
 
