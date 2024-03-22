@@ -25,7 +25,8 @@ namespace BeABachelor.Networking.Play
         private IPEndPoint _endPoint;
         private Action<int> _tickProcess;
         private int _processedTick = 0;
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _preambleTokenSource;
+        private CancellationTokenSource _tickProcessTokenSource;
         private NetworkState _networkState = NetworkState.Preamble;
         private TimeoutController _timeoutController;
         
@@ -40,21 +41,22 @@ namespace BeABachelor.Networking.Play
             _ipAddress = IPAddress.Parse(_ip);
             _endPoint = new IPEndPoint(_ipAddress, _endpointPort);
             _tickProcess = _gameManager.IsHakken() ? HakkenTickProcess : KokenTickProcess;
-            _cancellationTokenSource = new CancellationTokenSource();
+            _tickProcessTokenSource = new CancellationTokenSource();
+            _preambleTokenSource = new CancellationTokenSource();
             _networkState = NetworkState.Preamble;
             // startFlag + flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
             _tickDataSize = 1 + 1 + 4 + 12 + 12 + 4 + _gameManager.GetEnableItems().Length;
             _timeoutController = new TimeoutController();
             
-            var timeoutToken = _timeoutController.Timeout(TimeSpan.FromSeconds(30));
+            var timeoutToken = _timeoutController.Timeout(TimeSpan.FromSeconds(10));
             var destroyToken = this.GetCancellationTokenOnDestroy();
-            var token = CancellationTokenSource.CreateLinkedTokenSource(timeoutToken, destroyToken).Token;
+            var preambleToken = _preambleTokenSource.Token;
             UniTask.Void(async () =>
             {
                 _networkState = NetworkState.Preamble;
                 UdpReceiveResult result;
                 Debug.Log("Start Preamble");
-                Observable.Interval(TimeSpan.FromSeconds(0.1), _cancellationTokenSource.Token).Subscribe(_ =>
+                Observable.Interval(TimeSpan.FromSeconds(0.1), CancellationTokenSource.CreateLinkedTokenSource(timeoutToken, preambleToken, destroyToken).Token).Subscribe(_ =>
                 {
                     Debug.Log("Send Preamble");
                     _udpClient.Send(new[] { (byte)1 }, 1, _endPoint);
@@ -65,14 +67,17 @@ namespace BeABachelor.Networking.Play
                     Debug.Log("Receive Preamble");
                 }while(result.Buffer[0] != 1);
                 Debug.Log("Start");
-                _cancellationTokenSource.Cancel();
+                _preambleTokenSource.Cancel();
+                Debug.Log("Cancel");
                 _networkState = NetworkState.Playing;
                 _gameManager.GameStart();
                 
-                var token = _cancellationTokenSource.Token;
+                var token = _tickProcessTokenSource.Token;
                 while (!token.IsCancellationRequested)
                 {
+                    Debug.Log("Receive tick data");
                     result = await _udpClient.ReceiveAsync();
+                    Debug.Log("Received tick data");
                     var data = result.Buffer;
                     if (data.Length != _tickDataSize)
                     {
@@ -101,6 +106,7 @@ namespace BeABachelor.Networking.Play
                             }
 
                             var tickData = new TickData(tickCount, enableItems, enemyPosition, playerPosition);
+                            Debug.Log($"tickdata {tickData}");
                             _opponentTickData[tickCount] = tickData;
                             _tickProcess(tickCount);
                         }
@@ -109,6 +115,7 @@ namespace BeABachelor.Networking.Play
                             var tickCount = reader.ReadInt32();
                             SendData(new Rerequest(tickCount)).Forget();
                         }
+                        Debug.Log("Processed tick data");
                         await UniTask.Yield();
                     });
                 }
@@ -142,7 +149,8 @@ namespace BeABachelor.Networking.Play
 
         private void Disable()
         {
-            _cancellationTokenSource.Cancel();
+            _preambleTokenSource.Cancel();
+            _tickProcessTokenSource.Cancel();
             _udpClient.Close();
         }
 
