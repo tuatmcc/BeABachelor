@@ -47,80 +47,7 @@ namespace BeABachelor.Networking.Play
             // startFlag + flag + tickCount + playerPosition + enemyPosition + enableItemLength + enableItems
             _tickDataSize = 1 + 1 + 4 + 12 + 12 + 4 + _gameManager.GetEnableItems().Length;
             _timeoutController = new TimeoutController();
-            
-            var timeoutToken = _timeoutController.Timeout(TimeSpan.FromSeconds(10));
-            var destroyToken = this.GetCancellationTokenOnDestroy();
-            var preambleToken = _preambleTokenSource.Token;
-            UniTask.Void(async () =>
-            {
-                _networkState = NetworkState.Preamble;
-                UdpReceiveResult result;
-                Debug.Log("Start Preamble");
-                Observable.Interval(TimeSpan.FromSeconds(0.1), CancellationTokenSource.CreateLinkedTokenSource(timeoutToken, preambleToken, destroyToken).Token).Subscribe(_ =>
-                {
-                    Debug.Log("Send Preamble");
-                    _udpClient.Send(new[] { (byte)1 }, 1, _endPoint);
-                });
-                do
-                {
-                    result = await _udpClient.ReceiveAsync();
-                    Debug.Log("Receive Preamble");
-                }while(result.Buffer[0] != 1);
-                Debug.Log("Start");
-                _preambleTokenSource.Cancel();
-                Debug.Log("Cancel");
-                _networkState = NetworkState.Playing;
-                _gameManager.GameStart();
-                
-                var token = _tickProcessTokenSource.Token;
-                byte[] data;
-                while (!token.IsCancellationRequested)
-                {
-                    Debug.Log("Receive tick data");
-                    data = _udpClient.Receive(ref _endPoint);
-                    Debug.Log("Received tick data");
-                    if (data.Length != _tickDataSize)
-                    {
-                        continue;
-                    }
-
-                    UniTask.Void(AsyncAction);
-                    continue;
-
-                    async UniTaskVoid AsyncAction()
-                    {
-                        using BinaryReader reader = new(new MemoryStream(data));
-                        // 開始のフラグ
-                        reader.ReadByte();
-                        var flag = reader.ReadByte();
-                        if (flag == 0)
-                        {
-                            var tickCount = reader.ReadInt32();
-                            Debug.Log($"tickCount: {tickCount}");
-                            var playerPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var enemyPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            var enableItemLength = reader.ReadInt32();
-                            bool[] enableItems = new bool[enableItemLength];
-                            for (int i = 0; i < enableItemLength; i++)
-                            {
-                                enableItems[i] = reader.ReadByte() == 1;
-                            }
-
-                            var tickData = new TickData(tickCount, enableItems, enemyPosition, playerPosition);
-                            Debug.Log($"tickdata {tickData}");
-                            _opponentTickData[tickCount] = tickData;
-                            _tickProcess(tickCount);
-                        }
-                        else
-                        {
-                            var tickCount = reader.ReadInt32();
-                            SendData(new Rerequest(tickCount)).Forget();
-                        }
-
-                        Debug.Log("Processed tick data");
-                    }
-                }
-            });
+            ConnectionWait().Forget();
         }
 
         private void Update()
@@ -160,16 +87,17 @@ namespace BeABachelor.Networking.Play
             Disable();
         }
 
-        private async UniTask StartPreamble()
+        private async UniTask ConnectionWait()
         {
-            var preambleTokenSource = new CancellationTokenSource();
-            // Send preamble
-            Debug.Log("Start Preamble");
-            Observable.Interval(TimeSpan.FromSeconds(0.1), preambleTokenSource.Token).Subscribe(_ =>
+            var connectionWait = new CancellationTokenSource();
+            var timeOutToken = _timeoutController.Timeout(TimeSpan.FromSeconds(10));
+            var destroyToken = this.GetCancellationTokenOnDestroy();
+            var connectionToken = connectionWait.Token;
+            var token = CancellationTokenSource.CreateLinkedTokenSource(timeOutToken, destroyToken, connectionToken).Token;
+            Observable.Interval(TimeSpan.FromSeconds(0.1), token).Subscribe(_ =>
             {
                 _udpClient.Send(new []{(byte)1}, 1, _endPoint);
             });
-            Debug.Log("Start Preambling");
             
             // Receive preamble
             UdpReceiveResult data;
@@ -177,12 +105,10 @@ namespace BeABachelor.Networking.Play
             {
                 data = await _udpClient.ReceiveAsync();
             } while (data.Buffer[0] != 1);
-            Debug.Log("Start");
-            preambleTokenSource.Cancel();
+            connectionWait.Cancel();
             _networkState = NetworkState.Playing;
             _gameManager.GameStart();
-            //ReceiveDataAsync(_cancellationTokenSource.Token).Forget();
-            Debug.Log("forget");
+            ReceiveDataAsync(_tickProcessTokenSource.Token).Forget();
         }
 
 
@@ -207,7 +133,6 @@ namespace BeABachelor.Networking.Play
                 }
 
                 var data = stream.ToArray();
-                Debug.Log($"Send: {tickData}");
                 await _udpClient.SendAsync(data, data.Length, _endPoint);
             }
             else
@@ -222,66 +147,63 @@ namespace BeABachelor.Networking.Play
             }
         }
 
-        // private UniTaskVoid ReceiveDataAsync(CancellationToken cancellationToken)
-        // {
-        //     UniTask.Void(() =>
-        //     {
-        //         while (!cancellationToken.IsCancellationRequested)
-        //         {
-        //             byte[] data;
-        //             Debug.Log("Receiving");
-        //             try
-        //             {
-        //                 data = _udpClient.Receive(ref _endPoint);
-        //             }
-        //             catch (Exception e)
-        //             {
-        //                 Debug.LogError(e);
-        //                 continue;
-        //             }
-        //
-        //
-        //             Debug.Log($"Received {data.Length}");
-        //             if (data.Length != _tickDataSize)
-        //             {
-        //                 continue;
-        //             }
-        //
-        //             using BinaryReader reader = new(new MemoryStream(data));
-        //             // 開始のフラグ
-        //             reader.ReadByte();
-        //             var flag = reader.ReadByte();
-        //             if (flag == 0)
-        //             {
-        //                 var tickCount = reader.ReadInt32();
-        //                 var playerPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-        //                 var enemyPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-        //                 var enableItemLength = reader.ReadInt32();
-        //                 bool[] enableItems = new bool[enableItemLength];
-        //                 for (int i = 0; i < enableItemLength; i++)
-        //                 {
-        //                     enableItems[i] = reader.ReadByte() == 1;
-        //                 }
-        //
-        //                 var tickData = new TickData(tickCount, enableItems, enemyPosition, playerPosition);
-        //                 _opponentTickData[tickCount] = tickData;
-        //                 Debug.Log($"Receive: {tickData}");
-        //                 _tickProcess(tickCount);
-        //             }
-        //             else
-        //             {
-        //                 var tickCount = reader.ReadInt32();
-        //                 SendData(_playerTickData[tickCount]);
-        //             }
-        //         }
-        //     });
-        // }
+        private async UniTaskVoid ReceiveDataAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                UdpReceiveResult result;
+                try
+                {
+                    result = await _udpClient.ReceiveAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError(e);
+                    continue;
+                }
+
+                var data = result.Buffer;
+                if (data.Length == _tickDataSize)
+                {
+                    TickProcess(data).Forget();
+                }
+            }
+        }
+
+        private UniTask TickProcess(byte[] data)
+        {
+            using BinaryReader reader = new(new MemoryStream(data));
+            // 開始のフラグ
+            reader.ReadByte();
+            var flag = reader.ReadByte();
+            if (flag == 0)
+            {
+                var tickCount = reader.ReadInt32();
+                var playerPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                var enemyPosition = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                var enableItemLength = reader.ReadInt32();
+                var enableItems = new bool[enableItemLength];
+                for (var i = 0; i < enableItemLength; i++)
+                {
+                    enableItems[i] = reader.ReadByte() == 1;
+                }
+
+                var tickData = new TickData(tickCount, enableItems, enemyPosition, playerPosition);
+                _opponentTickData[tickCount] = tickData;
+                _tickProcess(tickCount);
+            }
+            else
+            {
+                var tickCount = reader.ReadInt32();
+                SendData(_playerTickData[tickCount]).Forget();
+            }
+            
+            return UniTask.CompletedTask;
+        }
 
         private void HakkenTickProcess(int tick)
         {
-            Debug.Log("HakkenTickProcess");
             while(!_playerTickData.ContainsKey(tick)){}
-            Debug.Log("HakkenTickProcess2");
             var tickData = _playerTickData[tick];
             var enemyTickData = _opponentTickData[tick];
             bool[] enableItems = _gameManager.GetEnableItems();
@@ -303,9 +225,7 @@ namespace BeABachelor.Networking.Play
         
         private void KokenTickProcess(int tick)
         {
-            Debug.Log("KokenTickProcess");
             while(!_playerTickData.ContainsKey(tick)){}
-            Debug.Log("KokenTickProcess2");
             var tickData = _playerTickData[tick];
             var enemyTickData = _opponentTickData[tick];
             bool[] enableItems = _gameManager.GetEnableItems();
