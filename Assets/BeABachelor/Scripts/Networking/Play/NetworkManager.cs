@@ -52,10 +52,9 @@ namespace BeABachelor.Networking.Play
             UniTask.Void(async () =>
             {
                 _networkState = NetworkState.Preamble;
-                var preambleTokenSource = new CancellationTokenSource();
                 UdpReceiveResult result;
                 Debug.Log("Start Preamble");
-                Observable.Interval(TimeSpan.FromSeconds(0.1), preambleTokenSource.Token).Subscribe(_ =>
+                Observable.Interval(TimeSpan.FromSeconds(0.1), _cancellationTokenSource.Token).Subscribe(_ =>
                 {
                     Debug.Log("Send Preamble");
                     _udpClient.Send(new[] { (byte)1 }, 1, _endPoint);
@@ -66,7 +65,7 @@ namespace BeABachelor.Networking.Play
                     Debug.Log("Receive Preamble");
                 }while(result.Buffer[0] != 1);
                 Debug.Log("Start");
-                preambleTokenSource.Cancel();
+                _cancellationTokenSource.Cancel();
                 _networkState = NetworkState.Playing;
                 _gameManager.GameStart();
                 
