@@ -1,3 +1,4 @@
+using BeABachelor.Interface;
 using System;
 using UnityEngine;
 using Zenject;
@@ -15,7 +16,7 @@ namespace BeABachelor.Play.Items
 
         public event Action<Collider> OnItemCollectorHit;
 
-        [Inject] private GameManager _gameManager;
+        [Inject] private IGameManager _gameManager;
 
 
         private void OnTriggerEnter(Collider other)
