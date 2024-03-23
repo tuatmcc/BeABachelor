@@ -1,3 +1,4 @@
+using BeABachelor.Interface;
 using System;
 using Zenject;
 
@@ -7,7 +8,7 @@ namespace BeABachelor.DI
     {
         public override void InstallBindings()
         {
-            Container.Bind(typeof(GameManager), typeof(IInitializable), typeof(IDisposable))
+            Container.Bind(typeof(IGameManager), typeof(IInitializable), typeof(IDisposable))
                 .To<GameManager>()
                 .FromNew()
                 .AsSingle();
