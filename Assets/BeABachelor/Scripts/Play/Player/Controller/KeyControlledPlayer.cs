@@ -5,6 +5,7 @@ using Zenject;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using System;
+using BeABachelor.Interface;
 
 namespace BeABachelor.Play.Player
 {
@@ -12,7 +13,7 @@ namespace BeABachelor.Play.Player
     {
         public event Action<long> OnStaminaChanged;
 
-        [Inject] GameManager _gameManager;
+        [Inject] IGameManager _gameManager;
 
         [SerializeField] private DefaultPlaySceneParams.Direction directionX = DefaultPlaySceneParams.Direction.PLUS;
         [SerializeField] private DefaultPlaySceneParams.Direction directionY = DefaultPlaySceneParams.Direction.PLUS;
@@ -24,7 +25,6 @@ namespace BeABachelor.Play.Player
             {
                 stamina = value;
                 OnStaminaChanged?.Invoke(stamina);
-                Debug.Log($"Stamina changed : {stamina}");
             }
         }
 

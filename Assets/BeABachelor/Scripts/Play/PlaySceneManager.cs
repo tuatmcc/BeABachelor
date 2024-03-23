@@ -1,3 +1,4 @@
+using BeABachelor.Interface;
 using BeABachelor.Play.Player;
 using Cysharp.Threading.Tasks;
 using System;
@@ -12,7 +13,7 @@ namespace BeABachelor.Play
         public event Action<int> OnCountChanged;
         public event Action<int> OnTimeChanged;
 
-        [Inject] GameManager _gameManager;
+        [Inject] private IGameManager _gameManager;
 
         [SerializeField] GameObject hakken;
         [SerializeField] GameObject kouken;
@@ -135,7 +136,8 @@ namespace BeABachelor.Play
         {
             if(_gameManager.PlayType == PlayType.Multi)
             {
-                while (!_gameManager.Connected || !token.IsCancellationRequested)
+                // 接続チェック
+                while (/*!_gameManager.Connected ||*/ !token.IsCancellationRequested)
                 {
                     await UniTask.Delay(100);
                     Debug.Log("Wait for connection established");
