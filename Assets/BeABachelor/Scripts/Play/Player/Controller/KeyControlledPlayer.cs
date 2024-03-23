@@ -24,7 +24,6 @@ namespace BeABachelor.Play.Player
             {
                 stamina = value;
                 OnStaminaChanged?.Invoke(stamina);
-                Debug.Log($"Stamina changed : {stamina}");
             }
         }
 

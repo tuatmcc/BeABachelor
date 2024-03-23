@@ -21,7 +21,7 @@ namespace BeABachelor.Play.Items
         private void OnTriggerEnter(Collider other)
         {
             if (_gameManager.GameState != GameState.Playing) return;
-            if (other.TryGetComponent(out IItemCollectable _)) return;
+            if (!other.TryGetComponent(out IItemCollectable _)) return;
 
             OnItemCollectorHit?.Invoke(other);
 

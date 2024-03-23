@@ -12,6 +12,7 @@ namespace BeABachelor.Play.Items
         private void NotifyItemHit(Collider other)
         {
             // ItemIDを基にNetworkManagerに衝突を通知
+            Debug.Log($"ID : {ItemID}");
         }
     }
 }
