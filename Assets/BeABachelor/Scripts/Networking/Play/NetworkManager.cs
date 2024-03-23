@@ -154,17 +154,21 @@ namespace BeABachelor.Networking.Play
                 UdpReceiveResult result;
                 try
                 {
+                    Debug.Log("Receive");
                     result = await _udpClient.ReceiveAsync();
+                    Debug.Log("Received");
                 }
                 catch (Exception e)
                 {
                     Debug.LogError(e);
                     continue;
                 }
+                _udpClient.Close(); 
 
                 var data = result.Buffer;
                 if (data.Length == _tickDataSize)
                 {
+                    Debug.Log("Tick");
                     TickProcess(data).Forget();
                 }
             }
@@ -189,8 +193,10 @@ namespace BeABachelor.Networking.Play
                 }
 
                 var tickData = new TickData(tickCount, enableItems, enemyPosition, playerPosition);
+                Debug.Log(tickData);
                 _opponentTickData[tickCount] = tickData;
                 _tickProcess(tickCount);
+                Debug.Log("Tick Processed");
             }
             else
             {
