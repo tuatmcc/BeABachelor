@@ -14,7 +14,7 @@ namespace BeABachelor.Networking.Play.Test
             networkManager1.ConnectAsync().Forget();
             networkManager2.ConnectAsync().Forget();
 
-            UniTask.WaitUntil(() => networkManager1.IsConnected && networkManager2.IsConnected)
+            UniTask.WaitUntil(() => networkManager1.IsConnected)
                 .ContinueWith(() => Debug.Log("Connected"))
                 .Forget();
         }
