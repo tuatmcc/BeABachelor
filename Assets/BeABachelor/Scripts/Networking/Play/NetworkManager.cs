@@ -44,8 +44,9 @@ namespace BeABachelor.Networking.Play
             var receivedEndPoint = new IPEndPoint(IPAddress.Any, 0);
             Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: token)
                 .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
+            Debug.Log("Connecting to " + ip + ":" + endpointPort);
             await UniTask.WaitUntil(() => _client.Receive(ref receivedEndPoint)[0] == 0xff && receivedEndPoint.Equals(_endpoint), cancellationToken: timeoutToken);
-            
+            Debug.Log("Task completed");
             if(timeoutToken.IsCancellationRequested)
             {
                 Debug.LogError("Connection timed out");
