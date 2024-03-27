@@ -38,7 +38,7 @@ namespace BeABachelor.Networking.Play
             _client?.Dispose();
         }
 
-        public async UniTask ConnectAsync(int timeOut = 3)
+        public async UniTask ConnectAsync(int timeOut = 5)
         {
             _client = new UdpClient(clientPort);
             if (_client == null)
@@ -53,7 +53,7 @@ namespace BeABachelor.Networking.Play
             var cancellationTokenSource = new CancellationTokenSource();
             var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, this.GetCancellationTokenOnDestroy()).Token;
             UdpReceiveResult result;
-            var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.5f), cancellationToken: token)
+            var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
                 .Subscribe(_ =>
                 {
                     Debug.Log("Send");
@@ -70,6 +70,12 @@ namespace BeABachelor.Networking.Play
                 sendTask.Dispose();
                 _client.Dispose();
                 Debug.LogError("Connection timed out");
+                return;
+            }
+
+            if (!receiveTask.IsCompleted)
+            {
+                Debug.LogError("Receive Task is not completed");
                 return;
             }
 
