@@ -64,6 +64,7 @@ namespace BeABachelor.Networking.Play
             Debug.Log("Connecting");
             var receiveTask = _client.ReceiveAsync();
             await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             Debug.Log("Receive End");
             if (timeoutToken.IsCancellationRequested)
             {
@@ -85,7 +86,6 @@ namespace BeABachelor.Networking.Play
             {
                 _isConnected = true;
                 _client.Connect(ip, endpointPort);
-                await UniTask.Delay(TimeSpan.FromSeconds(1));
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
                 return;
