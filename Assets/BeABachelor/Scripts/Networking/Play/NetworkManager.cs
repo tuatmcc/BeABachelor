@@ -26,7 +26,7 @@ namespace BeABachelor.Networking.Play
         
         public bool IsConnected => _isConnected;
 
-        private void Start()
+        private void Awake()
         {
             _client = new UdpClient(clientPort);
             _isConnected = false;
