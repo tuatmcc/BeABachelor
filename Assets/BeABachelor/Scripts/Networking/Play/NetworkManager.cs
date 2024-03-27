@@ -21,7 +21,7 @@ namespace BeABachelor.Networking.Play
 
         private UdpClient _client;
         private bool _isConnected;
-        private List<byte[]> _receivedData;
+        private Queue<byte[]> _receivedData;
         private EndPoint _endpoint;
 
         public bool IsConnected => _isConnected;
@@ -29,7 +29,7 @@ namespace BeABachelor.Networking.Play
         private void Awake()
         {
             _isConnected = false;
-            _receivedData = new List<byte[]>();
+            _receivedData = new Queue<byte[]>();
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
         }
 
@@ -86,6 +86,17 @@ namespace BeABachelor.Networking.Play
             }
             
             Debug.LogError("Connection Failed");
+        }
+        
+        public async UniTask SendAsync(IBinariable binariable)
+        {
+            if (!_isConnected)
+            {
+                Debug.LogError("Not connected");
+                return;
+            }
+            var bytes = binariable.ToBytes();
+            await _client.SendAsync(bytes, bytes.Length);
         }
     }
 }
