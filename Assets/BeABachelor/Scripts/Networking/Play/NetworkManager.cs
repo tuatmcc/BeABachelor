@@ -56,7 +56,7 @@ namespace BeABachelor.Networking.Play
                     return;
                 }
                 result = receiveTask.Result;
-            }while (result.Buffer[0] == 0xff && !_client.Client.RemoteEndPoint.Equals(_endpoint) && !timeoutToken.IsCancellationRequested);
+            }while (result.Buffer[0] == 0xff && result.RemoteEndPoint.Equals(_endpoint) && !timeoutToken.IsCancellationRequested);
             
             _isConnected = true;
             _client.Connect(ip, endpointPort);
