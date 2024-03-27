@@ -47,7 +47,7 @@ namespace BeABachelor.Networking.Play
             var receiveTask = _client.ReceiveAsync();
             await UniTask.WaitUntil(() => timeoutToken.IsCancellationRequested);
             
-            if (timeoutToken.IsCancellationRequested)
+            if (!receiveTask.IsCompleted)
             {
                 Debug.LogError("Connection timed out");
                 return;
