@@ -28,7 +28,6 @@ namespace BeABachelor.Networking.Play
 
         private void Awake()
         {
-            _client = new UdpClient(clientPort);
             _isConnected = false;
             _receivedData = new List<byte[]>();
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
@@ -36,27 +35,40 @@ namespace BeABachelor.Networking.Play
 
         private void OnDestroy()
         {
-            _client.Dispose();
+            _client?.Dispose();
         }
 
-        public async UniTask ConnectAsync(int timeOut = 5)
+        public async UniTask ConnectAsync(int timeOut = 3)
         {
+            _client = new UdpClient(clientPort);
+            if (_client == null)
+            {
+                Debug.LogError("Failed to create UdpClient");
+                return;
+            }
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
             _isConnected = false;
             var timeController = new TimeoutController();
-            var cancellationTokenSource = new CancellationTokenSource();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
-            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken).Token;
+            var cancellationTokenSource = new CancellationTokenSource();
+            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, this.GetCancellationTokenOnDestroy()).Token;
             UdpReceiveResult result;
-            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: token)
-                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
+            var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.5f), cancellationToken: token)
+                .Subscribe(_ =>
+                {
+                    Debug.Log("Send");
+                    _client.Send(new byte[] { 0xff }, 1, ip, endpointPort);
+                });
 
+            // _client.ReceiveAsync();
+            Debug.Log("Connecting");
             var receiveTask = _client.ReceiveAsync();
-            await UniTask.WaitUntil(() => timeoutToken.IsCancellationRequested || receiveTask.IsCompleted);
-            
-            if (!receiveTask.IsCompleted)
+            await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
+            Debug.Log("Receive End");
+            if (timeoutToken.IsCancellationRequested)
             {
-                receiveTask.Dispose();
+                sendTask.Dispose();
+                _client.Dispose();
                 Debug.LogError("Connection timed out");
                 return;
             }
