@@ -63,7 +63,7 @@ namespace BeABachelor.Networking.Play
                 _isConnected = true;
                 _client.Connect(ip, endpointPort);
                 cancellationTokenSource.Cancel();
-                Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeController.Timeout(1000))
+                Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeController.Timeout(TimeSpan.FromSeconds(1)))
                     .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
                 Debug.Log("Connected");
                 return;
