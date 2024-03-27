@@ -39,16 +39,19 @@ namespace BeABachelor.Networking.Play
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
             _isConnected = false;
             var timeController = new TimeoutController();
+            var cancellationTokenSource = new CancellationTokenSource();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
+            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken).Token;
             UdpReceiveResult result;
-            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeoutToken)
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: token)
                 .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
 
             var receiveTask = _client.ReceiveAsync();
-            await UniTask.WaitUntil(() => timeoutToken.IsCancellationRequested);
+            await UniTask.WaitUntil(() => timeoutToken.IsCancellationRequested || receiveTask.IsCompleted);
             
             if (!receiveTask.IsCompleted)
             {
+                receiveTask.Dispose();
                 Debug.LogError("Connection timed out");
                 return;
             }
@@ -59,6 +62,10 @@ namespace BeABachelor.Networking.Play
             {
                 _isConnected = true;
                 _client.Connect(ip, endpointPort);
+                cancellationTokenSource.Cancel();
+                Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeController.Timeout(1000))
+                    .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
+                Debug.Log("Connected");
                 return;
             }
             
