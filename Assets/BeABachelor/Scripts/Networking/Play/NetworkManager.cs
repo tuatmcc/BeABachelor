@@ -34,26 +34,30 @@ namespace BeABachelor.Networking.Play
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
         }
         
-        public async UniTask ConnectAsync(int timeOut = 10)
+        public async UniTask ConnectAsync(int timeOut = 3)
         {
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
             _isConnected = false;
-            var connectedTokenSource = new CancellationTokenSource();
-            var timeoutToken = new CancellationTokenSource(TimeSpan.FromSeconds(timeOut)).Token;
-            var token = CancellationTokenSource.CreateLinkedTokenSource(timeoutToken, connectedTokenSource.Token).Token;
+            var timeController = new TimeoutController();
+            var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
             var receivedEndPoint = new IPEndPoint(IPAddress.Any, 0);
-            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: token)
+            UdpReceiveResult result;
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeoutToken)
                 .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
-            Debug.Log("Connecting to " + ip + ":" + endpointPort);
-            await UniTask.WaitUntil(() => _client.Receive(ref receivedEndPoint)[0] == 0xff && receivedEndPoint.Equals(_endpoint), cancellationToken: timeoutToken);
-            Debug.Log("Task completed");
-            if(timeoutToken.IsCancellationRequested)
+
+            do
             {
-                Debug.LogError("Connection timed out");
-                return;
-            }
+                var receiveTask = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() => receiveTask.IsCompleted || timeoutToken.IsCancellationRequested);
+                _client.Close();
+                if (timeoutToken.IsCancellationRequested)
+                {
+                    Debug.LogError("Connection timed out");
+                    return;
+                }
+                result = receiveTask.Result;
+            }while (result.Buffer[0] == 0xff && !_client.Client.RemoteEndPoint.Equals(_endpoint) && !timeoutToken.IsCancellationRequested);
             
-            connectedTokenSource.Cancel();
             _isConnected = true;
             _client.Connect(ip, endpointPort);
         }
