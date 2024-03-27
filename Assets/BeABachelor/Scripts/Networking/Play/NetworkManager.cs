@@ -54,18 +54,12 @@ namespace BeABachelor.Networking.Play
             var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, this.GetCancellationTokenOnDestroy()).Token;
             UdpReceiveResult result;
             var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
-                .Subscribe(_ =>
-                {
-                    Debug.Log("Send");
-                    _client.Send(new byte[] { 0xff }, 1, ip, endpointPort);
-                });
+                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
 
-            // _client.ReceiveAsync();
-            Debug.Log("Connecting");
             var receiveTask = _client.ReceiveAsync();
             await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
+            // ちょっと待たないと相手が受信できない
             await UniTask.Delay(TimeSpan.FromSeconds(1));
-            Debug.Log("Receive End");
             if (timeoutToken.IsCancellationRequested)
             {
                 sendTask.Dispose();
@@ -91,7 +85,7 @@ namespace BeABachelor.Networking.Play
                 return;
             }
             
-            Debug.Log("Connection Failed");
+            Debug.LogError("Connection Failed");
         }
     }
 }
