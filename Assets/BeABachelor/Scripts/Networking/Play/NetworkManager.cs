@@ -39,7 +39,7 @@ namespace BeABachelor.Networking.Play
             _client.Dispose();
         }
 
-        public async UniTask ConnectAsync(int timeOut = 3)
+        public async UniTask ConnectAsync(int timeOut = 5)
         {
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
             _isConnected = false;
@@ -67,7 +67,7 @@ namespace BeABachelor.Networking.Play
             {
                 _isConnected = true;
                 _client.Connect(ip, endpointPort);
-                
+                await UniTask.Delay(TimeSpan.FromSeconds(1));
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
                 return;
