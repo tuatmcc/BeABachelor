@@ -23,43 +23,46 @@ namespace BeABachelor.Networking.Play
         private bool _isConnected;
         private List<byte[]> _receivedData;
         private EndPoint _endpoint;
-        
+
         public bool IsConnected => _isConnected;
 
         private void Awake()
         {
+            _client = new UdpClient(clientPort);
             _isConnected = false;
             _receivedData = new List<byte[]>();
             _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
         }
-        
+
         public async UniTask ConnectAsync(int timeOut = 3)
         {
-            using (var ackUpdClient = new UdpClient(clientPort))
-            {
-                _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
-                _isConnected = false;
-                var timeController = new TimeoutController();
-                var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
-                UdpReceiveResult result;
-                Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeoutToken)
-                    .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
+            _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
+            _isConnected = false;
+            var timeController = new TimeoutController();
+            var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
+            UdpReceiveResult result;
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), cancellationToken: timeoutToken)
+                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
 
-                do
-                {
-                    var receiveTask = ackUpdClient.ReceiveAsync();
-                    await UniTask.WaitUntil(() => receiveTask.IsCompleted || timeoutToken.IsCancellationRequested);
-                    if (timeoutToken.IsCancellationRequested)
-                    {
-                        Debug.LogError("Connection timed out");
-                        return;
-                    }
-                    result = receiveTask.Result;
-                }while (result.Buffer[0] == 0xff && result.RemoteEndPoint.Equals(_endpoint) && !timeoutToken.IsCancellationRequested);
+            var receiveTask = _client.ReceiveAsync();
+            await UniTask.WaitUntil(() => timeoutToken.IsCancellationRequested);
+            
+            if (timeoutToken.IsCancellationRequested)
+            {
+                Debug.LogError("Connection timed out");
+                return;
             }
-            _client = new UdpClient(clientPort);
-            _isConnected = true;
-            _client.Connect(ip, endpointPort);
+
+            result = receiveTask.Result;
+            if (result.Buffer[0] == 0xff && result.RemoteEndPoint.Equals(_endpoint) &&
+                !timeoutToken.IsCancellationRequested)
+            {
+                _isConnected = true;
+                _client.Connect(ip, endpointPort);
+                return;
+            }
+            
+            Debug.Log("Connection Failed");
         }
     }
 }
