@@ -25,6 +25,8 @@ namespace BeABachelor.Networking.Play
         private EndPoint _endpoint;
 
         public bool IsConnected => _isConnected;
+        public EndPoint Endpoint => _endpoint;
+        public int ClientPort => clientPort;
 
         private void Awake()
         {
