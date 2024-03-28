@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using BeABachelor.Networking.Interface;
-using BeABachelor.Networking.Play.Test;
 using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Triggers;
 using R3;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 namespace BeABachelor.Networking.Play
@@ -25,7 +21,6 @@ namespace BeABachelor.Networking.Play
         private Queue<byte[]> _receivedData;
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
-        private UniTask _receiveTask;
 
         public bool IsConnected => _isConnected;
         public EndPoint RemoteEndPoint => _endpoint;
@@ -79,7 +74,7 @@ namespace BeABachelor.Networking.Play
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
                 OnConnected?.Invoke(_endpoint);
-                _receiveTask = Observable.F;
+                ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
                 return;
             }
             
@@ -95,6 +90,26 @@ namespace BeABachelor.Networking.Play
             }
             var bytes = binariable.ToBytes();
             await _client.SendAsync(bytes, bytes.Length);
+        }
+        
+        private async UniTask ReceiveAsync(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                var receiveTask = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
+                if (token.IsCancellationRequested)
+                {
+                    receiveTask.Dispose();
+                    return;
+                }
+                var result = receiveTask.Result;
+                if (result.Buffer.Length > 0)
+                {
+                    _receivedData.Enqueue(result.Buffer);
+                    OnReceived?.Invoke(result.Buffer);
+                }
+            }
         }
 
         public void Initialize()
