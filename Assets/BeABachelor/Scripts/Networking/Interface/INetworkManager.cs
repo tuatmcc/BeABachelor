@@ -12,7 +12,8 @@ namespace BeABachelor.Networking.Interface
         bool IsConnected { get; }
         EndPoint RemoteEndPoint { get; }
         int ClientPort { get; }
-        UniTask ConnectAsync(int timeOut = 5);
+        bool IsHost { get; }
+        UniTask ConnectAsync(bool isHost, int timeOut = 5);
         UniTask SendAsync(IBinariable binariable);
         void Disconnect();
     }

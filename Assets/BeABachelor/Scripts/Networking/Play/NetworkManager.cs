@@ -21,6 +21,7 @@ namespace BeABachelor.Networking.Play
         private Queue<byte[]> _receivedData;
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
+        private bool _isHost;
 
         public bool IsConnected => _isConnected;
         public EndPoint RemoteEndPoint => _endpoint;
@@ -28,8 +29,9 @@ namespace BeABachelor.Networking.Play
         public event Action<EndPoint> OnConnected;
         public event Action OnDisconnected;
         public event Action<byte[]> OnReceived;
+        public bool IsHost => _isHost;
         
-        public async UniTask ConnectAsync(int timeOut = 5)
+        public async UniTask ConnectAsync(bool isHost, int timeOut = 5)
         {
             _client = new UdpClient(_clientPort);
             if (_client == null)
@@ -37,6 +39,7 @@ namespace BeABachelor.Networking.Play
                 Debug.LogError("Failed to create UdpClient");
                 return;
             }
+            _isHost = isHost;
             _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _isConnected = false;
             var timeController = new TimeoutController();
@@ -44,8 +47,9 @@ namespace BeABachelor.Networking.Play
             var cancellationTokenSource = new CancellationTokenSource();
             var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
             UdpReceiveResult result;
+            var ack = (byte)(_isHost ? 0xff : 0xfe);
             var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
-                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, _ip, _remoteEndpointPort));
+                .Subscribe(_ => _client.Send(new byte[] { ack }, 1, _ip, _remoteEndpointPort));
 
             var receiveTask = _client.ReceiveAsync();
             await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
@@ -66,8 +70,8 @@ namespace BeABachelor.Networking.Play
             }
 
             result = receiveTask.Result;
-            if (result.Buffer[0] == 0xff && result.RemoteEndPoint.Equals(_endpoint) &&
-                !timeoutToken.IsCancellationRequested)
+            if (result.Buffer[0] == (_isHost ? 0xfe : 0xff) && result.RemoteEndPoint.Equals(_endpoint) &&
+                                                     !timeoutToken.IsCancellationRequested)
             {
                 _isConnected = true;
                 _client.Connect(_ip, _remoteEndpointPort);
