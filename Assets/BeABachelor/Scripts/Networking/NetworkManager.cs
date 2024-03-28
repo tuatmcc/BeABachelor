@@ -4,59 +4,53 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using BeABachelor.Networking.Interface;
 using BeABachelor.Networking.Play.Test;
 using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
 using R3;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Zenject;
 
 namespace BeABachelor.Networking.Play
 {
-    public class NetworkManager : MonoBehaviour
+    public class NetworkManager : INetworkManager, IInitializable, IDisposable
     {
-        [SerializeField] private string ip;
-        [SerializeField] private int clientPort;
-        [SerializeField] private int endpointPort;
-
+        private string _ip;
+        private int _clientPort;
+        private int _remoteEndpointPort;
         private UdpClient _client;
         private bool _isConnected;
         private Queue<byte[]> _receivedData;
         private EndPoint _endpoint;
+        private CancellationTokenSource _disposeCancellationTokenSource;
+        private UniTask _receiveTask;
 
         public bool IsConnected => _isConnected;
-        public EndPoint Endpoint => _endpoint;
-        public int ClientPort => clientPort;
-
-        private void Awake()
-        {
-            _isConnected = false;
-            _receivedData = new Queue<byte[]>();
-            _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
-        }
-
-        private void OnDestroy()
-        {
-            _client?.Dispose();
-        }
-
+        public EndPoint RemoteEndPoint => _endpoint;
+        public int ClientPort => _clientPort;
+        public event Action<EndPoint> OnConnected;
+        public event Action OnDisconnected;
+        public event Action<byte[]> OnReceived;
+        
         public async UniTask ConnectAsync(int timeOut = 5)
         {
-            _client = new UdpClient(clientPort);
+            _client = new UdpClient(_clientPort);
             if (_client == null)
             {
                 Debug.LogError("Failed to create UdpClient");
                 return;
             }
-            _endpoint = new IPEndPoint(IPAddress.Parse(ip), endpointPort);
+            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _isConnected = false;
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
             var cancellationTokenSource = new CancellationTokenSource();
-            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, this.GetCancellationTokenOnDestroy()).Token;
+            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
             UdpReceiveResult result;
             var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
-                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, ip, endpointPort));
+                .Subscribe(_ => _client.Send(new byte[] { 0xff }, 1, _ip, _remoteEndpointPort));
 
             var receiveTask = _client.ReceiveAsync();
             await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
@@ -81,9 +75,11 @@ namespace BeABachelor.Networking.Play
                 !timeoutToken.IsCancellationRequested)
             {
                 _isConnected = true;
-                _client.Connect(ip, endpointPort);
+                _client.Connect(_ip, _remoteEndpointPort);
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
+                OnConnected?.Invoke(_endpoint);
+                _receiveTask = Observable.F;
                 return;
             }
             
@@ -99,6 +95,27 @@ namespace BeABachelor.Networking.Play
             }
             var bytes = binariable.ToBytes();
             await _client.SendAsync(bytes, bytes.Length);
+        }
+
+        public void Initialize()
+        {
+            _isConnected = false;
+            _receivedData = new Queue<byte[]>();
+            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
+            _disposeCancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public void Dispose()
+        {
+            _client?.Dispose();
+            _disposeCancellationTokenSource?.Cancel();
+        }
+        
+        public void Disconnect()
+        {
+            _client?.Dispose();
+            _isConnected = false;
+            OnDisconnected?.Invoke();
         }
     }
 }
