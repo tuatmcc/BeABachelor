@@ -13,7 +13,7 @@ namespace BeABachelor.Networking
                 if (TryGetComponent(out Rigidbody rb))
                 {
                     // disable gravity
-                    rb.useGravity = !UseReceivedData;
+                    rb.isKinematic = !UseReceivedData;
                 }
             };
         }
