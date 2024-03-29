@@ -36,6 +36,7 @@ namespace BeABachelor.Networking
 
         public override void FromBytes(byte[] bytes)
         {
+            if(Match2Host == _networkManager.IsHost) return;
             var t = transform;
             var p = t.position;
             var r = t.rotation;
