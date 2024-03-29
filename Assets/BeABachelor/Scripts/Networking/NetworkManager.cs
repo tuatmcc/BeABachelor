@@ -27,14 +27,39 @@ namespace BeABachelor.Networking
         public EndPoint RemoteEndPoint => _endpoint;
         public int ClientPort => _clientPort;
         public event Action<EndPoint> OnConnected;
+        public event Action<EndPoint> OnConnecting;
         public event Action OnDisconnected;
         public bool IsHost => _isHost;
-        public NetworkState NetworkState => _networkState;
+
+        public NetworkState NetworkState
+        {
+            get => _networkState;
+            private set
+            {
+                switch (value)
+                {
+                    case NetworkState.Connected:
+                        OnConnected?.Invoke(_endpoint);
+                        _networkState = NetworkState.Connected;
+                        break;
+                    case NetworkState.Connecting:
+                        OnConnecting?.Invoke(_endpoint);
+                        _networkState = NetworkState.Connecting;
+                        break;
+                    case NetworkState.Disconnected:
+                        OnDisconnected?.Invoke();
+                        _networkState = NetworkState.Disconnected;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value), value, null);
+                }
+            }
+        }
         public SynchronizationController SynchronizationController { get; set; }
 
         public async UniTask ConnectAsync(bool isHost, string ip, int remotePort, int clientPort, int timeOut = 5)
         {
-            _networkState = NetworkState.Connecting;
+            NetworkState = NetworkState.Connecting;
             _ip = ip;
             _clientPort = clientPort;
             _remoteEndpointPort = remotePort;
@@ -43,7 +68,7 @@ namespace BeABachelor.Networking
             if (_client == null)
             {
                 Debug.LogError("Failed to create UdpClient");
-                _networkState = NetworkState.Disconnected;
+                NetworkState = NetworkState.Disconnected;
                 return;
             }
             _isHost = isHost;
@@ -67,14 +92,14 @@ namespace BeABachelor.Networking
                 sendTask.Dispose();
                 _client.Dispose();
                 Debug.LogError("Connection timed out");
-                _networkState = NetworkState.Disconnected;
+                NetworkState = NetworkState.Disconnected;
                 return;
             }
 
             if (!receiveTask.IsCompleted)
             {
                 Debug.LogError("Receive Task is not completed");
-                _networkState = NetworkState.Disconnected;
+                NetworkState = NetworkState.Disconnected;
                 return;
             }
 
@@ -86,14 +111,13 @@ namespace BeABachelor.Networking
                 _client.Connect(_ip, _remoteEndpointPort);
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
-                _networkState = NetworkState.Connected;
-                OnConnected?.Invoke(_endpoint);
+                NetworkState = NetworkState.Connected;
                 ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
                 return;
             }
             
             Debug.LogError("Connection Failed");
-            _networkState = NetworkState.Disconnected;
+            NetworkState = NetworkState.Disconnected;
         }
         
         private async UniTask ReceiveAsync(CancellationToken token)
@@ -124,22 +148,21 @@ namespace BeABachelor.Networking
         {
             _isConnected = false;
             _disposeCancellationTokenSource = new CancellationTokenSource();
-            _networkState = NetworkState.Disconnected;
+            NetworkState = NetworkState.Disconnected;
         }
 
         public void Dispose()
         {
             _client?.Dispose();
             _disposeCancellationTokenSource?.Cancel();
-            _networkState = NetworkState.Disconnected;
+            NetworkState = NetworkState.Disconnected;
         }
         
         public void Disconnect()
         {
             _client?.Dispose();
             _isConnected = false;
-            _networkState = NetworkState.Disconnected;
-            OnDisconnected?.Invoke();
+            NetworkState = NetworkState.Disconnected;
         }
 
         public void FixedTick()

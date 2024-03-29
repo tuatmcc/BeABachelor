@@ -8,6 +8,7 @@ namespace BeABachelor.Networking.Interface
     public interface INetworkManager
     {
         event Action<EndPoint> OnConnected;
+        event Action<EndPoint> OnConnecting; 
         event Action OnDisconnected;
         bool IsConnected { get; }
         EndPoint RemoteEndPoint { get; }

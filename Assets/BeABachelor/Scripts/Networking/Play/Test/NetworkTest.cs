@@ -18,6 +18,7 @@ namespace BeABachelor.Networking.Play.Test
         [SerializeField] private GameObject p2;
         [SerializeField] private GameObject field;
         [SerializeField] private float speed = 0.1f;
+        [SerializeField] private Text stateText;
         
         [Inject] private INetworkManager _networkManager;
         
@@ -32,6 +33,11 @@ namespace BeABachelor.Networking.Play.Test
         {
             connectButton.onClick.AddListener(() =>
             {
+                if (_networkManager.IsConnected)
+                {
+                    _networkManager.Disconnect();
+                    return;
+                }
                 _networkManager.ConnectAsync(hostToggle.isOn, ipInputField.text, int.Parse(portInputField.text),
                     int.Parse(clientPortInputField.text)).Forget();
                 UniTask.WaitUntil(() =>
@@ -45,6 +51,18 @@ namespace BeABachelor.Networking.Play.Test
                     }).Forget();
             });
             _networkManager.SynchronizationController = synchronizationController;
+            _networkManager.OnConnected += _ =>
+            {
+                stateText.text = "Connected";
+            };
+            _networkManager.OnConnecting += _ =>
+            {
+                stateText.text = "Connecting";
+            };
+            _networkManager.OnDisconnected += () =>
+            {
+                stateText.text = "Disconnected";
+            };
         }
 
         private void Update()
