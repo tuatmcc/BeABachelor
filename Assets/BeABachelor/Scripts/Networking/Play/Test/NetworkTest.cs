@@ -33,6 +33,9 @@ namespace BeABachelor.Networking.Play.Test
         {
             connectButton.onClick.AddListener(() =>
             {
+                _player = hostToggle.isOn ? p1 : p2;
+                p1.GetComponent<TransformSynchronization>().Match2Host = !hostToggle.isOn;
+                p2.GetComponent<TransformSynchronization>().Match2Host = hostToggle.isOn;
                 if (_networkManager.IsConnected)
                 {
                     _networkManager.Disconnect();
@@ -45,9 +48,6 @@ namespace BeABachelor.Networking.Play.Test
                     .ContinueWith(() =>
                     {
                         if (!_networkManager.IsConnected) return;
-                        _player = hostToggle.isOn ? p1 : p2;
-                        p1.GetComponent<TransformSynchronization>().Match2Host = !hostToggle.isOn;
-                        p2.GetComponent<TransformSynchronization>().Match2Host = hostToggle.isOn;
                     }).Forget();
             });
             _networkManager.SynchronizationController = synchronizationController;
