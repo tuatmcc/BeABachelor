@@ -10,7 +10,7 @@ namespace BeABachelor.Networking
         {
             _networkManager.OnConnected += _ =>
             {
-                if (_networkManager.IsHost == !Match2Host && TryGetComponent(out Rigidbody rb))
+                if (_networkManager.IsHost == !UseHostData && TryGetComponent(out Rigidbody rb))
                 {
                     // disable gravity
                     rb.useGravity = false;
@@ -36,7 +36,7 @@ namespace BeABachelor.Networking
 
         public override void FromBytes(byte[] bytes)
         {
-            if(Match2Host != _networkManager.IsHost) return;
+            if(UseHostData != _networkManager.IsHost) return;
             var t = transform;
             var p = t.position;
             var r = t.rotation;

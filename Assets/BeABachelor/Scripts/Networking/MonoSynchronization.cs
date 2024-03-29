@@ -1,5 +1,6 @@
 ﻿using BeABachelor.Networking.Interface;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace BeABachelor.Networking
@@ -8,7 +9,7 @@ namespace BeABachelor.Networking
     {
         [Inject] protected INetworkManager _networkManager;
         // ホストに合わせます。 False の場合、ホストがクライアントに合わせます。
-        [SerializeField] public bool Match2Host = true;
+        [FormerlySerializedAs("Match2Host")] [SerializeField] public bool UseHostData = true;
         public abstract byte[] ToBytes();
         public abstract void FromBytes(byte[] bytes);
     }
