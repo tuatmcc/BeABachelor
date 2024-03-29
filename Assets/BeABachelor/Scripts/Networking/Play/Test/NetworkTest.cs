@@ -34,8 +34,8 @@ namespace BeABachelor.Networking.Play.Test
             connectButton.onClick.AddListener(() =>
             {
                 _player = hostToggle.isOn ? p1 : p2;
-                p1.GetComponent<TransformSynchronization>().UseHostData = !hostToggle.isOn;
-                p2.GetComponent<TransformSynchronization>().UseHostData = hostToggle.isOn;
+                p1.GetComponent<TransformSynchronization>().UseReceivedData = !hostToggle.isOn;
+                p2.GetComponent<TransformSynchronization>().UseReceivedData = hostToggle.isOn;
                 if (_networkManager.IsConnected)
                 {
                     _networkManager.Disconnect();

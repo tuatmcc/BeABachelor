@@ -9,7 +9,7 @@ namespace BeABachelor.Networking
     {
         [Inject] protected INetworkManager _networkManager;
         // ホストに合わせます。 False の場合、ホストがクライアントに合わせます。
-        [FormerlySerializedAs("Match2Host")] [SerializeField] public bool UseHostData = true;
+        [SerializeField] public bool UseReceivedData = true;
         public abstract byte[] ToBytes();
         public abstract void FromBytes(byte[] bytes);
     }
