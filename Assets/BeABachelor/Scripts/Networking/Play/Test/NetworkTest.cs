@@ -16,7 +16,6 @@ namespace BeABachelor.Networking.Play.Test
         [SerializeField] private SynchronizationController synchronizationController;
         [SerializeField] private GameObject p1;
         [SerializeField] private GameObject p2;
-        [SerializeField] private GameObject field;
         [SerializeField] private float power = 0.1f;
         [SerializeField] private Text stateText;
         
