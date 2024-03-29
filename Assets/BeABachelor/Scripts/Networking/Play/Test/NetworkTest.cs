@@ -1,6 +1,7 @@
 ﻿using BeABachelor.Networking.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
@@ -17,12 +18,12 @@ namespace BeABachelor.Networking.Play.Test
         [SerializeField] private GameObject p1;
         [SerializeField] private GameObject p2;
         [SerializeField] private GameObject field;
-        [SerializeField] private float speed = 0.1f;
+        [SerializeField] private float power = 0.1f;
         [SerializeField] private Text stateText;
         
         [Inject] private INetworkManager _networkManager;
         
-        [SerializeField] private GameObject _player;
+        [SerializeField] private Rigidbody playerRb;
 
         private bool _w;
         private bool _a;
@@ -33,7 +34,7 @@ namespace BeABachelor.Networking.Play.Test
         {
             connectButton.onClick.AddListener(() =>
             {
-                _player = hostToggle.isOn ? p1 : p2;
+                playerRb = (hostToggle.isOn ? p1 : p2).GetComponent<Rigidbody>();
                 p1.GetComponent<TransformSynchronization>().UseReceivedData = !hostToggle.isOn;
                 p2.GetComponent<TransformSynchronization>().UseReceivedData = hostToggle.isOn;
                 if (_networkManager.IsConnected)
@@ -105,25 +106,22 @@ namespace BeABachelor.Networking.Play.Test
         private void FixedUpdate()
         {
             if (!_networkManager.IsConnected) return;
-            var t = _player.transform;
-            var p = t.position;
             if (_w)
             {
-                p.z += speed;
+                playerRb.AddForce(Vector3.forward * power, ForceMode.Impulse);
             }
             if (_a)
             {
-                p.x -= speed;
+                playerRb.AddForce(Vector3.left * power, ForceMode.Impulse);
             }
             if (_s)
             {
-                p.z -= speed;
+                playerRb.AddForce(Vector3.back * power, ForceMode.Impulse);
             }
             if (_d)
             {
-                p.x += speed;
+                playerRb.AddForce(Vector3.right * power, ForceMode.Impulse);
             }
-            t.position = p;
         }
     }
 }
