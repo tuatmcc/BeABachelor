@@ -110,6 +110,7 @@ namespace BeABachelor.Networking
 
                 if (receiveTask.Result.Buffer.Length <= 0) continue;
                 var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
+                if (reader.ReadByte() != 0xaa) continue;
                 foreach(var synchronization in SynchronizationController.MonoSynchronizations)
                 {
                     var length = reader.ReadInt32();
@@ -145,6 +146,7 @@ namespace BeABachelor.Networking
         {
             if (!_isConnected || SynchronizationController == null) return;
             var writer = new BinaryWriter(new MemoryStream());
+            writer.Write((byte) 0xaa);
             foreach (var synchronization in SynchronizationController.MonoSynchronizations)
             {
                 var data = synchronization.ToBytes();
