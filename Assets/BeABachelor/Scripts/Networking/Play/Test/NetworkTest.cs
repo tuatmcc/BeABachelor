@@ -1,7 +1,6 @@
 ﻿using BeABachelor.Networking.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Zenject;
 
