@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using BeABachelor.Networking.Play;
 using Cysharp.Threading.Tasks;
 
 namespace BeABachelor.Networking.Interface
@@ -8,13 +9,13 @@ namespace BeABachelor.Networking.Interface
     {
         event Action<EndPoint> OnConnected;
         event Action OnDisconnected;
-        event Action<byte[]> OnReceived;
         bool IsConnected { get; }
         EndPoint RemoteEndPoint { get; }
         int ClientPort { get; }
         bool IsHost { get; }
-        UniTask ConnectAsync(bool isHost, int timeOut = 5);
-        UniTask SendAsync(IBinariable binariable);
+        SynchronizationController SynchronizationController { get; set;}
+        NetworkState NetworkState { get; }
+        UniTask ConnectAsync(bool isHost, string ip, int remotePort = 8888, int clientPort = 8888, int timeOut = 5);
         void Disconnect();
     }
 }

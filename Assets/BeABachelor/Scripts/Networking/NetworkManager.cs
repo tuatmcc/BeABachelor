@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -9,34 +9,41 @@ using R3;
 using UnityEngine;
 using Zenject;
 
-namespace BeABachelor.Networking.Play
+namespace BeABachelor.Networking
 {
-    public class NetworkManager : INetworkManager, IInitializable, IDisposable
+    public class NetworkManager : INetworkManager, IInitializable, IDisposable, IFixedTickable
     {
         private string _ip;
         private int _clientPort;
         private int _remoteEndpointPort;
         private UdpClient _client;
         private bool _isConnected;
-        private Queue<byte[]> _receivedData;
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
         private bool _isHost;
+        private NetworkState _networkState;
 
         public bool IsConnected => _isConnected;
         public EndPoint RemoteEndPoint => _endpoint;
         public int ClientPort => _clientPort;
         public event Action<EndPoint> OnConnected;
         public event Action OnDisconnected;
-        public event Action<byte[]> OnReceived;
         public bool IsHost => _isHost;
-        
-        public async UniTask ConnectAsync(bool isHost, int timeOut = 5)
+        public NetworkState NetworkState => _networkState;
+        public SynchronizationController SynchronizationController { get; set; }
+
+        public async UniTask ConnectAsync(bool isHost, string ip, int remotePort, int clientPort, int timeOut = 5)
         {
+            _networkState = NetworkState.Connecting;
+            _ip = ip;
+            _clientPort = clientPort;
+            _remoteEndpointPort = remotePort;
+            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _client = new UdpClient(_clientPort);
             if (_client == null)
             {
                 Debug.LogError("Failed to create UdpClient");
+                _networkState = NetworkState.Disconnected;
                 return;
             }
             _isHost = isHost;
@@ -60,12 +67,14 @@ namespace BeABachelor.Networking.Play
                 sendTask.Dispose();
                 _client.Dispose();
                 Debug.LogError("Connection timed out");
+                _networkState = NetworkState.Disconnected;
                 return;
             }
 
             if (!receiveTask.IsCompleted)
             {
                 Debug.LogError("Receive Task is not completed");
+                _networkState = NetworkState.Disconnected;
                 return;
             }
 
@@ -77,23 +86,14 @@ namespace BeABachelor.Networking.Play
                 _client.Connect(_ip, _remoteEndpointPort);
                 cancellationTokenSource.Cancel();
                 Debug.Log("Connected");
+                _networkState = NetworkState.Connected;
                 OnConnected?.Invoke(_endpoint);
                 ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
                 return;
             }
             
             Debug.LogError("Connection Failed");
-        }
-        
-        public async UniTask SendAsync(IBinariable binariable)
-        {
-            if (!_isConnected)
-            {
-                Debug.LogError("Not connected");
-                return;
-            }
-            var bytes = binariable.ToBytes();
-            await _client.SendAsync(bytes, bytes.Length);
+            _networkState = NetworkState.Disconnected;
         }
         
         private async UniTask ReceiveAsync(CancellationToken token)
@@ -107,11 +107,14 @@ namespace BeABachelor.Networking.Play
                     receiveTask.Dispose();
                     return;
                 }
-                var result = receiveTask.Result;
-                if (result.Buffer.Length > 0)
+
+                if (receiveTask.Result.Buffer.Length <= 0) continue;
+                var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
+                foreach(var synchronization in SynchronizationController.MonoSynchronizations)
                 {
-                    _receivedData.Enqueue(result.Buffer);
-                    OnReceived?.Invoke(result.Buffer);
+                    var length = reader.ReadInt32();
+                    var data = reader.ReadBytes(length);
+                    synchronization.FromBytes(data);
                 }
             }
         }
@@ -119,22 +122,36 @@ namespace BeABachelor.Networking.Play
         public void Initialize()
         {
             _isConnected = false;
-            _receivedData = new Queue<byte[]>();
-            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _disposeCancellationTokenSource = new CancellationTokenSource();
+            _networkState = NetworkState.Disconnected;
         }
 
         public void Dispose()
         {
             _client?.Dispose();
             _disposeCancellationTokenSource?.Cancel();
+            _networkState = NetworkState.Disconnected;
         }
         
         public void Disconnect()
         {
             _client?.Dispose();
             _isConnected = false;
+            _networkState = NetworkState.Disconnected;
             OnDisconnected?.Invoke();
+        }
+
+        public void FixedTick()
+        {
+            if (!_isConnected || SynchronizationController == null) return;
+            var writer = new BinaryWriter(new MemoryStream());
+            foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+            {
+                var data = synchronization.ToBytes();
+                writer.Write(data.Length);
+                writer.Write(synchronization.GetHashCode());
+            }
+            _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
         }
     }
 }

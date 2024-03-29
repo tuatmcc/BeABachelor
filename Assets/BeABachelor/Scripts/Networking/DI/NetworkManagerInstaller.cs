@@ -9,7 +9,7 @@ namespace BeABachelor.Networking.DI
     {
         public override void InstallBindings()
         {
-            Container.Bind(typeof(INetworkManager), typeof(IInitializable), typeof(IDisposable))
+            Container.Bind(typeof(INetworkManager), typeof(IInitializable), typeof(IDisposable), typeof(IFixedTickable))
                 .To<NetworkManager>()
                 .FromNew()
                 .AsSingle();
