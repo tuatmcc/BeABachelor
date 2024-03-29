@@ -612,9 +612,9 @@ MonoBehaviour:
   synchronizationController: {fileID: 17206559}
   p1: {fileID: 6296470525454231876}
   p2: {fileID: 5650945498163914120}
-  field: {fileID: 1870060401}
-  speed: 0.1
+  power: 0.5
   stateText: {fileID: 1150211597}
+  playerRb: {fileID: 0}
 --- !u!4 &636521809
 Transform:
   m_ObjectHideFlags: 0
@@ -1980,11 +1980,9 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: -2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 5494262524246091659}
-  - {fileID: 3164656699089715716}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1915525781
@@ -2450,12 +2448,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5650945498163914120}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -1, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1870060405}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &4306266308015515362
 Rigidbody:
@@ -2492,12 +2490,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6296470525454231876}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 2}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1870060405}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5650945498163914120
 GameObject:
@@ -2595,7 +2593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f2f6725649d43d8865fa8bbe7158bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Match2Host: 0
+  UseReceivedData: 1
 --- !u!65 &8595424270516897464
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2629,7 +2627,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f2f6725649d43d8865fa8bbe7158bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Match2Host: 1
+  UseReceivedData: 1
 --- !u!33 &9007716212277576713
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2650,3 +2648,5 @@ SceneRoots:
   - {fileID: 636521809}
   - {fileID: 1870060405}
   - {fileID: 175596369}
+  - {fileID: 5494262524246091659}
+  - {fileID: 3164656699089715716}
