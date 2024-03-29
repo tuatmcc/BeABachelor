@@ -151,7 +151,7 @@ namespace BeABachelor.Networking
             {
                 var data = synchronization.ToBytes();
                 writer.Write(data.Length);
-                writer.Write(synchronization.GetHashCode());
+                writer.Write(synchronization.ToBytes());
             }
             _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
         }
