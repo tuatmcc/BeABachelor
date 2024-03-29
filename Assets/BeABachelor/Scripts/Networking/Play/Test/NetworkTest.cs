@@ -22,7 +22,7 @@ namespace BeABachelor.Networking.Play.Test
         
         [Inject] private INetworkManager _networkManager;
         
-        private GameObject _player;
+        [SerializeField] private GameObject _player;
 
         private bool _w;
         private bool _a;
