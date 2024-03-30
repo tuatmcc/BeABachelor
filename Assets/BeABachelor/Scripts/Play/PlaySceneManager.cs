@@ -137,11 +137,11 @@ namespace BeABachelor.Play
             if(_gameManager.PlayType == PlayType.Multi)
             {
                 // 接続チェック
-                while (/*!_gameManager.Connected ||*/ !token.IsCancellationRequested)
-                {
-                    await UniTask.Delay(100);
-                    Debug.Log("Wait for connection established");
-                }
+                // while (/*!_gameManager.Connected ||*/ !token.IsCancellationRequested)
+                // {
+                //     await UniTask.Delay(100);
+                //     Debug.Log("Wait for connection established");
+                // }
             }
             _gameManager.GameState = GameState.CountDown;
         }
