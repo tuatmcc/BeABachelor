@@ -30,7 +30,7 @@ namespace BeABachelor.Networking.Play.Test
                 networkState = NetworkState.Connecting;
             };
             _gameManager.PlayerType = playerType;
-            _networkManager.ConnectAsync(false, ipAddress, remotePort, clientPort).Forget();
+            _networkManager.ConnectAsync(playerType == PlayerType.Hakken, ipAddress, remotePort, clientPort).Forget();
         }
     }
 }
