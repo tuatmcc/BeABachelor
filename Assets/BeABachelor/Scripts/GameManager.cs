@@ -97,7 +97,6 @@ namespace BeABachelor
 
         public void FixedTick()
         {
-            Debug.Log(_tick);
             if(_gameState == GameState.Playing)
             {
                 _tick++;
