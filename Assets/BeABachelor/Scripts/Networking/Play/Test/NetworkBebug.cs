@@ -23,6 +23,7 @@ namespace BeABachelor.Networking.Play.Test
             _networkManager.OnConnected += _ =>
             {
                 networkState = NetworkState.Connected;
+                _gameManager.PlayType = PlayType.Multi;
                 _gameManager.GameState = GameState.Ready;
             };
             _networkManager.OnConnecting += _ =>
