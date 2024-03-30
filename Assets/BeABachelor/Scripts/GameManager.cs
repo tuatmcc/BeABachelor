@@ -1,6 +1,7 @@
 using System;
 using Zenject;
 using BeABachelor.Interface;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 namespace BeABachelor
@@ -45,6 +46,32 @@ namespace BeABachelor
         public void Initialize()
         {
             Reset();
+            OnGameStateChanged += state =>
+            {
+                switch (state)
+                {
+                    case GameState.Title:
+                        SceneManager.LoadScene("Title");
+                        break;
+                    case GameState.Setting:
+                        SceneManager.LoadScene("PlaySetting");
+                        break;
+                    case GameState.Ready:
+                        SceneManager.LoadScene("Play");
+                        break;
+                    case GameState.Result:
+                        SceneManager.LoadScene("Title");
+                        break;
+                    case GameState.CountDown:
+                        break;
+                    case GameState.Playing:
+                        break;
+                    case GameState.Finished:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                }
+            };
         }
 
         public void Dispose()
