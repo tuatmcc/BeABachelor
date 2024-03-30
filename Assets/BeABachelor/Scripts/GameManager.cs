@@ -38,46 +38,38 @@ namespace BeABachelor
             }
         }
 
-        public void NextScene()
-        {
-            switch (_gameState)
-            {
-                case GameState.Title:
-                    SceneManager.LoadScene("PlaySetting");
-                    GameState = GameState.Setting;
-                    break;
-                case GameState.Setting:
-                    SceneManager.LoadScene("Play");
-                    GameState = GameState.Ready;
-                    break;
-                case GameState.Finished:
-                    SceneManager.LoadScene("Result");
-                    GameState = GameState.Result;
-                    break;
-                case GameState.Result:
-                    SceneManager.LoadScene("Title");
-                    GameState = GameState.Title;
-                    break;
-                case GameState.Ready:
-                case GameState.CountDown:
-                case GameState.Playing:
-                default:
-                    throw new InvalidOperationException("無効なタイミングでのシーン遷移です。");
-            }
-        }
-
-        public void ToTitle()
-        {
-            SceneManager.LoadScene("Title");
-            Reset();
-        }
-
         private GameState _gameState;
         private int _score;
 
         public void Initialize()
         {
             Reset();
+            OnGameStateChanged += state =>
+            {
+                switch (state)
+                {
+                    case GameState.Title:
+                        SceneManager.LoadScene("Title");
+                        break;
+                    case GameState.Setting:
+                        SceneManager.LoadScene("PlaySetting");
+                        break;
+                    case GameState.Ready:
+                        SceneManager.LoadScene("Play");
+                        break;
+                    case GameState.Result:
+                        SceneManager.LoadScene("Title");
+                        break;
+                    case GameState.CountDown:
+                        break;
+                    case GameState.Playing:
+                        break;
+                    case GameState.Finished:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(state), state, null);
+                }
+            };
         }
 
         public void Dispose()

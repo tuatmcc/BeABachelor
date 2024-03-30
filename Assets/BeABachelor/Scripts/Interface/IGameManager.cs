@@ -11,7 +11,5 @@ namespace BeABachelor.Interface
         public PlayType PlayType { get; set; }
         public PlayerType PlayerType { get; set; }
         public int Score { get; set; }
-        public void NextScene();
-        public void ToTitle();
     }
 }
