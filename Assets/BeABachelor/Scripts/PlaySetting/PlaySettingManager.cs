@@ -125,6 +125,7 @@ namespace BeABachelor.PlaySetting
                     _activeUI.Right();
                     break;
                 case "Space":
+                    _activeUI.Space();
                     NextState();
                     break;
                 case "Back":
