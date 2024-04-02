@@ -58,62 +58,6 @@ namespace BeABachelor.PlaySetting
             playerInput.actions["Back"].performed -= OnSelect;
         }
 
-        // public void SelectPlayMode(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.PlayMode) { return; }
-        //
-        //     switch (context.action.name)
-        //     {
-        //         case "Left":
-        //             _gameManager.PlayType = PlayType.Solo;
-        //             break;
-        //         case "Right":
-        //             _gameManager.PlayType = PlayType.Multi;
-        //             break;
-        //         default:
-        //             return;
-        //     }
-        //
-        //     if (_state == PlaySettingState.PlayMode) _state++;
-        // }
-        //
-        // public void SelectPlayerType(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.PlayerType) { return; }
-        //
-        //     switch (context.action.name)
-        //     {
-        //         case "Left":
-        //             _gameManager.PlayerType = PlayerType.Hakken;
-        //             hakken.SetActive(true);
-        //             break;
-        //         case "Right":
-        //             _gameManager.PlayerType = PlayerType.Kouken;
-        //             kouken.SetActive(true);
-        //             break;
-        //         default:
-        //             return;
-        //     }
-        //
-        //     if (_state == PlaySettingState.PlayerType) _state++;
-        // }
-        //
-        // public void ConfirmSetting(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.Confirm) { return; }
-        //
-        //     if (context.action.name == "Left")
-        //     {
-        //         // mState = PlaySettingState.PlayMode;
-        //         // mGameManager++;
-        //         Debug.Log("Confirmed");
-        //     }
-        //     else if (context.action.name == "Right")
-        //     {
-        //         _state = PlaySettingState.PlayMode;
-        //     }
-        // }
-
         private void OnSelect(InputAction.CallbackContext context)
         {
             switch (context.action.name)
@@ -148,7 +92,10 @@ namespace BeABachelor.PlaySetting
                     State = PlaySettingState.Confirm;
                     break;
                 case PlaySettingState.Confirm:
+                    _gameManager.GameState = GameState.Ready;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         
@@ -167,48 +114,57 @@ namespace BeABachelor.PlaySetting
                 case PlaySettingState.Confirm:
                     State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.PlayerType : PlaySettingState.MultiplaySetting;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void OnPlaySettingStateChange(PlaySettingState state)
+        {
+            switch (state)
+            {
+                case PlaySettingState.PlayMode:
+                    playModeTypeUI.Activate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Deactivate();
+                    _activeUI = playModeTypeUI;
+                    break;
+                case PlaySettingState.PlayerType:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Activate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Deactivate();
+                    _activeUI = playerTypeUI;
+                    break;
+                case PlaySettingState.MultiplaySetting:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Activate();
+                    confirmUI.Deactivate();
+                    _activeUI = multiplaySettingUI;
+                    break;
+                case PlaySettingState.Confirm:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Activate();
+                    _activeUI = confirmUI;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(_state), _state, null);
             }
         }
 
         private void Start()
         {
-            OnPlaySettingStateChanged += state =>
-            {
-                switch (state)
-                {
-                    case PlaySettingState.PlayMode:
-                        playModeTypeUI.Activate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Deactivate();
-                        _activeUI = playModeTypeUI;
-                        break;
-                    case PlaySettingState.PlayerType:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Activate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Deactivate();
-                        _activeUI = playerTypeUI;
-                        break;
-                    case PlaySettingState.MultiplaySetting:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Activate();
-                        confirmUI.Deactivate();
-                        _activeUI = multiplaySettingUI;
-                        break;
-                    case PlaySettingState.Confirm:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Activate();
-                        _activeUI = confirmUI;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(_state), _state, null);
-                }
-            };
+            OnPlaySettingStateChanged += OnPlaySettingStateChanged;
             State = PlaySettingState.PlayMode;
+        }
+
+        private void OnDestroy()
+        {
+            OnPlaySettingStateChanged -= OnPlaySettingStateChanged;
         }
     }
 }
