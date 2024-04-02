@@ -12,11 +12,13 @@ namespace BeABachelor.PlaySetting
         public override void Left()
         {
             selector.transform.position = playerType1.transform.position;
+            _gameManager.PlayerType = PlayerType.Kouken;
         }
 
         public override void Right()
         {
             selector.transform.position = playerType2.transform.position;
+            _gameManager.PlayerType = PlayerType.Hakken;
         }
         
         public override void Space()
