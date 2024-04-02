@@ -158,13 +158,13 @@ namespace BeABachelor.PlaySetting
 
         private void Start()
         {
-            OnPlaySettingStateChanged += OnPlaySettingStateChanged;
+            OnPlaySettingStateChanged += OnPlaySettingStateChange;
             State = PlaySettingState.PlayMode;
         }
 
         private void OnDestroy()
         {
-            OnPlaySettingStateChanged -= OnPlaySettingStateChanged;
+            OnPlaySettingStateChanged -= OnPlaySettingStateChange;
         }
     }
 }
