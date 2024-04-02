@@ -58,62 +58,6 @@ namespace BeABachelor.PlaySetting
             playerInput.actions["Back"].performed -= OnSelect;
         }
 
-        // public void SelectPlayMode(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.PlayMode) { return; }
-        //
-        //     switch (context.action.name)
-        //     {
-        //         case "Left":
-        //             _gameManager.PlayType = PlayType.Solo;
-        //             break;
-        //         case "Right":
-        //             _gameManager.PlayType = PlayType.Multi;
-        //             break;
-        //         default:
-        //             return;
-        //     }
-        //
-        //     if (_state == PlaySettingState.PlayMode) _state++;
-        // }
-        //
-        // public void SelectPlayerType(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.PlayerType) { return; }
-        //
-        //     switch (context.action.name)
-        //     {
-        //         case "Left":
-        //             _gameManager.PlayerType = PlayerType.Hakken;
-        //             hakken.SetActive(true);
-        //             break;
-        //         case "Right":
-        //             _gameManager.PlayerType = PlayerType.Kouken;
-        //             kouken.SetActive(true);
-        //             break;
-        //         default:
-        //             return;
-        //     }
-        //
-        //     if (_state == PlaySettingState.PlayerType) _state++;
-        // }
-        //
-        // public void ConfirmSetting(InputAction.CallbackContext context)
-        // {
-        //     if (_state != PlaySettingState.Confirm) { return; }
-        //
-        //     if (context.action.name == "Left")
-        //     {
-        //         // mState = PlaySettingState.PlayMode;
-        //         // mGameManager++;
-        //         Debug.Log("Confirmed");
-        //     }
-        //     else if (context.action.name == "Right")
-        //     {
-        //         _state = PlaySettingState.PlayMode;
-        //     }
-        // }
-
         private void OnSelect(InputAction.CallbackContext context)
         {
             switch (context.action.name)
@@ -148,7 +92,10 @@ namespace BeABachelor.PlaySetting
                     State = PlaySettingState.Confirm;
                     break;
                 case PlaySettingState.Confirm:
+                    _gameManager.GameState = GameState.Ready;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
         
