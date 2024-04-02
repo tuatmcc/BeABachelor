@@ -58,12 +58,26 @@ namespace BeABachelor.Networking
         }
         public SynchronizationController SynchronizationController { get; set; }
 
+        public void SetRemoteEndPointAndClientPort(bool isHost, string ip, int remotePort, int clientPort)
+        {
+            _ip = ip;
+            _remoteEndpointPort = remotePort;
+            _clientPort = clientPort;
+            _isHost = isHost;
+        }
+        
         public async UniTask ConnectAsync(bool isHost, string ip, int remotePort, int clientPort, int timeOut = 5)
         {
-            NetworkState = NetworkState.Connecting;
             _ip = ip;
             _clientPort = clientPort;
             _remoteEndpointPort = remotePort;
+            _isHost = isHost;
+            await ConnectAsync(timeOut);
+        }
+
+        public async UniTask ConnectAsync(int timeOut = 5)
+        {
+            NetworkState = NetworkState.Connecting;
             _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _client = new UdpClient(_clientPort);
             if (_client == null)
@@ -72,7 +86,6 @@ namespace BeABachelor.Networking
                 NetworkState = NetworkState.Disconnected;
                 return;
             }
-            _isHost = isHost;
             _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
             _isConnected = false;
             var timeController = new TimeoutController();
@@ -148,6 +161,7 @@ namespace BeABachelor.Networking
                 if (receiveTask.Result.Buffer.Length <= 0) continue;
                 var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
                 if (reader.ReadByte() != 0xaa) continue;
+                if (SynchronizationController == null) continue;
                 foreach(var synchronization in SynchronizationController.MonoSynchronizations)
                 {
                     var length = reader.ReadInt32();
