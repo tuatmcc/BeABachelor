@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace BeABachelor
+namespace BeABachelor.PlaySetting
 {
     public class Rotator : MonoBehaviour
     {
