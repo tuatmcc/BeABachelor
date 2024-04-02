@@ -25,7 +25,6 @@ namespace BeABachelor.PlaySetting
         
         public override void Space()
         {
-            Debug.Log("Set Remote End Point and Client Port");
             _networkManager.SetRemoteEndPointAndClientPort(_gameManager.PlayerType == PlayerType.Hakken, 
                 remoteIPInputField.text, 
                 int.Parse(remotePortInputField.text), 

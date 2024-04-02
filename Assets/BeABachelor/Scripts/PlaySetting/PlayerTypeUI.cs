@@ -27,6 +27,7 @@ namespace BeABachelor.PlaySetting
 
         public override void Activate()
         {
+            selector.transform.position = _gameManager.PlayerType == PlayerType.Hakken ? playerType2.transform.position : playerType1.transform.position;
             gameObject.SetActive(true);
         }
 
