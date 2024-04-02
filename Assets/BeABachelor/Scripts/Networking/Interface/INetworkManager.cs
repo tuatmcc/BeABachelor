@@ -10,10 +10,12 @@ namespace BeABachelor.Networking.Interface
         event Action<EndPoint> OnConnected;
         event Action<EndPoint> OnConnecting; 
         event Action OnDisconnected;
+        event Action OpponentReadyEvent; 
         bool IsConnected { get; }
         EndPoint RemoteEndPoint { get; }
         int ClientPort { get; }
         bool IsHost { get; }
+        bool OpponentReady { get; set; }
         SynchronizationController SynchronizationController { get; set;}
         NetworkState NetworkState { get; }
         UniTask ConnectAsync(bool isHost, string ip, int remotePort = 8888, int clientPort = 8888, int timeOut = 5);
