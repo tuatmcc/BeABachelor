@@ -119,45 +119,52 @@ namespace BeABachelor.PlaySetting
             }
         }
 
+        private void OnPlaySettingStateChange(PlaySettingState state)
+        {
+            switch (state)
+            {
+                case PlaySettingState.PlayMode:
+                    playModeTypeUI.Activate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Deactivate();
+                    _activeUI = playModeTypeUI;
+                    break;
+                case PlaySettingState.PlayerType:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Activate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Deactivate();
+                    _activeUI = playerTypeUI;
+                    break;
+                case PlaySettingState.MultiplaySetting:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Activate();
+                    confirmUI.Deactivate();
+                    _activeUI = multiplaySettingUI;
+                    break;
+                case PlaySettingState.Confirm:
+                    playModeTypeUI.Deactivate();
+                    playerTypeUI.Deactivate();
+                    multiplaySettingUI.Deactivate();
+                    confirmUI.Activate();
+                    _activeUI = confirmUI;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(_state), _state, null);
+            }
+        }
+
         private void Start()
         {
-            OnPlaySettingStateChanged += state =>
-            {
-                switch (state)
-                {
-                    case PlaySettingState.PlayMode:
-                        playModeTypeUI.Activate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Deactivate();
-                        _activeUI = playModeTypeUI;
-                        break;
-                    case PlaySettingState.PlayerType:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Activate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Deactivate();
-                        _activeUI = playerTypeUI;
-                        break;
-                    case PlaySettingState.MultiplaySetting:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Activate();
-                        confirmUI.Deactivate();
-                        _activeUI = multiplaySettingUI;
-                        break;
-                    case PlaySettingState.Confirm:
-                        playModeTypeUI.Deactivate();
-                        playerTypeUI.Deactivate();
-                        multiplaySettingUI.Deactivate();
-                        confirmUI.Activate();
-                        _activeUI = confirmUI;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(_state), _state, null);
-                }
-            };
+            OnPlaySettingStateChanged += OnPlaySettingStateChanged;
             State = PlaySettingState.PlayMode;
+        }
+
+        private void OnDestroy()
+        {
+            OnPlaySettingStateChanged -= OnPlaySettingStateChanged;
         }
     }
 }
