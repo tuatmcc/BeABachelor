@@ -22,6 +22,7 @@ namespace BeABachelor.Networking
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
         private bool _isHost;
+        private bool _opponentReady;
         private NetworkState _networkState;
 
         public bool IsConnected => _isConnected;
@@ -30,8 +31,19 @@ namespace BeABachelor.Networking
         public event Action<EndPoint> OnConnected;
         public event Action<EndPoint> OnConnecting;
         public event Action OnDisconnected;
+        public event Action OpponentReadyEvent;
         public bool IsHost => _isHost;
-        public bool OpponentReady { get; set; }
+
+        public bool OpponentReady
+        {
+            get => _opponentReady;
+            set
+            {
+                if (_opponentReady == value) return;
+                _opponentReady = value;
+                OpponentReadyEvent?.Invoke();
+            }
+        }
 
         public NetworkState NetworkState
         {

@@ -10,6 +10,7 @@ namespace BeABachelor.Networking.Interface
         event Action<EndPoint> OnConnected;
         event Action<EndPoint> OnConnecting; 
         event Action OnDisconnected;
+        event Action OpponentReadyEvent;; 
         bool IsConnected { get; }
         EndPoint RemoteEndPoint { get; }
         int ClientPort { get; }
