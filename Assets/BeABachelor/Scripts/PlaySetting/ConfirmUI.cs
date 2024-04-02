@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using BeABachelor.Interface;
 using BeABachelor.Networking.Interface;
 using Cysharp.Threading.Tasks;
@@ -16,20 +17,30 @@ namespace BeABachelor.PlaySetting
         [Inject] private IGameManager _gameManager;
         [Inject] private INetworkManager _networkManager;
 
-        private void Start()
+        private void OnConnect(EndPoint _)
         {
-            _networkManager.OnConnected += _ =>
-            {
                 connectingUI.SetActive(false);
                 confirmUI.SetActive(true);
                 connectionFailedUI.SetActive(false);
-            };
-            _networkManager.OnDisconnected += () =>
-            {
-                connectingUI.SetActive(false);
-                connectionFailedUI.SetActive(true);
-                confirmUI.SetActive(false);
-            };
+        }
+        
+        private void OnDisconnect()
+        {
+            connectingUI.SetActive(false);
+            confirmUI.SetActive(false);
+            connectionFailedUI.SetActive(true);
+        }
+        
+        private void Start()
+        {
+            _networkManager.OnConnected += OnConnect;
+            _networkManager.OnDisconnected += OnDisconnect;
+        }
+
+        private void OnDestroy()
+        {
+            _networkManager.OnConnected -= OnConnect;
+            _networkManager.OnDisconnected -= OnDisconnect;
         }
 
         public override void Left()
