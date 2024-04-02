@@ -8,7 +8,7 @@ namespace BeABachelor.DI
     {
         public override void InstallBindings()
         {
-            Container.Bind(typeof(IGameManager), typeof(IInitializable), typeof(IDisposable))
+            Container.Bind(typeof(IGameManager), typeof(IInitializable), typeof(IDisposable), typeof(IFixedTickable))
                 .To<GameManager>()
                 .FromNew()
                 .AsSingle();

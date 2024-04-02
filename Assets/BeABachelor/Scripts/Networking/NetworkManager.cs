@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -117,6 +118,18 @@ namespace BeABachelor.Networking
             }
             
             Debug.LogError("Connection Failed");
+            if (_isHost)
+            {
+                Debug.LogError(result.Buffer[0] == 0xff
+                    ? "Host is me"
+                    : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
+            }
+            else
+            {
+                Debug.LogError(result.Buffer[0] == 0xfe
+                    ? "I'm not host"
+                    : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
+            }
             NetworkState = NetworkState.Disconnected;
         }
         

@@ -2,13 +2,14 @@ using System;
 using Zenject;
 using BeABachelor.Interface;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 namespace BeABachelor
 {
     /// <summary>
     /// ゲームの状態を管理するクラス
     /// </summary>
-    public class GameManager : IGameManager, IInitializable, IDisposable
+    public class GameManager : IGameManager, IInitializable, IDisposable, IFixedTickable
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
@@ -40,6 +41,7 @@ namespace BeABachelor
 
         private GameState _gameState;
         private int _score;
+        private int _tick;
 
         public void Initialize()
         {
@@ -84,6 +86,21 @@ namespace BeABachelor
             PlayerType = PlayerType.NotSelected;
             PlayType = PlayType.NotSelected;
             Score = 0;
+            OnGameStateChanged += state =>
+            {
+                if (state == GameState.Playing)
+                {
+                    _tick = 0;
+                }
+            };
+        }
+
+        public void FixedTick()
+        {
+            if(_gameState == GameState.Playing)
+            {
+                _tick++;
+            }
         }
     }
 }

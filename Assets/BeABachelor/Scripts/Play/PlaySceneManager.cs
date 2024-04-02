@@ -3,6 +3,7 @@ using BeABachelor.Play.Player;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
+using BeABachelor.Networking;
 using UnityEngine;
 using Zenject;
 
@@ -83,6 +84,8 @@ namespace BeABachelor.Play
                         remoteControlledPlayer.enabled = false;
                         var keyControlledPlayer = kouken.GetComponent<KeyControlledPlayer>();
                         keyControlledPlayer.enabled = false;
+                        hakken.GetComponent<TransformSynchronization>().UseReceivedData = false;
+                        kouken.GetComponent<TransformSynchronization>().UseReceivedData = true;
                     }
                     else
                     {
@@ -90,6 +93,8 @@ namespace BeABachelor.Play
                         remoteControlledPlayer.enabled = false;
                         var keyControlledPlayer = hakken.GetComponent<KeyControlledPlayer> ();
                         keyControlledPlayer.enabled = false;
+                        hakken.GetComponent<TransformSynchronization>().UseReceivedData = true;
+                        kouken.GetComponent<TransformSynchronization>().UseReceivedData = false;
                     }
                     break;
             }
@@ -137,11 +142,11 @@ namespace BeABachelor.Play
             if(_gameManager.PlayType == PlayType.Multi)
             {
                 // 接続チェック
-                while (/*!_gameManager.Connected ||*/ !token.IsCancellationRequested)
-                {
-                    await UniTask.Delay(100);
-                    Debug.Log("Wait for connection established");
-                }
+                // while (/*!_gameManager.Connected ||*/ !token.IsCancellationRequested)
+                // {
+                //     await UniTask.Delay(100);
+                //     Debug.Log("Wait for connection established");
+                // }
             }
             _gameManager.GameState = GameState.CountDown;
         }
