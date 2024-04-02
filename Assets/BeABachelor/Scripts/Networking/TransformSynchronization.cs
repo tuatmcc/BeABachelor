@@ -1,21 +1,27 @@
 ﻿using System.IO;
+using System.Net;
 using UnityEngine;
 
 namespace BeABachelor.Networking
 {
     public class TransformSynchronization : MonoSynchronization
     {
-
-        private void Start()
+        private void OnConnect(EndPoint _)
         {
-            _networkManager.OnConnected += _ =>
-            {
                 if (TryGetComponent(out Rigidbody rb))
                 {
                     // disable gravity
                     rb.isKinematic = UseReceivedData;
                 }
-            };
+        }
+        private void Start()
+        {
+            _networkManager.OnConnected += OnConnect;
+        }
+        
+        private void OnDestroy()
+        {
+            _networkManager.OnConnected -= OnConnect;
         }
         
         public override byte[] ToBytes()
