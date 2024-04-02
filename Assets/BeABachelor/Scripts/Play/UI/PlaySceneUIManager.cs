@@ -22,7 +22,7 @@ namespace BeABachelor.Play.UI
         {
             _playSceneManager.OnCountChanged += countDownText.CountText;
             if (_gameManager.PlayType != PlayType.Multi) return;
-            waitOpponentPanel.SetActive(true);
+            if(!_networkManager.OpponentReady) waitOpponentPanel.SetActive(true);
             _networkManager.OpponentReadyEvent += OnOpponentReady;
         }
         private void OnDestroy()
