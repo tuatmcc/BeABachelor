@@ -114,6 +114,8 @@ namespace BeABachelor.PlaySetting
                 case PlaySettingState.Confirm:
                     State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.PlayerType : PlaySettingState.MultiplaySetting;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
