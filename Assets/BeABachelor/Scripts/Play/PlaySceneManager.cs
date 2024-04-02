@@ -144,7 +144,7 @@ namespace BeABachelor.Play
             if(_gameManager.PlayType == PlayType.Multi)
             {
                 // 相手まち
-                while (!_networkManager.OpponentReady || !token.IsCancellationRequested)
+                while (!_networkManager.OpponentReady && !token.IsCancellationRequested)
                 {
                     await UniTask.Delay(100);
                     Debug.Log("Wait for connection established");
