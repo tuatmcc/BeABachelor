@@ -31,6 +31,7 @@ namespace BeABachelor.Networking
         public event Action<EndPoint> OnConnecting;
         public event Action OnDisconnected;
         public bool IsHost => _isHost;
+        public bool OpponentReady { get; set; }
 
         public NetworkState NetworkState
         {
@@ -160,8 +161,14 @@ namespace BeABachelor.Networking
 
                 if (receiveTask.Result.Buffer.Length <= 0) continue;
                 var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
-                if (reader.ReadByte() != 0xaa) continue;
+                if (reader.ReadByte() != 0xaa)
+                {
+                    OpponentReady = false;
+                    continue;
+                }
+                OpponentReady = true;
                 if (SynchronizationController == null) continue;
+                
                 foreach(var synchronization in SynchronizationController.MonoSynchronizations)
                 {
                     var length = reader.ReadInt32();
@@ -196,6 +203,7 @@ namespace BeABachelor.Networking
         {
             if (!_isConnected || SynchronizationController == null) return;
             var writer = new BinaryWriter(new MemoryStream());
+            // 0xaa はプレイ中
             writer.Write((byte) 0xaa);
             foreach (var synchronization in SynchronizationController.MonoSynchronizations)
             {
