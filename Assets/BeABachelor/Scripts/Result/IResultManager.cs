@@ -2,6 +2,7 @@
 {
     public interface IResultManager
     {
-        
+        string ResultText { get; }
+        string ScoreText { get; }
     }
 }
