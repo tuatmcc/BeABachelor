@@ -22,9 +22,11 @@ namespace BeABachelor.Play.Items
             switch (_gameManager.PlayerType)
             {
                 case PlayerType.Hakken when other.CompareTag("Hakken"):
+                case PlayerType.Kouken when other.CompareTag("Koken"):
                     _gameManager.Score += 2;
                     break;
-                case PlayerType.Kouken when other.CompareTag("Koken"):
+                case PlayerType.Kouken when other.CompareTag("Hakken"):
+                case PlayerType.Hakken when other.CompareTag("Koken"):
                     _gameManager.OpponentScore += 2;
                     break;
                 case PlayerType.NotSelected:
