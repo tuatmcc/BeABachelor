@@ -84,10 +84,10 @@ namespace BeABachelor.Play.Player
         {
             Stamina = DefaultPlaySceneParams.StaminaMax;
             CantRun = false;
-            while(!token.IsCancellationRequested || (!finished && playing))
+            while (!token.IsCancellationRequested || (!finished && playing))
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.1), cancellationToken : token);
-                if (run.IsPressed())
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1), cancellationToken: token);
+                if (run.IsPressed() && move.ReadValue<Vector2>() != Vector2.zero)
                 {
                     Stamina -= 1;
                     if(Stamina == 0)
