@@ -18,7 +18,8 @@ namespace BeABachelor.Play.Items
         {
             // ItemIDを基にNetworkManagerに衝突を通知
             Debug.Log($"ID : {ItemID}");
-
+            Debug.Log($"{_gameManager.PlayerType} Tag : {other.tag}");
+            
             switch (_gameManager.PlayerType)
             {
                 case PlayerType.Hakken when other.CompareTag("Hakken"):
