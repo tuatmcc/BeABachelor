@@ -12,6 +12,7 @@ namespace BeABachelor.Play.Player
     public class KeyControlledPlayer : MonoBehaviour, IPlayable, IItemCollectable
     {
         public event Action<long> OnStaminaChanged;
+        public event Action<bool> OnRunnableChanged;
 
         [Inject] IGameManager _gameManager;
 
@@ -28,11 +29,20 @@ namespace BeABachelor.Play.Player
             }
         }
 
-        public bool CantRun { get; private set; }
+        public bool CantRun
+        {
+            get => runnable;
+            private set
+            {
+                runnable = value;
+                OnRunnableChanged?.Invoke(!runnable);
+            }
+        }
 
         private InputAction move, run;
         private CancellationTokenSource _cts;
         private long stamina;
+        private bool runnable;
         private bool playing = false;
         private bool finished = false;
 
