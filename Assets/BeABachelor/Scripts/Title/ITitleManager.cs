@@ -7,9 +7,5 @@ namespace BeABachelor
 {
     public interface ITitleManager
     {
-        void Awake();
-        void OnEnable();
-        void OnDisable();
-        void OnKeyDown(InputAction.CallbackContext context);
     }
 }

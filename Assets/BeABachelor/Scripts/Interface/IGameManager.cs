@@ -6,10 +6,13 @@ namespace BeABachelor.Interface
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
+        public event Action<int> OnOpponentScoreChanged;
 
         public GameState GameState { get; set; }
         public PlayType PlayType { get; set; }
         public PlayerType PlayerType { get; set; }
         public int Score { get; set; }
+        public int OpponentScore { get; set; }
+        public ResultState ResultState { get; set; }
     }
 }
