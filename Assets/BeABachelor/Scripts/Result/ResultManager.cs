@@ -17,5 +17,10 @@ namespace BeABachelor.Result
         };
 
         public string ScoreText => _gameManager.Score.ToString();
+
+        public void ToTile()
+        {
+            _gameManager.GameState = GameState.Title;
+        }
     }
 }
