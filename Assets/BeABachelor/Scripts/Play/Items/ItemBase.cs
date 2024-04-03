@@ -16,6 +16,8 @@ namespace BeABachelor.Play.Items
 
         public event Action<Collider> OnItemCollectorHit;
 
+        public ItemManager itemManager { private get; set; }
+
         [Inject] private IGameManager _gameManager;
 
 
@@ -30,6 +32,11 @@ namespace BeABachelor.Play.Items
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void OnDestroy()
+        {
+            itemManager.ItemNum--;
         }
     }
 }
