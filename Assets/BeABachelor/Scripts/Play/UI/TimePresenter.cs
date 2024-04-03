@@ -22,6 +22,7 @@ namespace BeABachelor.Play.UI
         private void OnDestroy()
         {
             gameManager.OnGameStateChanged -= EnableText;
+            playSceneManager.OnTimeChanged -= OnTimeChanged;
         }
 
         private void OnTimeChanged(int time)

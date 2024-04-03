@@ -21,6 +21,7 @@ namespace BeABachelor.Play.UI
         private void OnDestroy()
         {
             gameManager.OnScoreChanged -= OnScoreChanged;
+            gameManager.OnGameStateChanged -= EnaleText;
         }
 
         private void OnScoreChanged(int score)

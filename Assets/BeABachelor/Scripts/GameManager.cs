@@ -21,6 +21,7 @@ namespace BeABachelor
             get => _gameState;
             set 
             {
+                if(_gameState == value) return;
                 _gameState = value;
                 OnGameStateChanged?.Invoke(_gameState);
             }
@@ -55,6 +56,7 @@ namespace BeABachelor
                 {
                     case GameState.Title:
                         SceneManager.LoadScene("Title");
+                        Reset();
                         break;
                     case GameState.Setting:
                         SceneManager.LoadScene("PlaySetting");
