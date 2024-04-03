@@ -39,6 +39,8 @@ namespace BeABachelor
             }
         }
 
+        public int EnemyScore {  get; set; }
+
         private GameState _gameState;
         private int _score;
         private int _tick;
@@ -86,6 +88,7 @@ namespace BeABachelor
             PlayerType = PlayerType.NotSelected;
             PlayType = PlayType.NotSelected;
             Score = 0;
+            EnemyScore = 0;
             OnGameStateChanged += state =>
             {
                 if (state == GameState.Playing)
