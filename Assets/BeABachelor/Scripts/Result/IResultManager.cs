@@ -1,6 +1,6 @@
 ﻿namespace BeABachelor.Result
 {
-    public class ResultManager : IResultManager
+    public interface IResultManager
     {
         
     }
