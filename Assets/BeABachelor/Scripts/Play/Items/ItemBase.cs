@@ -21,7 +21,7 @@ namespace BeABachelor.Play.Items
 
         private bool used = false;
 
-        private  void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             if(used) return;
             if (_gameManager.GameState != GameState.Playing) return;
