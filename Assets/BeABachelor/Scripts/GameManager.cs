@@ -13,6 +13,7 @@ namespace BeABachelor
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
+        public event Action<int> OnOpponentScoreChanged;
 
         public bool Connected { get; set; }
 
@@ -39,8 +40,20 @@ namespace BeABachelor
             }
         }
 
+        public int OpponentScore
+        {
+            get => _opponentScore;
+            set
+            {
+                _opponentScore = value;
+                OnOpponentScoreChanged?.Invoke(_opponentScore);
+            }
+        }
+        public ResultState ResultState { get; set; }
+
         private GameState _gameState;
         private int _score;
+        private int _opponentScore;
         private int _tick;
 
         public void Initialize()

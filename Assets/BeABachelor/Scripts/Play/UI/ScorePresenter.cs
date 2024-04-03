@@ -24,6 +24,7 @@ public class ScorePresenter : MonoBehaviour
 
     private void OnScoreChanged(int score)
     {
+        Debug.Log($"Score : {score}");
         text.text = $"Score : {score : 000}";
     }
 
