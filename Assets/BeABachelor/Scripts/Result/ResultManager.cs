@@ -16,7 +16,7 @@ namespace BeABachelor.Result
             _ => throw new NotImplementedException()
         };
 
-        public string ScoreText => _gameManager.Score.ToString();
+        public string ScoreText => $"{_gameManager.Score}単位取得！";
 
         public void ToTile()
         {
