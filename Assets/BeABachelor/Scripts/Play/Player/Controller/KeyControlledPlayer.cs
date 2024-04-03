@@ -82,6 +82,7 @@ namespace BeABachelor.Play.Player
 
         private async UniTask ManageStaminaAsync(CancellationToken token)
         {
+            await UniTask.WaitUntil(() => _gameManager.GameState == GameState.Playing, cancellationToken:token);
             Stamina = DefaultPlaySceneParams.StaminaMax;
             CantRun = false;
             while (!token.IsCancellationRequested || (!finished && playing))
@@ -122,6 +123,12 @@ namespace BeABachelor.Play.Player
                 default:
                     break;
             }
+        }
+
+        private void OnDestroy()
+        {
+            _cts.Cancel();
+            _gameManager.OnGameStateChanged -= OnGameStarted;
         }
     }
 }
