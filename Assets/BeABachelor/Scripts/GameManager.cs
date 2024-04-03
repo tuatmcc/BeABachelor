@@ -2,7 +2,6 @@ using System;
 using Zenject;
 using BeABachelor.Interface;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
 namespace BeABachelor
 {
