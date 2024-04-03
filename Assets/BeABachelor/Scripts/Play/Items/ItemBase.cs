@@ -16,15 +16,14 @@ namespace BeABachelor.Play.Items
 
         public event Action<Collider> OnItemCollectorHit;
 
-        public ItemManager itemManager { private get; set; }
-
-        [Inject] private IGameManager _gameManager;
+        [Inject] protected IGameManager _gameManager;
+        [Inject] private ItemManager _itemManager;
 
 
         private void OnTriggerEnter(Collider other)
         {
             if (_gameManager.GameState != GameState.Playing) return;
-            if (!other.TryGetComponent(out IItemCollectable _)) return;
+            if (!(other.TryGetComponent(out IItemCollectable _) || other.TryGetComponent(out IEnemyItemCollectable _))) return;
 
             OnItemCollectorHit?.Invoke(other);
 
@@ -36,7 +35,7 @@ namespace BeABachelor.Play.Items
 
         private void OnDestroy()
         {
-            itemManager.ItemNum--;
+            _itemManager.ItemNum--;
         }
     }
 }

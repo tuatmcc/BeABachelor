@@ -7,8 +7,8 @@ namespace BeABachelor.Play.Items
 {
     public class ScoreItem : ItemBase
     {
-        [Inject] private IGameManager _gameManager;
-        
+        [SerializeField] private int score = 0;
+
         private void Awake()
         {
             OnItemCollectorHit += NotifyItemHit;
@@ -18,23 +18,14 @@ namespace BeABachelor.Play.Items
         {
             // ItemIDを基にNetworkManagerに衝突を通知
             Debug.Log($"ID : {ItemID}");
-            Debug.Log($"{_gameManager.PlayerType} Tag : {other.tag}");
-            
-            switch (_gameManager.PlayerType)
+
+            if(other.TryGetComponent(out IItemCollectable _))
             {
-                case PlayerType.Hakken when other.CompareTag("Hakken"):
-                case PlayerType.Kouken when other.CompareTag("Koken"):
-                    _gameManager.Score += 2;
-                    break;
-                case PlayerType.Kouken when other.CompareTag("Hakken"):
-                case PlayerType.Hakken when other.CompareTag("Koken"):
-                    _gameManager.OpponentScore += 2;
-                    break;
-                case PlayerType.NotSelected:
-                    Debug.LogError("PlayerType is not selected");
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                _gameManager.Score += score;
+            }
+            else if(other.TryGetComponent(out IEnemyItemCollectable _))
+            {
+                _gameManager.EnemyScore += score;
             }
         }
     }

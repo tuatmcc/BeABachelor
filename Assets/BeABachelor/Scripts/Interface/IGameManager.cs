@@ -12,7 +12,7 @@ namespace BeABachelor.Interface
         public PlayType PlayType { get; set; }
         public PlayerType PlayerType { get; set; }
         public int Score { get; set; }
-        public int OpponentScore { get; set; }
+        public int EnemyScore { get; set; }
         public ResultState ResultState { get; set; }
     }
 }

@@ -40,20 +40,11 @@ namespace BeABachelor
             }
         }
 
-        public int OpponentScore
-        {
-            get => _opponentScore;
-            set
-            {
-                _opponentScore = value;
-                OnOpponentScoreChanged?.Invoke(_opponentScore);
-            }
-        }
+        public int EnemyScore {  get; set; }
         public ResultState ResultState { get; set; }
 
         private GameState _gameState;
         private int _score;
-        private int _opponentScore;
         private int _tick;
 
         public void Initialize()
@@ -73,7 +64,7 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
-                        ResultState = _score > _opponentScore ? ResultState.Win : _score < _opponentScore ? ResultState.Lose : ResultState.Draw;
+                        ResultState = _score > EnemyScore ? ResultState.Win : _score < EnemyScore ? ResultState.Lose : ResultState.Draw;
                         SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
@@ -100,6 +91,7 @@ namespace BeABachelor
             PlayerType = PlayerType.NotSelected;
             PlayType = PlayType.NotSelected;
             Score = 0;
+            EnemyScore = 0;
             OnGameStateChanged += state =>
             {
                 if (state == GameState.Playing)
