@@ -128,6 +128,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1774782573575091418, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
   m_PrefabInstance: {fileID: 1734544460476641603}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &659209946 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1874586001275148867, guid: 5e2f4f4d2a70a2d48b9eb9a63bdc2cbc, type: 3}
+  m_PrefabInstance: {fileID: 3576703884080393685}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbbdfef5f203eed4680eaa3d958f8267, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1044099236
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +890,10 @@ PrefabInstance:
       propertyPath: _playSceneManager
       value: 
       objectReference: {fileID: 2128955902}
+    - target: {fileID: 6653736372242865120, guid: b20eaddeb05ec204e89c031f6fe95471, type: 3}
+      propertyPath: _itemManager
+      value: 
+      objectReference: {fileID: 659209946}
     - target: {fileID: 7172372694214625449, guid: b20eaddeb05ec204e89c031f6fe95471, type: 3}
       propertyPath: m_Name
       value: SceneContext
