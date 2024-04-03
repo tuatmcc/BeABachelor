@@ -185,5 +185,11 @@ namespace BeABachelor.Play
             _gameManager.GameState = GameState.Finished;
             _gameManager.GameState = GameState.Result;
         }
+
+        public KeyControlledPlayer GetKeyControlledPlayer()
+        {
+            return _gameManager.PlayerType == PlayerType.Hakken ? 
+                hakken.GetComponent<KeyControlledPlayer>() : kouken.GetComponent<KeyControlledPlayer>();
+        }
     }
 }
