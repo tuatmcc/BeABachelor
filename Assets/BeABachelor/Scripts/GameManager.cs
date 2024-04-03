@@ -73,7 +73,7 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
-                        SceneManager.LoadScene("Title");
+                        SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
                         break;
