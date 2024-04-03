@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-namespace BeABachelor.Result.DI
+namespace BeABachelor.Result
 {
     public class ResultSceneUIManager : MonoBehaviour
     {
@@ -10,7 +11,11 @@ namespace BeABachelor.Result.DI
         [SerializeField] private Text scoreText;
         
         [Inject] private IResultManager _resultManager;
-        
-        
+
+        private void Start()
+        {
+            resultText.text = _resultManager.ResultText;
+            scoreText.text = _resultManager.ScoreText;
+        }
     }
 }
