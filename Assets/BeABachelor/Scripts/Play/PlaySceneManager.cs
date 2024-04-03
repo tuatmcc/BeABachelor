@@ -171,7 +171,7 @@ namespace BeABachelor.Play
                 MainTimer--;
             }
 
-            _gameManager.GameState = GameState.Finished;
+            FinishPlay();
         }
 
         public GameObject GetPlayerObject()
@@ -179,5 +179,11 @@ namespace BeABachelor.Play
             return _gameManager.PlayerType == PlayerType.Hakken ? hakken : kouken;
         }
 
+        public void FinishPlay()
+        {
+            _cts?.Cancel();
+            _gameManager.GameState = GameState.Finished;
+            _gameManager.GameState = GameState.Result;
+        }
     }
 }

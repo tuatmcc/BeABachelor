@@ -1,7 +1,10 @@
+using BeABachelor.Interface;
+using BeABachelor.Play;
 using BeABachelor.Play.Items;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 /// <summary>
 /// アイテムに関する情報を保持
@@ -10,16 +13,35 @@ public class ItemManager : MonoBehaviour
 {
     [SerializeField] List<GameObject> items;
 
+    [Inject] PlaySceneManager playSceneManager;
+
+    public int ItemNum
+    {
+        get => _itemnum;
+        set
+        {
+            _itemnum = value;
+            if(_itemnum == 0)
+            {
+                playSceneManager.FinishPlay();
+            }
+        }
+    }
+
+    private int _itemnum;
+
     private void Awake()
     {
         // 各アイテムにIDを割り当て(1～)
-        var count =  1;
+        var count =  0;
         foreach (GameObject item in items)
         {
+            count++;
             var itembase = item.GetComponent<ItemBase>();
             itembase.ItemID = count;
-            count++;
+            itembase.itemManager = this;
         }
+        ItemNum = count;
     }
 
     // IDからGameObjectを削除
