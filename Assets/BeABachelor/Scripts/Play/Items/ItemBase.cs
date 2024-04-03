@@ -19,13 +19,16 @@ namespace BeABachelor.Play.Items
         [Inject] protected IGameManager _gameManager;
         [Inject] private ItemManager _itemManager;
 
+        private bool used = false;
 
         private void OnTriggerEnter(Collider other)
         {
+            if(used) return;
             if (_gameManager.GameState != GameState.Playing) return;
             if (!(other.TryGetComponent(out IItemCollectable _) || other.TryGetComponent(out IEnemyItemCollectable _))) return;
 
             OnItemCollectorHit?.Invoke(other);
+            used = true;
 
             if(DestroyOnItemCollectorHit)
             {

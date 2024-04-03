@@ -1,43 +1,44 @@
-using BeABachelor;
 using BeABachelor.Interface;
-using BeABachelor.Play;
 using BeABachelor.Play.Player;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
-public class StaminaBackgroundPresenter : MonoBehaviour
+namespace BeABachelor.Play.UI
 {
-    [SerializeField] Image image;
-    [SerializeField] Sprite green;
-    [SerializeField] Sprite red;
-
-    [Inject] IGameManager gameManager;
-    [Inject] PlaySceneManager playSceneManager;
-
-    private KeyControlledPlayer player;
-
-    void Start()
+    public class StaminaBackgroundPresenter : MonoBehaviour
     {
-        image.enabled = false;
-        player = playSceneManager.GetKeyControlledPlayer();
-        gameManager.OnGameStateChanged += EnableImage;
-        player.OnRunnableChanged += OnRunnableChanged;
-    }
+        [SerializeField] Image image;
+        [SerializeField] Sprite green;
+        [SerializeField] Sprite red;
 
-    private void OnDestroy()
-    {
-        gameManager.OnGameStateChanged -= EnableImage;
-        player.OnRunnableChanged -= OnRunnableChanged;
-    }
+        [Inject] IGameManager gameManager;
+        [Inject] PlaySceneManager playSceneManager;
 
-    private void OnRunnableChanged(bool runnable)
-    {
-        image.sprite = runnable ? green : red;
-    }
+        private KeyControlledPlayer player;
 
-    private void EnableImage(GameState gameState)
-    {
-        if(gameState == GameState.Playing) image.enabled = true;
+        void Start()
+        {
+            image.enabled = false;
+            player = playSceneManager.GetKeyControlledPlayer();
+            gameManager.OnGameStateChanged += EnableImage;
+            player.OnRunnableChanged += OnRunnableChanged;
+        }
+
+        private void OnDestroy()
+        {
+            gameManager.OnGameStateChanged -= EnableImage;
+            player.OnRunnableChanged -= OnRunnableChanged;
+        }
+
+        private void OnRunnableChanged(bool runnable)
+        {
+            image.sprite = runnable ? green : red;
+        }
+
+        private void EnableImage(GameState gameState)
+        {
+            if(gameState == GameState.Playing) image.enabled = true;
+        }
     }
 }

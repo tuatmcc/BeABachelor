@@ -1,5 +1,3 @@
-using BeABachelor.Play;
-using BeABachelor.Play.Items;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;

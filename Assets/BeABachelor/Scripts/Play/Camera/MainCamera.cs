@@ -1,52 +1,53 @@
-using BeABachelor;
 using BeABachelor.Interface;
-using BeABachelor.Play;
 using UnityEngine;
 using Zenject;
 
-public class MainCamera : MonoBehaviour
+namespace BeABachelor.Play.Camera
 {
-    [SerializeField] private GameObject target;
-
-    [Inject] IGameManager _gameManager;
-    [Inject] PlaySceneManager _playSceneManager;
-
-    private float flag = 1;
-
-    private void Awake()
+    public class MainCamera : MonoBehaviour
     {
-        _gameManager.OnGameStateChanged += SetTarget;
-    }
+        [SerializeField] private GameObject target;
 
-    void Start()
-    {
-    }
+        [Inject] IGameManager _gameManager;
+        [Inject] PlaySceneManager _playSceneManager;
 
-    void Update()
-    {
-            transform.position = target.transform.position - new Vector3(0.0f, -7.0f, 15.0f * flag);
-    }
+        private float flag = 1;
 
-    private void OnDestroy()
-    {
-        _gameManager.OnGameStateChanged -= SetTarget;
-    }
-
-    private void SetTarget(GameState gameState)
-    {
-        if(gameState == GameState.CountDown)
+        private void Awake()
         {
-            target = _playSceneManager.GetPlayerObject();
+            _gameManager.OnGameStateChanged += SetTarget;
+        }
 
-            // とりあえず名前解決
-            if(target.name == "HakkenPlayer")
+        void Start()
+        {
+        }
+
+        void Update()
+        {
+                transform.position = target.transform.position - new Vector3(0.0f, -7.0f, 15.0f * flag);
+        }
+
+        private void OnDestroy()
+        {
+            _gameManager.OnGameStateChanged -= SetTarget;
+        }
+
+        private void SetTarget(GameState gameState)
+        {
+            if(gameState == GameState.CountDown)
             {
-                flag = 1.0f;
-            }
-            else
-            {
-                flag = -1.0f;
-                transform.localEulerAngles += new Vector3(0, 180, 0);
+                target = _playSceneManager.GetPlayerObject();
+
+                // とりあえず名前解決
+                if(target.name == "HakkenPlayer")
+                {
+                    flag = 1.0f;
+                }
+                else
+                {
+                    flag = -1.0f;
+                    transform.localEulerAngles += new Vector3(0, 180, 0);
+                }
             }
         }
     }
