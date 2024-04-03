@@ -13,6 +13,7 @@ namespace BeABachelor
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
+        public event Action<int> OnOpponentScoreChanged;
 
         public bool Connected { get; set; }
 
@@ -40,9 +41,11 @@ namespace BeABachelor
         }
 
         public int EnemyScore {  get; set; }
+        public ResultState ResultState { get; set; }
 
         private GameState _gameState;
         private int _score;
+        private int _opponentScore;
         private int _tick;
 
         public void Initialize()
@@ -62,7 +65,8 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
-                        SceneManager.LoadScene("Title");
+                        ResultState = _score > _opponentScore ? ResultState.Win : _score < _opponentScore ? ResultState.Lose : ResultState.Draw;
+                        SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
                         break;

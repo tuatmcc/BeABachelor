@@ -4,5 +4,6 @@
     {
         string ResultText { get; }
         string ScoreText { get; }
+        void ToTile();
     }
 }

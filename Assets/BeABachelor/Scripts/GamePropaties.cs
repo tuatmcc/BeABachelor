@@ -33,4 +33,11 @@ namespace BeABachelor
         Solo,
         Multi,
     }
+
+    public enum ResultState
+    {
+        Win,
+        Lose,
+        Draw
+    }
 }

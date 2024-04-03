@@ -1,4 +1,7 @@
+using System;
+using BeABachelor.Interface;
 using UnityEngine;
+using Zenject;
 
 namespace BeABachelor.Play.Items
 {

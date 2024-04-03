@@ -40,6 +40,7 @@ namespace BeABachelor.PlaySetting
         public void Awake()
         {
             playerInput = GetComponent<PlayerInput>();
+            _gameManager.PlayerType = PlayerType.Kouken;
         }
 
         public void OnEnable()

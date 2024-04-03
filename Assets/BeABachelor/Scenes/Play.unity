@@ -575,6 +575,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1774782573575091418, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: m_TagString
+      value: Hakken
+      objectReference: {fileID: 0}
+    - target: {fileID: 8936969478265931664, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: m_TagString
+      value: Koken
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,4 +1,5 @@
-﻿using BeABachelor.Interface;
+﻿using System;
+using BeABachelor.Interface;
 using Zenject;
 
 namespace BeABachelor.Result
@@ -6,10 +7,20 @@ namespace BeABachelor.Result
     public class ResultManager : IResultManager
     {
         [Inject] private IGameManager _gameManager;
-        
-        public string ResultText {
-            get;
+
+        public string ResultText => _gameManager.ResultState switch
+        {
+            ResultState.Win => "卒業成功！",
+            ResultState.Lose => "留年...",
+            ResultState.Draw => "仲良く卒業！",
+            _ => throw new NotImplementedException()
+        };
+
+        public string ScoreText => $"{_gameManager.Score}単位取得！";
+
+        public void ToTile()
+        {
+            _gameManager.GameState = GameState.Title;
         }
-        public string ScoreText => _gameManager.Score.ToString();
     }
 }
