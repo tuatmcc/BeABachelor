@@ -73,6 +73,7 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
+                        ResultState = _score > _opponentScore ? ResultState.Win : _score < _opponentScore ? ResultState.Lose : ResultState.Draw;
                         SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
