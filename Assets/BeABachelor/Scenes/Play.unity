@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.57690066, g: 0.89534634, b: 0.8565728, a: 1}
+  m_IndirectSpecularColor: {r: 0.28786102, g: 0.7653159, b: 0.69240403, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -504,6 +504,11 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!54 &1814234487 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 2699991210136987635, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+  m_PrefabInstance: {fileID: 1734544460476641603}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1896432155
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,6 +644,22 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Hakken
       objectReference: {fileID: 0}
+    - target: {fileID: 6226167865906242025, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 1814234487}
+    - target: {fileID: 6226167865906242025, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: rd
+      value: 
+      objectReference: {fileID: 1814234487}
+    - target: {fileID: 6450327938774945926, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: rb
+      value: 
+      objectReference: {fileID: 1734544460476641607}
+    - target: {fileID: 6450327938774945926, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+      propertyPath: rd
+      value: 
+      objectReference: {fileID: 1734544460476641607}
     - target: {fileID: 8936969478265931664, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
       propertyPath: m_TagString
       value: Koken
@@ -675,6 +696,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f2f6725649d43d8865fa8bbe7158bd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!54 &1734544460476641607 stripped
+Rigidbody:
+  m_CorrespondingSourceObject: {fileID: 3823036103546254542, guid: 1cf4452a24aba1e498b625bde0d71d00, type: 3}
+  m_PrefabInstance: {fileID: 1734544460476641603}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3044231038661767268
 PrefabInstance:
   m_ObjectHideFlags: 0
