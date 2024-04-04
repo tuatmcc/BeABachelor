@@ -10,7 +10,7 @@ namespace BeABachelor.Play
         // 走っているときの移動速度倍率
         public static float RunningSpeed = 2.0f;
         // スタミナを使い切った時の移動速度倍率
-        public static float NoStaminaSpeed = 0.7f;
+        public static float NoStaminaSpeed = 0.3f;
         // スタミナの量(10で1秒)
         public static long StaminaMax = 70;
         // 向きを変えたときの回転速度
