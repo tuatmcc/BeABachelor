@@ -23,6 +23,10 @@ namespace BeABachelor.PlaySetting
         
         public override void Space()
         {
+            if (_gameManager.PlayerType == PlayerType.NotSelected)
+            {
+                _gameManager.PlayerType = PlayerType.Kouken;
+            }
         }
 
         public override void Activate()

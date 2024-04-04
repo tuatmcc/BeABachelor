@@ -12,6 +12,7 @@ namespace BeABachelor.Play.Player
     public class KeyControlledPlayer : MonoBehaviour, IPlayable, IItemCollectable
     {
         public event Action<long> OnStaminaChanged;
+        public event Action<bool> OnRunnableChanged;
 
         [Inject] IGameManager _gameManager;
 
@@ -28,11 +29,20 @@ namespace BeABachelor.Play.Player
             }
         }
 
-        public bool CantRun { get; private set; }
+        public bool CantRun
+        {
+            get => runnable;
+            private set
+            {
+                runnable = value;
+                OnRunnableChanged?.Invoke(!runnable);
+            }
+        }
 
         private InputAction move, run;
         private CancellationTokenSource _cts;
         private long stamina;
+        private bool runnable;
         private bool playing = false;
         private bool finished = false;
 
@@ -72,12 +82,13 @@ namespace BeABachelor.Play.Player
 
         private async UniTask ManageStaminaAsync(CancellationToken token)
         {
+            await UniTask.WaitUntil(() => _gameManager.GameState == GameState.Playing, cancellationToken:token);
             Stamina = DefaultPlaySceneParams.StaminaMax;
             CantRun = false;
-            while(!token.IsCancellationRequested || (!finished && playing))
+            while (!token.IsCancellationRequested || (!finished && playing))
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(0.1), cancellationToken : token);
-                if (run.IsPressed())
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1), cancellationToken: token);
+                if (run.IsPressed() && move.ReadValue<Vector2>() != Vector2.zero)
                 {
                     Stamina -= 1;
                     if(Stamina == 0)
@@ -112,6 +123,12 @@ namespace BeABachelor.Play.Player
                 default:
                     break;
             }
+        }
+
+        private void OnDestroy()
+        {
+            _cts.Cancel();
+            _gameManager.OnGameStateChanged -= OnGameStarted;
         }
     }
 }

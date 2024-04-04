@@ -82,8 +82,30 @@
                 },
                 {
                     "name": "",
+                    "id": "25346dfd-d83d-47bb-a4ea-5a7b5a8e2bb9",
+                    "path": "<Joystick>/stick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "cc8e4091-b65a-48fe-9058-f938b45bd630",
                     "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "825d4d1b-1077-4d8e-aee3-4b0c54cee185",
+                    "path": "<HID::WiseGroup.,Ltd JC-AS01 series>/button5",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

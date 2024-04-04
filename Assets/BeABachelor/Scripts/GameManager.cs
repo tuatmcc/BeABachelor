@@ -2,7 +2,6 @@ using System;
 using Zenject;
 using BeABachelor.Interface;
 using UnityEngine.SceneManagement;
-using UnityEngine;
 
 namespace BeABachelor
 {
@@ -13,6 +12,7 @@ namespace BeABachelor
     {
         public event Action<GameState> OnGameStateChanged;
         public event Action<int> OnScoreChanged;
+        public event Action<int> OnOpponentScoreChanged;
 
         public bool Connected { get; set; }
 
@@ -21,6 +21,7 @@ namespace BeABachelor
             get => _gameState;
             set 
             {
+                if(_gameState == value) return;
                 _gameState = value;
                 OnGameStateChanged?.Invoke(_gameState);
             }
@@ -39,6 +40,9 @@ namespace BeABachelor
             }
         }
 
+        public int EnemyScore {  get; set; }
+        public ResultState ResultState { get; set; }
+
         private GameState _gameState;
         private int _score;
         private int _tick;
@@ -52,6 +56,7 @@ namespace BeABachelor
                 {
                     case GameState.Title:
                         SceneManager.LoadScene("Title");
+                        Reset();
                         break;
                     case GameState.Setting:
                         SceneManager.LoadScene("PlaySetting");
@@ -60,7 +65,8 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
-                        SceneManager.LoadScene("Title");
+                        ResultState = _score > EnemyScore ? ResultState.Win : _score < EnemyScore ? ResultState.Lose : ResultState.Draw;
+                        SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
                         break;
@@ -86,6 +92,7 @@ namespace BeABachelor
             PlayerType = PlayerType.NotSelected;
             PlayType = PlayType.NotSelected;
             Score = 0;
+            EnemyScore = 0;
             OnGameStateChanged += state =>
             {
                 if (state == GameState.Playing)
