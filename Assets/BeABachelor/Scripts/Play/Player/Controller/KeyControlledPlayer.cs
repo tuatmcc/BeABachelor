@@ -74,7 +74,7 @@ namespace BeABachelor.Play.Player
                 var inputMoveAxis = move.ReadValue<Vector2>();
                 var movedir = new Vector3(inputMoveAxis.x * (float)directionX, 0.0f, inputMoveAxis.y * (float)directionY);
                 movedir *= DefaultPlaySceneParams.DefaultSpeed * 
-                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f)) / Time.deltaTime / 50.0f;
+                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
 
                 rb.velocity = movedir;
                 //transform.position += movedir;
