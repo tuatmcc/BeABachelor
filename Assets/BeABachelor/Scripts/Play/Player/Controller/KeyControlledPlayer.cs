@@ -18,7 +18,8 @@ namespace BeABachelor.Play.Player
 
         [SerializeField] private DefaultPlaySceneParams.Direction directionX = DefaultPlaySceneParams.Direction.PLUS;
         [SerializeField] private DefaultPlaySceneParams.Direction directionY = DefaultPlaySceneParams.Direction.PLUS;
-
+        [SerializeField] private Rigidbody rb;
+        
         public long Stamina
         {
             get => stamina;
@@ -74,7 +75,9 @@ namespace BeABachelor.Play.Player
                 var movedir = new Vector3(inputMoveAxis.x * (float)directionX, 0.0f, inputMoveAxis.y * (float)directionY);
                 movedir *= Time.deltaTime * DefaultPlaySceneParams.DefaultSpeed * 
                     (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
-                transform.position += movedir;
+
+                rb.velocity = movedir;
+                //transform.position += movedir;
                 // 移動方向への回転
                 transform.forward = Vector3.Slerp(transform.forward, movedir, Time.deltaTime * DefaultPlaySceneParams.RotateSpeed);
             }
