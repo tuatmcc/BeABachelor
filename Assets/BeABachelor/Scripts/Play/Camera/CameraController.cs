@@ -16,10 +16,12 @@ namespace BeABachelor.Play.Camera
 
         private void Awake()
         {
+            _gameManager.OnGameStateChanged += SetTarget;
         }
 
         private void OnDestroy()
         {
+            _gameManager.OnGameStateChanged -= SetTarget;
         }
 
         private void SetTarget(GameState gameState)
@@ -29,10 +31,10 @@ namespace BeABachelor.Play.Camera
                 var target = _playSceneManager.GetPlayerObject();
 
                 virtualCamera.m_Follow = target.transform;
+
                 if (target.tag == "Hakken")
                 {
-                    cameraOffset.m_Offset = new Vector3(cameraOffset.m_Offset.x, cameraOffset.m_Offset.y,
-                        -cameraOffset.m_Offset.z);
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
                 }
             }
         }
