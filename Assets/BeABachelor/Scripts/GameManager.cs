@@ -2,6 +2,7 @@ using System;
 using Zenject;
 using BeABachelor.Interface;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 namespace BeABachelor
 {
@@ -15,6 +16,8 @@ namespace BeABachelor
         public event Action<int> OnOpponentScoreChanged;
 
         public bool Connected { get; set; }
+
+        GameInputs inputActions;
 
         public GameState GameState 
         { 
@@ -49,6 +52,9 @@ namespace BeABachelor
 
         public void Initialize()
         {
+            inputActions = new GameInputs();
+            inputActions.System.Exit.performed += ToTitle;
+            inputActions.Enable();
             Reset();
             OnGameStateChanged += state =>
             {
@@ -91,7 +97,7 @@ namespace BeABachelor
 
         public void Dispose()
         {
-
+            inputActions.Dispose();
         }
 
         public void Reset()
@@ -117,6 +123,11 @@ namespace BeABachelor
             {
                 _tick++;
             }
+        }
+
+        private void ToTitle(InputAction.CallbackContext context)
+        {
+            GameState = GameState.Title;
         }
     }
 }

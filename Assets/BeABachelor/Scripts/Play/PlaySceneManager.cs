@@ -182,8 +182,11 @@ namespace BeABachelor.Play
         public void FinishPlay()
         {
             _cts?.Cancel();
-            _gameManager.GameState = GameState.Finished;
-            _gameManager.GameState = GameState.Result;
+            if(_gameManager.GameState == GameState.Playing)
+            {
+                _gameManager.GameState = GameState.Result;
+                _gameManager.GameState = GameState.Finished;
+            }
         }
 
         public KeyControlledPlayer GetKeyControlledPlayer()
