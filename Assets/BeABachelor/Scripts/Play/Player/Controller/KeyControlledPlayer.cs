@@ -130,7 +130,7 @@ namespace BeABachelor.Play.Player
 
         private void OnDestroy()
         {
-            _cts.Cancel();
+            _cts?.Cancel();
             _gameManager.OnGameStateChanged -= OnGameStarted;
         }
     }

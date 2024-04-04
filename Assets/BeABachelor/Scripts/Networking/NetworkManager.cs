@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -170,8 +170,13 @@ namespace BeABachelor.Networking
                     receiveTask.Dispose();
                     return;
                 }
-
-                if (receiveTask.Result.Buffer.Length <= 0) continue;
+                try
+                {
+                    if (receiveTask.Result.Buffer.Length <= 0) continue;
+                }catch (Exception ex)
+                {
+                    return;
+                }
                 var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
                 if (reader.ReadByte() != 0xaa)
                 {
