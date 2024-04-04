@@ -27,7 +27,7 @@ namespace BeABachelor.Play.UI
 
         private void OnTimeChanged(int time)
         {
-            text.text = $"{time / 60 : 00}:{time % 60 : 00}";
+            text.text = $"{time / 60 :00}:{time % 60 :00}";
         }
 
         private void EnableText(GameState gameState)
