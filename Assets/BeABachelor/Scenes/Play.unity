@@ -615,6 +615,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1113237906771441925, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: bc7e165a1130aca48a5366dcf53b4356, type: 3}
+    - target: {fileID: 2624843370339291060, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: bc7e165a1130aca48a5366dcf53b4356, type: 3}
     - target: {fileID: 4083102615873661779, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -693,6 +701,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4083102615873661779, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6811095246857655294, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7303825663671476842, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
