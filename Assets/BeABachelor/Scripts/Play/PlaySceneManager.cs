@@ -70,31 +70,31 @@ namespace BeABachelor.Play
                     {
                         kouken.SetActive(false);
                         var script = hakken.GetComponent<RemoteControlledPlayer>();
-                        script.enabled = false;
+                        Destroy(script);
                     }
                     else
                     {
                         hakken.SetActive(false);
                         var script = kouken.GetComponent<RemoteControlledPlayer>();
-                        script.enabled = false;
+                        Destroy(script);
                     }
                     break;
                 case PlayType.Multi:
                     if(_gameManager.PlayerType == PlayerType.Hakken)
                     {
                         var remoteControlledPlayer = hakken.GetComponent<RemoteControlledPlayer>();
-                        remoteControlledPlayer.enabled = false;
+                        Destroy(remoteControlledPlayer);
                         var keyControlledPlayer = kouken.GetComponent<KeyControlledPlayer>();
-                        keyControlledPlayer.enabled = false;
+                        Destroy(keyControlledPlayer);
                         hakken.GetComponent<TransformSynchronization>().UseReceivedData = false;
                         kouken.GetComponent<TransformSynchronization>().UseReceivedData = true;
                     }
                     else
                     {
                         var remoteControlledPlayer = kouken.GetComponent<RemoteControlledPlayer>();
-                        remoteControlledPlayer.enabled = false;
+                        Destroy(remoteControlledPlayer);
                         var keyControlledPlayer = hakken.GetComponent<KeyControlledPlayer> ();
-                        keyControlledPlayer.enabled = false;
+                        Destroy(keyControlledPlayer);
                         hakken.GetComponent<TransformSynchronization>().UseReceivedData = true;
                         kouken.GetComponent<TransformSynchronization>().UseReceivedData = false;
                     }
