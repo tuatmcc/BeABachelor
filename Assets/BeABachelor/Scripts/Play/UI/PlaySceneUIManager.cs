@@ -1,5 +1,6 @@
 using BeABachelor.Interface;
 using BeABachelor.Networking.Interface;
+using System;
 using UnityEngine;
 using Zenject;
 
@@ -16,7 +17,13 @@ namespace BeABachelor.Play.UI
         
         private void OnOpponentReady()
         {
-            waitOpponentPanel.SetActive(false);
+            try
+            {
+                waitOpponentPanel.SetActive(false);
+            } catch(Exception e)
+            {
+                return; 
+            }
         }
         private void Start()
         {
