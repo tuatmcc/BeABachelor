@@ -1,6 +1,7 @@
 using System;
 using BeABachelor.Interface;
 using Cinemachine;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Zenject;
@@ -43,8 +44,13 @@ namespace BeABachelor.Play.Camera
                     transform.rotation = Quaternion.Euler(0, 180, 0);
                 }
 
-                // カメラ切り替え
-                focusCamera.Priority = 1;
+                // 時間差でカメラ切り替え
+                UniTask.Create(async () =>
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(1),
+                        cancellationToken: this.GetCancellationTokenOnDestroy());
+                    focusCamera.Priority = 0;
+                }).Forget();
             }
         }
     }
