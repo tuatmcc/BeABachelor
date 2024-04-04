@@ -65,7 +65,16 @@ namespace BeABachelor
                         SceneManager.LoadScene("Play");
                         break;
                     case GameState.Result:
-                        ResultState = _score > EnemyScore ? ResultState.Win : _score < EnemyScore ? ResultState.Lose : ResultState.Draw;
+                        if (PlayType == PlayType.Multi)
+                        {
+                            ResultState = _score > EnemyScore ? ResultState.Win :
+                                _score < EnemyScore ? ResultState.Lose : ResultState.Draw;
+                        }
+                        else
+                        {
+                            ResultState = 30 <= _score ? ResultState.Win : ResultState.Lose;
+                        }
+
                         SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
