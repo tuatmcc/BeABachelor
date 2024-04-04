@@ -76,7 +76,7 @@ namespace BeABachelor.Play.Player
                 movedir *= Time.deltaTime * DefaultPlaySceneParams.DefaultSpeed * 
                     (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
 
-                rb.velocity = movedir;
+                rb.velocity = movedir * Time.deltaTime;
                 //transform.position += movedir;
                 // 移動方向への回転
                 transform.forward = Vector3.Slerp(transform.forward, movedir, Time.deltaTime * DefaultPlaySceneParams.RotateSpeed);

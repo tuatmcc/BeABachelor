@@ -6,7 +6,7 @@ namespace BeABachelor.Play
     public class DefaultPlaySceneParams
     {
         // デフォルトの移動スピード
-        public static float DefaultSpeed = 1000.0f;
+        public static float DefaultSpeed = 200000.0f;
         // 走っているときの移動速度倍率
         public static float RunningSpeed = 2.0f;
         // スタミナを使い切った時の移動速度倍率
