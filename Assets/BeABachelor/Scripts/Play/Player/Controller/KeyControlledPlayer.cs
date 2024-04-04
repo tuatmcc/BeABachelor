@@ -73,10 +73,10 @@ namespace BeABachelor.Play.Player
                 // 入力から移動量を決定
                 var inputMoveAxis = move.ReadValue<Vector2>();
                 var movedir = new Vector3(inputMoveAxis.x * (float)directionX, 0.0f, inputMoveAxis.y * (float)directionY);
-                movedir *= Time.deltaTime * DefaultPlaySceneParams.DefaultSpeed * 
-                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
+                movedir *= DefaultPlaySceneParams.DefaultSpeed * 
+                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f)) / Time.deltaTime / 50.0f;
 
-                rb.velocity = movedir * Time.deltaTime;
+                rb.velocity = movedir;
                 //transform.position += movedir;
                 // 移動方向への回転
                 transform.forward = Vector3.Slerp(transform.forward, movedir, Time.deltaTime * DefaultPlaySceneParams.RotateSpeed);
