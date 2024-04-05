@@ -8,10 +8,16 @@ namespace BeABachelor.Networking
 {
     public class SynchronizationController : MonoBehaviour
     {
-        [SerializeField] private List<MonoSynchronization> _monoSynchronizations;
+        private List<MonoSynchronization> _monoSynchronizations;
         [Inject] private INetworkManager _networkManager;
         
         public List<MonoSynchronization> MonoSynchronizations => _monoSynchronizations;
+        
+        public void Register(MonoSynchronization monoSynchronization)
+        {
+            _monoSynchronizations.Add(monoSynchronization);
+        }
+        
         private void Start()
         {
             _networkManager.SynchronizationController = this;
