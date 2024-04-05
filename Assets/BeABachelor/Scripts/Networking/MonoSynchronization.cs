@@ -11,7 +11,7 @@ namespace BeABachelor.Networking
         [Inject] protected INetworkManager _networkManager;
         [Inject] protected ISynchronizationController _synchronizationController;
 
-        private void Start()
+        protected void Start()
         {
             _synchronizationController.Register(this);
         }
