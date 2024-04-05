@@ -13,8 +13,8 @@ namespace BeABachelor.Networking
         public override byte[] ToBytes()
         {
             using BinaryWriter writer = new (new MemoryStream(8));
-            writer.Write(_animIDSpeed);
-            writer.Write(_animIDMotionSpeed);
+            writer.Write(animator.GetFloat(_animIDSpeed));
+            writer.Write(animator.GetFloat(_animIDMotionSpeed));
             return ((MemoryStream)writer.BaseStream).ToArray();
         }
 
