@@ -1,3 +1,4 @@
+using BeABachelor.Networking;
 using UnityEngine;
 
 namespace BeABachelor.Play.Player
@@ -8,7 +9,7 @@ namespace BeABachelor.Play.Player
     {
         [SerializeField] Animator animator;
         [SerializeField] Rigidbody rigidbody;
-
+        [SerializeField] private PlayerAnimationSynchronization playerAnimationSynchronization;
 
         private int _animIDSpeed = Animator.StringToHash("Speed");
         private int _animIDGrounded = Animator.StringToHash("Grounded");
@@ -21,6 +22,7 @@ namespace BeABachelor.Play.Player
 
         private void Update()
         {
+            if (playerAnimationSynchronization.UseReceivedData) return;
             animator.SetFloat(_animIDSpeed, rigidbody.velocity.magnitude);
             animator.SetFloat(_animIDMotionSpeed, rigidbody.velocity.magnitude * 0.1f);
         }

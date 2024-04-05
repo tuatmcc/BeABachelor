@@ -6,18 +6,25 @@ using Zenject;
 
 namespace BeABachelor.Networking
 {
-    public class SynchronizationController : MonoBehaviour
-    {
-        [SerializeField] private List<MonoSynchronization> _monoSynchronizations;
+    public class SynchronizationController : ISynchronizationController, IInitializable, IDisposable
+    { 
+        private List<MonoSynchronization> _monoSynchronizations;
         [Inject] private INetworkManager _networkManager;
         
         public List<MonoSynchronization> MonoSynchronizations => _monoSynchronizations;
-        private void Start()
+        
+        public void Initialize()
         {
+            _monoSynchronizations = new List<MonoSynchronization>();
             _networkManager.SynchronizationController = this;
         }
 
-        private void OnDestroy()
+        public void Register(MonoSynchronization monoSynchronization)
+        {
+            _monoSynchronizations.Add(monoSynchronization);
+        }
+
+        public void Dispose()
         {
             _networkManager.SynchronizationController = null;
         }

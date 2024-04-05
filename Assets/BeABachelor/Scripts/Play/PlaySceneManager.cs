@@ -87,7 +87,9 @@ namespace BeABachelor.Play
                         var keyControlledPlayer = kouken.GetComponent<KeyControlledPlayer>();
                         Destroy(keyControlledPlayer);
                         hakken.GetComponent<TransformSynchronization>().UseReceivedData = false;
+                        hakken.GetComponent<PlayerAnimationSynchronization>().UseReceivedData = false;
                         kouken.GetComponent<TransformSynchronization>().UseReceivedData = true;
+                        kouken.GetComponent<PlayerAnimationSynchronization>().UseReceivedData = true;
                     }
                     else
                     {
@@ -96,7 +98,9 @@ namespace BeABachelor.Play
                         var keyControlledPlayer = hakken.GetComponent<KeyControlledPlayer> ();
                         Destroy(keyControlledPlayer);
                         hakken.GetComponent<TransformSynchronization>().UseReceivedData = true;
+                        hakken.GetComponent<PlayerAnimationSynchronization>().UseReceivedData = true;
                         kouken.GetComponent<TransformSynchronization>().UseReceivedData = false;
+                        kouken.GetComponent<PlayerAnimationSynchronization>().UseReceivedData = false;
                     }
                     break;
             }

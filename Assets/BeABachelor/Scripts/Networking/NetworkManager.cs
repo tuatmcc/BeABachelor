@@ -69,7 +69,7 @@ namespace BeABachelor.Networking
                 }
             }
         }
-        public SynchronizationController SynchronizationController { get; set; }
+        public ISynchronizationController SynchronizationController { get; set; }
 
         public void SetRemoteEndPointAndClientPort(bool isHost, string ip, int remotePort, int clientPort)
         {
