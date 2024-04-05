@@ -32,6 +32,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: McccGreen
       objectReference: {fileID: 0}
+    - target: {fileID: 658221511246633534, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_TagString
+      value: Hakken
+      objectReference: {fileID: 0}
     - target: {fileID: 749186287852351692, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
       propertyPath: UseReceivedData
       value: 0
