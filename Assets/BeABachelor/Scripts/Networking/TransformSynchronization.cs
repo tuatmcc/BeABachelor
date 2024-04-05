@@ -17,6 +17,7 @@ namespace BeABachelor.Networking
         private void Start()
         {
             _networkManager.OnConnected += OnConnect;
+            base.Start();
         }
         
         private void OnDestroy()

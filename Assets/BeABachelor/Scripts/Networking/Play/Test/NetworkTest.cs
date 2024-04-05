@@ -13,13 +13,13 @@ namespace BeABachelor.Networking.Play.Test
         [SerializeField] private InputField clientPortInputField;
         [SerializeField] private Button connectButton;
         [SerializeField] private Toggle hostToggle;
-        [SerializeField] private SynchronizationController synchronizationController;
         [SerializeField] private GameObject p1;
         [SerializeField] private GameObject p2;
         [SerializeField] private float power = 0.1f;
         [SerializeField] private Text stateText;
         
         [Inject] private INetworkManager _networkManager;
+        [Inject] private ISynchronizationController _synchronizationController;
         
         [SerializeField] private Rigidbody playerRb;
 
@@ -49,7 +49,7 @@ namespace BeABachelor.Networking.Play.Test
                         if (!_networkManager.IsConnected) return;
                     }).Forget();
             });
-            _networkManager.SynchronizationController = synchronizationController;
+            _networkManager.SynchronizationController = _synchronizationController;
             _networkManager.OnConnected += _ =>
             {
                 stateText.text = "Connected";
