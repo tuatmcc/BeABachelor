@@ -9,6 +9,7 @@ using BeABachelor.Interface;
 
 namespace BeABachelor.Play.Player
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class KeyControlledPlayer : MonoBehaviour, IPlayable, IItemCollectable
     {
         public event Action<long> OnStaminaChanged;
