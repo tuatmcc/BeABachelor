@@ -14,7 +14,7 @@ namespace BeABachelor.Play.UI
         [Inject] PlaySceneManager playSceneManager;
 
         private KeyControlledPlayer player;
-    
+
         void Start()
         {
             image.enabled = false;
@@ -36,7 +36,7 @@ namespace BeABachelor.Play.UI
 
         private void EnableImage(GameState gameState)
         {
-            if(gameState == GameState.Playing) image.enabled = true;
+            if (gameState == GameState.Playing) image.enabled = true;
         }
     }
 }
