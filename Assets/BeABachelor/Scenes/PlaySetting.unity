@@ -389,6 +389,7 @@ GameObject:
   m_Component:
   - component: {fileID: 696772216}
   - component: {fileID: 696772215}
+  - component: {fileID: 696772217}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -409,7 +410,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
-  _monoInstallers: []
+  _monoInstallers:
+  - {fileID: 696772217}
   _installerPrefabs: []
   _findSiblingMonoInstallers: 0
   _autoRun: 1
@@ -443,6 +445,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &696772217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696772214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2aead284822e49b7bdaa95d6d231dce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playSettingManager: {fileID: 1834324877}
 --- !u!1 &878907986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,6 +1079,17 @@ MonoBehaviour:
     mipBias: 0
     varianceClampScale: 0.9
     contrastAdaptiveSharpening: 0
+--- !u!114 &1834324877 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7305908321908526176, guid: 722b8485e09ebe5469f2c531fd4400d4, type: 3}
+  m_PrefabInstance: {fileID: 5831228676956830713}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c127767fad30087e8e0766094c49d0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2103475202
 PrefabInstance:
   m_ObjectHideFlags: 0

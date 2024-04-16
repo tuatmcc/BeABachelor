@@ -1,8 +1,9 @@
 using System;
+using BeABachelor.Util;
 
 namespace BeABachelor.PlaySetting
 {
-    public interface IPlaySettingManager
+    public interface IPlaySettingManager : IFade
     {
         Action<PlaySettingState> OnPlaySettingStateChanged { get; set; }
         PlaySettingState State { get; set; }
