@@ -1,5 +1,6 @@
 using System;
 using BeABachelor.Interface;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
@@ -23,6 +24,8 @@ namespace BeABachelor.PlaySetting
         private PlaySettingUIBase _activeUI;
 
         public Action<PlaySettingState> OnPlaySettingStateChanged { get; set; }
+        public Action PlayFadeIn { get; set; }
+        public Action PlayFadeOut { get; set; }
         public PlaySettingState State
         {
             get => _state;
@@ -93,11 +96,19 @@ namespace BeABachelor.PlaySetting
                     State = PlaySettingState.Confirm;
                     break;
                 case PlaySettingState.Confirm:
-                    _gameManager.GameState = GameState.Ready;
+                    StateChangeWaitFade().Forget();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+        }
+        
+        private async UniTask StateChangeWaitFade()
+        {
+            await UniTask.Delay(1000);
+            PlayFadeOut?.Invoke();
+            await UniTask.Delay(1500);
+            _gameManager.GameState = GameState.Ready;
         }
         
         private void BackState()
