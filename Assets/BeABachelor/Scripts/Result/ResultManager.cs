@@ -1,5 +1,7 @@
 ﻿using System;
 using BeABachelor.Interface;
+using Cysharp.Threading.Tasks;
+using UnityEngine;
 using Zenject;
 
 namespace BeABachelor.Result
@@ -20,7 +22,18 @@ namespace BeABachelor.Result
 
         public void ToTile()
         {
+            StateChangeWithFade().Forget();
+        }
+
+        private async UniTask StateChangeWithFade()
+        {
+            await UniTask.Delay(1000);
+            PlayFadeOut?.Invoke();
+            await UniTask.Delay(1500);
             _gameManager.GameState = GameState.Title;
         }
+
+        public Action PlayFadeIn { get; set; }
+        public Action PlayFadeOut { get; set; }
     }
 }
