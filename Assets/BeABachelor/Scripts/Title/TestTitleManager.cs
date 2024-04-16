@@ -1,3 +1,4 @@
+using System;
 using BeABachelor.Interface;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,5 +39,8 @@ namespace BeABachelor
                 Debug.Log("Imprement scene transition to GameScene.");
             }
         }
+
+        public Action PlayFadeIn { get; set; }
+        public Action PlayFadeOut { get; set; }
     }
 }

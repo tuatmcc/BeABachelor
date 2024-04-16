@@ -115,7 +115,8 @@ GameObject:
   - component: {fileID: 7675788298508913678}
   - component: {fileID: 1510039449598903869}
   - component: {fileID: 4318224726023051469}
-  - component: {fileID: 7613102604927426320}
+  - component: {fileID: 7933539024178637859}
+  - component: {fileID: 2896591040902417054}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -157,7 +158,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6911781490189254030}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -180,7 +181,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!95 &7613102604927426320
+--- !u!95 &7933539024178637859
 Animator:
   serializedVersion: 5
   m_ObjectHideFlags: 0
@@ -201,6 +202,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2896591040902417054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6911781490189254030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e4852ee7c6641e439c2745961011ca8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7369004457055593527
 GameObject:
   m_ObjectHideFlags: 0
