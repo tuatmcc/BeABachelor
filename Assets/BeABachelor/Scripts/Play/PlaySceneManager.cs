@@ -5,12 +5,13 @@ using System;
 using System.Threading;
 using BeABachelor.Networking;
 using BeABachelor.Networking.Interface;
+using BeABachelor.Util;
 using UnityEngine;
 using Zenject;
 
 namespace BeABachelor.Play
 {
-    public class PlaySceneManager : MonoBehaviour
+    public class PlaySceneManager : MonoBehaviour, IFade
     {
         public event Action<int> OnCountChanged;
         public event Action<int> OnTimeChanged;
@@ -183,11 +184,14 @@ namespace BeABachelor.Play
             return _gameManager.PlayerType == PlayerType.Hakken ? hakken : kouken;
         }
 
-        public void FinishPlay()
+        public async UniTask FinishPlay()
         {
             _cts?.Cancel();
             if(_gameManager.GameState == GameState.Playing)
             {
+                await UniTask.Delay(1000);
+                PlayFadeOut?.Invoke();
+                await UniTask.Delay(1500);
                 _gameManager.GameState = GameState.Result;
                 _gameManager.GameState = GameState.Finished;
             }
@@ -198,5 +202,8 @@ namespace BeABachelor.Play
             return _gameManager.PlayerType == PlayerType.Hakken ? 
                 hakken.GetComponent<KeyControlledPlayer>() : kouken.GetComponent<KeyControlledPlayer>();
         }
+
+        public Action PlayFadeIn { get; set; }
+        public Action PlayFadeOut { get; set; }
     }
 }
