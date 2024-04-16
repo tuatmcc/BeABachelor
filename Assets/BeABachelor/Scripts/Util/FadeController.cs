@@ -1,34 +1,24 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace BeABachelor.Util
 {
-    public class FadeController : MonoBehaviour
+    public abstract class FadeController : MonoBehaviour
     {
-        [Inject] private ITitleManager _titleManager;
-        private Animator _animator;
-        private int _fadeOut;
-        private Image _image;
-
-        private void Awake()
-        {
-            _image = GetComponent<Image>();
-            _image.enabled = true;
-            _animator = GetComponent<Animator>();
-            _fadeOut = Animator.StringToHash("FadeOut");
-            _titleManager.PlayFadeIn = PlayFadeIn;
-            _titleManager.PlayFadeOut = PlayFadeOut;
-        }
+        protected Animator Animator;
+        protected int FadeOut;
+        protected Image Image;
 
         public void PlayFadeIn()
         {
-            _animator.SetBool(_fadeOut, false);
+            Animator.SetBool(FadeOut, false);
         }
 
         public void PlayFadeOut()
         {
-            _animator.SetBool(_fadeOut, true);
+            Animator.SetBool(FadeOut, true);
         }
     }
 }
