@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,5 +8,7 @@ namespace BeABachelor
 {
     public interface ITitleManager
     {
+        Action PlayFadeIn { get; set; }
+        Action PlayFadeOut { get; set; }
     }
 }
