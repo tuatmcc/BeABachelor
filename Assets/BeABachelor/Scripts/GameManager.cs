@@ -1,6 +1,7 @@
 using System;
 using Zenject;
 using BeABachelor.Interface;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
 
@@ -61,6 +62,7 @@ namespace BeABachelor
                 switch (state)
                 {
                     case GameState.Title:
+                        Debug.Log("Title");
                         SceneManager.LoadScene("Title");
                         Reset();
                         break;

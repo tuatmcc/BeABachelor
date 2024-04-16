@@ -1,6 +1,8 @@
-﻿namespace BeABachelor.Result
+﻿using BeABachelor.Util;
+
+namespace BeABachelor.Result
 {
-    public interface IResultManager
+    public interface IResultManager : IFade
     {
         string ResultText { get; }
         string ScoreText { get; }
