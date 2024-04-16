@@ -16,10 +16,12 @@ namespace BeABachelor.Title
         
         [Inject] private IGameManager _gameManager;
         private PlayerInput _playerInput;
+        private bool _sceneChangeFlag;
         
         private void Awake()
         {
             _playerInput = GetComponent<PlayerInput>();
+            _sceneChangeFlag = false;
         }
 
         private void Start()
@@ -29,9 +31,11 @@ namespace BeABachelor.Title
 
         private void OnKeyDown(InputAction.CallbackContext context)
         {
-            if (context.action.name == "Space")
+            if (context.action.name == "Space" && !_sceneChangeFlag)
             {
+                _sceneChangeFlag = true;
                 StateChangeWaitFade().Forget();
+                Debug.Log("Space");
             }
         }
 
