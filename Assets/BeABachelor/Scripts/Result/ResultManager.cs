@@ -6,9 +6,10 @@ using Zenject;
 
 namespace BeABachelor.Result
 {
-    public class ResultManager : IResultManager
+    public class ResultManager : IResultManager, IInitializable
     {
         [Inject] private IGameManager _gameManager;
+        private bool _sceneChangeFlag;
 
         public string ResultText => _gameManager.ResultState switch
         {
@@ -27,6 +28,8 @@ namespace BeABachelor.Result
 
         private async UniTask StateChangeWithFade()
         {
+            if (_sceneChangeFlag) return;
+            _sceneChangeFlag = true;
             await UniTask.Delay(1000);
             PlayFadeOut?.Invoke();
             await UniTask.Delay(1500);
@@ -35,5 +38,9 @@ namespace BeABachelor.Result
 
         public Action PlayFadeIn { get; set; }
         public Action PlayFadeOut { get; set; }
+        public void Initialize()
+        {
+            _sceneChangeFlag = false;
+        }
     }
 }

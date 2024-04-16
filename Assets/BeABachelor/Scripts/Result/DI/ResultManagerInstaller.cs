@@ -6,7 +6,7 @@ namespace BeABachelor.Result.DI
     {
         public override void InstallBindings()
         {
-            Container.Bind<IResultManager>()
+            Container.Bind(typeof(IResultManager), typeof(IInitializable))
                 .To<ResultManager>()
                 .FromNew()
                 .AsSingle();

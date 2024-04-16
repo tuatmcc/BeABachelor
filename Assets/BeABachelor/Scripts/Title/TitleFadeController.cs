@@ -16,6 +16,7 @@ namespace BeABachelor.Title
             FadeOut = Animator.StringToHash("FadeOut");
             _titleManager.PlayFadeIn = PlayFadeIn;
             _titleManager.PlayFadeOut = PlayFadeOut;
+            DisableImage();
         }
     }
 }

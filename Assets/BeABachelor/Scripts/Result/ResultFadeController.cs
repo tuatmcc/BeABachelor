@@ -17,6 +17,7 @@ namespace BeABachelor.Result
             FadeOut = Animator.StringToHash("FadeOut");
             _resultManager.PlayFadeIn = PlayFadeIn;
             _resultManager.PlayFadeOut = PlayFadeOut;
+            DisableImage();
         }
     }
 }

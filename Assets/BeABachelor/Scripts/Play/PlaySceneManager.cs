@@ -50,9 +50,11 @@ namespace BeABachelor.Play
         private CancellationTokenSource _cts;
         private bool _counting;
         private long _startTime;
+        private bool _sceneChangeFlag;
 
         public void Start()
         {
+            _sceneChangeFlag = false;
             // 未選択の場合
             if(_gameManager.PlayType == PlayType.NotSelected)
             {
@@ -187,13 +189,18 @@ namespace BeABachelor.Play
         public async UniTask FinishPlay()
         {
             _cts?.Cancel();
-            if(_gameManager.GameState == GameState.Playing)
+            if(_gameManager.GameState == GameState.Playing && !_sceneChangeFlag)
             {
+                _sceneChangeFlag = true;
                 await UniTask.Delay(1000);
                 PlayFadeOut?.Invoke();
                 await UniTask.Delay(1500);
                 _gameManager.GameState = GameState.Result;
                 _gameManager.GameState = GameState.Finished;
+            }
+            else if(_gameManager.GameState == GameState.Playing && _sceneChangeFlag)
+            {
+                Debug.LogError("Scene change flag is already set, so cannot change scene");
             }
         }
 

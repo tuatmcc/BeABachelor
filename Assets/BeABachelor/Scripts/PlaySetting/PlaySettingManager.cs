@@ -22,6 +22,7 @@ namespace BeABachelor.PlaySetting
         [Inject] private IGameManager _gameManager;
         private PlaySettingState _state;
         private PlaySettingUIBase _activeUI;
+        private bool _sceneChangeFlag;
 
         public Action<PlaySettingState> OnPlaySettingStateChanged { get; set; }
         public Action PlayFadeIn { get; set; }
@@ -44,6 +45,7 @@ namespace BeABachelor.PlaySetting
         {
             playerInput = GetComponent<PlayerInput>();
             _gameManager.PlayerType = PlayerType.Kouken;
+            _sceneChangeFlag = false;
         }
 
         public void OnEnable()
@@ -105,6 +107,8 @@ namespace BeABachelor.PlaySetting
         
         private async UniTask StateChangeWaitFade()
         {
+            if (_sceneChangeFlag) return;
+            _sceneChangeFlag = true;
             await UniTask.Delay(1000);
             PlayFadeOut?.Invoke();
             await UniTask.Delay(1500);

@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -18,7 +19,19 @@ namespace BeABachelor.Util
 
         public void PlayFadeOut()
         {
+            Image.enabled = true;
             Animator.SetBool(FadeOut, true);
+        }
+
+        protected void DisableImage()
+        {
+            DisableImageAsync().Forget();
+        }
+        
+        private async UniTask DisableImageAsync()
+        {
+            await UniTask.Delay(500);
+            Image.enabled = false;
         }
     }
 }
