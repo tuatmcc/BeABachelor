@@ -28,6 +28,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 521792029397107977, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7f3232d8d87ebac981919170f4af509, type: 2}
     - target: {fileID: 658221511246633534, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
       propertyPath: m_Name
       value: McccGreen
@@ -40,6 +44,22 @@ PrefabInstance:
       propertyPath: UseReceivedData
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1599441881394804321, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 66abddfcabba273be85b124984d5b620, type: 2}
+    - target: {fileID: 1619018039963462035, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f1ad3ba243c2510b6b12c8aa61945a54, type: 2}
+    - target: {fileID: 4785635885842359351, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 66abddfcabba273be85b124984d5b620, type: 2}
+    - target: {fileID: 8296236586851929542, guid: eb97fa42c570151bc8a8d1d5ac8a2539, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: f1ad3ba243c2510b6b12c8aa61945a54, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
