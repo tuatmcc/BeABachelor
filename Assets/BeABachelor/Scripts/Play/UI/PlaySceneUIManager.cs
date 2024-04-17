@@ -10,6 +10,7 @@ namespace BeABachelor.Play.UI
     {
         [SerializeField] private GameObject waitOpponentPanel;
         [SerializeField] private CountDownText countDownText;
+        [SerializeField] private GameObject finishImage;
         
         [Inject] private INetworkManager _networkManager;
         [Inject] private IGameManager _gameManager;
@@ -25,15 +26,25 @@ namespace BeABachelor.Play.UI
                 return; 
             }
         }
+        
+        private void EnableFinishImage(GameState state)
+        {
+            if(state == GameState.Finished)
+                finishImage.SetActive(true);
+
+        }
+        
         private void Start()
         {
             _playSceneManager.OnCountChanged += countDownText.CountText;
+            _gameManager.OnGameStateChanged += EnableFinishImage;
             if (_gameManager.PlayType != PlayType.Multi) return;
             if(!_networkManager.OpponentReady) waitOpponentPanel?.SetActive(true);
             _networkManager.OpponentReadyEvent += OnOpponentReady;
         }
         private void OnDestroy()
         {
+            _gameManager.OnGameStateChanged -= EnableFinishImage;
             _playSceneManager.OnCountChanged -= countDownText.CountText;
             if (_gameManager.PlayType != PlayType.Multi) return;
             _networkManager.OpponentReadyEvent -= OnOpponentReady;
