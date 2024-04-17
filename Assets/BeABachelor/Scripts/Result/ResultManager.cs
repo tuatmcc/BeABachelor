@@ -19,7 +19,7 @@ namespace BeABachelor.Result
             _ => throw new NotImplementedException()
         };
 
-        public string ScoreText => $"{_gameManager.Score}単位取得！";
+        public string ScoreText => $"{_gameManager.Score}";
 
         public void ToTile()
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using BeABachelor.Interface;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,15 +9,24 @@ namespace BeABachelor.Result
 {
     public class ResultSceneUIManager : MonoBehaviour
     {
-        [SerializeField] private Text resultText;
+        [SerializeField] private Image resultImage;
+        [SerializeField] private Sprite gokokau;
+        [SerializeField] private Sprite nakayokuGokaku;
+        [SerializeField] private Sprite ryunen;
         [SerializeField] private Text scoreText;
         [SerializeField] private PlayerInput playerInput;
         
         [Inject] private IResultManager _resultManager;
+        [Inject] private IGameManager _gameManager;
 
         private void Start()
         {
-            resultText.text = _resultManager.ResultText;
+            resultImage.sprite = _gameManager.ResultState switch
+            {
+                ResultState.Win => gokokau,
+                ResultState.Lose => ryunen,
+                ResultState.Draw => nakayokuGokaku
+            };
             scoreText.text = _resultManager.ScoreText;
             playerInput.actions["Space"].performed += ToTile;
         }
