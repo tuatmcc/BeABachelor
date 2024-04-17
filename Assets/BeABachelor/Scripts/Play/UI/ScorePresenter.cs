@@ -14,7 +14,7 @@ namespace BeABachelor.Play.UI
 
         void Start()
         {
-            text.text = $"000単位";
+            text.text = $"00/30単位";
             text.enabled = false;
             gameManager.OnScoreChanged += OnScoreChanged;
             gameManager.OnGameStateChanged += EnaleText;
@@ -29,7 +29,7 @@ namespace BeABachelor.Play.UI
         private void OnScoreChanged(int score)
         {
             Debug.Log($"Score : {score}");
-            text.text = $"{score :000}単位";
+            text.text = $"{score :00}/30単位";
         }
 
         private void EnaleText(GameState gameState)
