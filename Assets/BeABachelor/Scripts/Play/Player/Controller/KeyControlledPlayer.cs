@@ -123,6 +123,7 @@ namespace BeABachelor.Play.Player
                 case GameState.Finished:
                     playing = false;
                     finished = true;
+                    rb.velocity = Vector3.zero;
                     break;
                 default:
                     break;
