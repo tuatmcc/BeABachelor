@@ -1,5 +1,7 @@
 using System;
 using BeABachelor.Interface;
+using BeABachelor.Networking;
+using BeABachelor.Networking.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +22,7 @@ namespace BeABachelor.PlaySetting
         [SerializeField] private GameObject kouken;
         
         [Inject] private IGameManager _gameManager;
+        [Inject] private INetworkManager _networkManager;
         private PlaySettingState _state;
         private PlaySettingUIBase _activeUI;
         private bool _sceneChangeFlag;
@@ -86,6 +89,7 @@ namespace BeABachelor.PlaySetting
 
         private void NextState()
         {
+            Debug.Log(_state);
             switch (_state)
             {
                 case PlaySettingState.PlayMode:
@@ -104,11 +108,30 @@ namespace BeABachelor.PlaySetting
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        private async UniTask ShowConnectWaitUI()
+        {
+            await UniTask.WaitWhile(() => _networkManager.NetworkState == NetworkState.Connecting);
+            if (_networkManager.NetworkState == NetworkState.Connected)
+            {
+                State = PlaySettingState.Confirm;
+            }
+        }
         
         private async UniTask StateChangeWaitFade()
         {
             if (_sceneChangeFlag) return;
             _sceneChangeFlag = true;
+
+            if (_gameManager.PlayType == PlayType.Multi)
+            {
+                if (!_networkManager.IsConnected)
+                {
+                    _sceneChangeFlag = false;
+                    return;
+                }
+            }
+
             await UniTask.Delay(1000);
             PlayFadeOut?.Invoke();
             await UniTask.Delay(1500);
@@ -137,6 +160,7 @@ namespace BeABachelor.PlaySetting
 
         private void OnPlaySettingStateChange(PlaySettingState state)
         {
+            Debug.Log($"OnPlaySettingStateChange: {state}");
             switch (state)
             {
                 case PlaySettingState.PlayMode:
