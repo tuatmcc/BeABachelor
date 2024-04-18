@@ -65,7 +65,7 @@ namespace BeABachelor.PlaySetting
 
         public override void Space()
         {
-            if (_networkManager.NetworkState != NetworkState.Connecting && _failedFlag)
+            if (_networkManager.NetworkState == NetworkState.Disconnected && _failedFlag)
             {
                 HideAll();
                 _failedFlag = false;
