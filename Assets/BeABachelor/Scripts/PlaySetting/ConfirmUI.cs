@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using BeABachelor.Interface;
+using BeABachelor.Networking;
 using BeABachelor.Networking.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -14,8 +15,10 @@ namespace BeABachelor.PlaySetting
         [SerializeField] private GameObject confirmUI;
         [SerializeField] private GameObject connectionFailedUI;
         
-        [Inject] private IGameManager _gameManager;
         [Inject] private INetworkManager _networkManager;
+        [Inject] private IPlaySettingManager _playSettingManager;
+        
+        private bool _failedFlag;
 
         private void OnConnect(EndPoint _)
         {
@@ -29,10 +32,19 @@ namespace BeABachelor.PlaySetting
             connectingUI.SetActive(false);
             confirmUI.SetActive(false);
             connectionFailedUI.SetActive(true);
+            _failedFlag = true;
+        }
+        
+        private void HideAll()
+        {
+            connectingUI.SetActive(false);
+            confirmUI.SetActive(false); 
+            connectionFailedUI.SetActive(false);
         }
         
         private void Start()
         {
+            _failedFlag = false;
             _networkManager.OnConnected += OnConnect;
             _networkManager.OnDisconnected += OnDisconnect;
         }
@@ -53,6 +65,12 @@ namespace BeABachelor.PlaySetting
 
         public override void Space()
         {
+            if (_networkManager.NetworkState != NetworkState.Connecting && _failedFlag)
+            {
+                HideAll();
+                _failedFlag = false;
+                _playSettingManager.State = PlaySettingState.PlayerType;
+            }
         }
 
         public override void Activate()
