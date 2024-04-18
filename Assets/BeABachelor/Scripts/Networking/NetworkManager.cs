@@ -91,7 +91,19 @@ namespace BeABachelor.Networking
         public async UniTask ConnectAsync(int timeOut = 5)
         {
             NetworkState = NetworkState.Connecting;
-            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
+            if (IPAddress.TryParse(_ip, out var ipAddress))
+            {
+                _endpoint = new IPEndPoint(ipAddress, _remoteEndpointPort);
+            }
+            else
+            {
+                Debug.LogError("Invalid IP Address");
+                // ちょっと待たないと UI が更新されない
+                await UniTask.Delay(500);
+                NetworkState = NetworkState.Disconnected;
+                return;
+            }
+            
             _client = new UdpClient(_clientPort);
             if (_client == null)
             {
