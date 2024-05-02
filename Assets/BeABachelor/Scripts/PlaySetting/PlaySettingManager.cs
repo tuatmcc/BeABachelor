@@ -26,6 +26,7 @@ namespace BeABachelor.PlaySetting
         private PlaySettingState _state;
         private PlaySettingUIBase _activeUI;
         private bool _sceneChangeFlag;
+        private bool _ignoreBack;
 
         public Action<PlaySettingState> OnPlaySettingStateChanged { get; set; }
         public Action PlayFadeIn { get; set; }
@@ -49,6 +50,7 @@ namespace BeABachelor.PlaySetting
             playerInput = GetComponent<PlayerInput>();
             _gameManager.PlayerType = PlayerType.Kouken;
             _sceneChangeFlag = false;
+            _ignoreBack = false;
         }
 
         public void OnEnable()
@@ -82,7 +84,8 @@ namespace BeABachelor.PlaySetting
                     NextState();
                     break;
                 case "Back":
-                    BackState();
+                    if (!_ignoreBack)
+                        BackState();
                     break;
             }
         }
