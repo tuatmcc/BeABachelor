@@ -38,6 +38,10 @@ namespace BeABachelor.PlaySetting
             {
                 _state = value;
                 OnPlaySettingStateChanged?.Invoke(_state);
+                if (_state != PlaySettingState.Confirm)
+                {
+                    _ignoreBack = false;
+                }
             }
         }
 
@@ -102,6 +106,7 @@ namespace BeABachelor.PlaySetting
                     State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.Confirm : PlaySettingState.MultiplaySetting;
                     break;
                 case PlaySettingState.MultiplaySetting:
+                    _ignoreBack = true;
                     State = PlaySettingState.Confirm;
                     break;
                 case PlaySettingState.Confirm:
