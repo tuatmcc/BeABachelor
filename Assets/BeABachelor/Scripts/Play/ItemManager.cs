@@ -35,7 +35,7 @@ namespace BeABachelor.Play.Items
             ItemNum = count;
             for(int i = 0; i < count; i++)
             {
-                var item = transform.GetChild(i);
+                var item = transform.GetChild(i).GetChild(0);
                 var itembase = item.GetComponent<ItemBase>();
                 itembase.ItemID = i;
                 items.Add(item.gameObject);
