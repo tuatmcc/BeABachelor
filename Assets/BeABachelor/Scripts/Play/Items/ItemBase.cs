@@ -32,7 +32,7 @@ namespace BeABachelor.Play.Items
 
             if(DestroyOnItemCollectorHit)
             {
-                Destroy(gameObject);
+                Destroy(gameObject.transform.parent.gameObject);
             }
         }
 
