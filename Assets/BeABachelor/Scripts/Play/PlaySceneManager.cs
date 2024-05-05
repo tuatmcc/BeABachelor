@@ -44,6 +44,12 @@ namespace BeABachelor.Play
             }
         }
 
+        public UnityEngine.Camera MainCamera
+        {
+            get => _mainCamera;
+            set => _mainCamera = value;
+        }
+
         private int _count;
         private int _timer;
 
@@ -51,6 +57,7 @@ namespace BeABachelor.Play
         private bool _counting;
         private long _startTime;
         private bool _sceneChangeFlag;
+        private UnityEngine.Camera _mainCamera;
 
         public void Start()
         {

@@ -434,6 +434,14 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 17168180}
+    - target: {fileID: 4860615250372638969, guid: 0d97924b5bdd22b038c1f14b8812fefc, type: 3}
+      propertyPath: m_Cameras.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4860615250372638969, guid: 0d97924b5bdd22b038c1f14b8812fefc, type: 3}
+      propertyPath: m_Cameras.Array.data[0]
+      value: 
+      objectReference: {fileID: 3044231038661767269}
     - target: {fileID: 5377201454707152750, guid: 0d97924b5bdd22b038c1f14b8812fefc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.4
@@ -491,14 +499,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1113237906771441925, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
-      propertyPath: m_FontData.m_Font
-      value: 
-      objectReference: {fileID: 12800000, guid: bc7e165a1130aca48a5366dcf53b4356, type: 3}
-    - target: {fileID: 2624843370339291060, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
-      propertyPath: m_FontData.m_Font
-      value: 
-      objectReference: {fileID: 12800000, guid: bc7e165a1130aca48a5366dcf53b4356, type: 3}
     - target: {fileID: 4083102615873661779, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -579,18 +579,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4099008072335733559, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
-      propertyPath: m_FontData.m_Font
-      value: 
-      objectReference: {fileID: 12800000, guid: 6a657205967e4754b96ba3233eea03ed, type: 3}
-    - target: {fileID: 4457735972594970874, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
-      propertyPath: m_FontData.m_Font
-      value: 
-      objectReference: {fileID: 12800000, guid: 6a657205967e4754b96ba3233eea03ed, type: 3}
-    - target: {fileID: 6811095246857655294, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7303825663671476842, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
       propertyPath: m_Name
       value: Canvas
@@ -600,6 +588,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
+--- !u!20 &3044231038661767269 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 2631683166083607884, guid: b1e343bb7db24ba41aed876927a0c85b, type: 3}
+  m_PrefabInstance: {fileID: 3044231038661767268}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3576703884080393685
 PrefabInstance:
   m_ObjectHideFlags: 0
