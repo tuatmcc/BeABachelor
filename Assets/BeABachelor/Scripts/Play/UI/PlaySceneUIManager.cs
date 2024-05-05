@@ -39,6 +39,9 @@ namespace BeABachelor.Play.UI
             _playSceneManager.OnCountChanged += countDownText.CountText;
             _gameManager.OnGameStateChanged += EnableFinishImage;
             if (_gameManager.PlayType != PlayType.Multi) return;
+            
+            // これ以降はマルチプレイのみ
+            
             if(!_networkManager.OpponentReady) waitOpponentPanel?.SetActive(true);
             _networkManager.OpponentReadyEvent += OnOpponentReady;
         }

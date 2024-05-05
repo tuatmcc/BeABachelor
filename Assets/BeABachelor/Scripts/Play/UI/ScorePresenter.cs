@@ -1,4 +1,5 @@
 using BeABachelor.Interface;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
@@ -29,7 +30,12 @@ namespace BeABachelor.Play.UI
         private void OnScoreChanged(int score)
         {
             Debug.Log($"Score : {score}");
-            text.text = $"{score :00}/30単位";
+            UniTask.Create(async () =>
+            {
+                await UniTask.Delay(500);
+                text.text = $"{score :00}/30単位";
+                return UniTask.CompletedTask;
+            }).Forget();
         }
 
         private void EnaleText(GameState gameState)

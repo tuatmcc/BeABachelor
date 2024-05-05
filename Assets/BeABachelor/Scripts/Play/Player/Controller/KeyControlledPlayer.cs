@@ -14,6 +14,7 @@ namespace BeABachelor.Play.Player
     {
         public event Action<long> OnStaminaChanged;
         public event Action<bool> OnRunnableChanged;
+        public event Action<bool> OnRunningChanged; 
 
         [Inject] IGameManager _gameManager;
 
@@ -41,12 +42,25 @@ namespace BeABachelor.Play.Player
             }
         }
 
+        public bool Running
+        {
+            get => running;
+            private set
+            {
+                running = value;
+                OnRunningChanged?.Invoke(running);
+            }
+        }
+        
+        public bool IsStaminaFull => Stamina == DefaultPlaySceneParams.StaminaMax;
+
         private InputAction move, run;
         private CancellationTokenSource _cts;
         private long stamina;
         private bool runnable;
         private bool playing = false;
         private bool finished = false;
+        private bool running = false;
 
         private void Awake()
         {
@@ -73,9 +87,10 @@ namespace BeABachelor.Play.Player
             {
                 // 入力から移動量を決定
                 var inputMoveAxis = move.ReadValue<Vector2>();
+                Running = !CantRun && run.IsPressed();
                 var movedir = new Vector3(inputMoveAxis.x * (float)directionX, 0.0f, inputMoveAxis.y * (float)directionY);
                 movedir *= DefaultPlaySceneParams.DefaultSpeed * 
-                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (run.IsPressed() ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
+                    (CantRun ? DefaultPlaySceneParams.NoStaminaSpeed : (Running ? DefaultPlaySceneParams.RunningSpeed : 1.0f));
 
                 rb.velocity = movedir;
                 //transform.position += movedir;
