@@ -51,12 +51,8 @@ namespace BeABachelor.Play.Items
                     return UniTask.CompletedTask;
                 }).Forget();
                 gameObject.SetActive(false);
+               _itemManager.ItemNum--;
             }
-        }
-
-        private void OnDestroy()
-        {
-            _itemManager.ItemNum--;
         }
     }
 }
