@@ -283,6 +283,7 @@ namespace BeABachelor.Networking
                 await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
                 if (token.IsCancellationRequested)
                 {
+                    // Stop receiveTask
                     receiveTask.Dispose();
                     return;
                 }
@@ -329,8 +330,7 @@ namespace BeABachelor.Networking
         public void Disconnect()
         {
             Debug.Log("Disconnect");
-            _disposeCancellationTokenSource?.Cancel();
-            _client?.Dispose();
+            _client.Close();
             _isConnected = false;
             NetworkState = NetworkState.Disconnected;
         }
