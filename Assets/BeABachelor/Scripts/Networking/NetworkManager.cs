@@ -157,7 +157,7 @@ namespace BeABachelor.Networking
             
             // ちょっと待たないと相手が受信できない
             Debug.Log("Wait 1 sec");
-            await UniTask.Delay(2000);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             cancellationTokenSource.Cancel();
             _client.Connect(_ip, _remoteEndpointPort);
             NetworkState = NetworkState.Connected;
