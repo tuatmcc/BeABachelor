@@ -1,6 +1,17 @@
 namespace BeABachelor
 {
     /// <summary>
+    /// デフォルトのネットワークプロパティ
+    /// </summary>
+    public static class NetworkProperties
+    {
+        /// <summary>
+        /// ポート
+        /// </summary>
+        public const int DEFAULT_PORT = 8888;
+    }
+
+    /// <summary>
     /// ゲームの状態
     /// </summary>
     public enum GameState
