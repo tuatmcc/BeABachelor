@@ -121,10 +121,11 @@ namespace BeABachelor.Networking
             _isConnected = false;
             
             NetworkState = NetworkState.Connecting;
-            Debug.Log($"Connecting");
+            Debug.Log($"Connecting {_client}");
             try
             {
-                _client ??= new UdpClient(_clientPort);
+                _client?.Dispose();
+                _client = new UdpClient(_clientPort);
                 if (_client == null)
                 {
                     Debug.LogError("Failed to create UdpClient");
@@ -139,6 +140,7 @@ namespace BeABachelor.Networking
             }
 
             Debug.Log($"IsConnected : {_client.Client.Connected}");
+            Debug.Log($"IsConnected : {_client.Client}");
             
             // キャンセルトークン生成
             var timeController = new TimeoutController();
@@ -318,6 +320,7 @@ namespace BeABachelor.Networking
 
         public void Dispose()
         {
+            Debug.Log("Dispose");
             _client?.Dispose();
             _disposeCancellationTokenSource?.Cancel();
             NetworkState = NetworkState.Disconnected;
@@ -325,6 +328,7 @@ namespace BeABachelor.Networking
         
         public void Disconnect()
         {
+            Debug.Log("Disconnect");
             _disposeCancellationTokenSource?.Cancel();
             _client?.Dispose();
             _isConnected = false;
