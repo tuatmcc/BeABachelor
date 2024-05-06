@@ -127,7 +127,7 @@ namespace BeABachelor.Networking
             }
             
             NetworkState = NetworkState.Connecting;
-            _client = new UdpClient(_clientPort);
+            _client ??= new UdpClient(_clientPort);
             if (_client == null)
             {
                 Debug.LogError("Failed to create UdpClient");
