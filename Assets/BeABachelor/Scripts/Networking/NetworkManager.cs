@@ -31,6 +31,7 @@ namespace BeABachelor.Networking
         private bool _opponentReady;
         private NetworkState _networkState;
         private int _randNum;
+        private NetworkConfig _networkConfig;
 
         public bool IsConnected => _isConnected;
         public EndPoint RemoteEndPoint => _endpoint;
@@ -97,6 +98,18 @@ namespace BeABachelor.Networking
         
         public async UniTask ConnectAsync(int timeout = 5)
         {
+            const string path = "config.json";
+            if(!File.Exists(path))
+            {
+                Debug.LogError("config.json is not found");
+                NetworkConfig config = new ();
+                config.defaultPort = NetworkProperties.DefaultPort;
+                config.ipAddresses = new string[0];
+                await File.WriteAllTextAsync(path, JsonUtility.ToJson(config));
+                return;
+            }
+            var json = await File.ReadAllTextAsync(path);
+            _networkConfig = JsonUtility.FromJson<NetworkConfig>(json);
             if (_gameManager.PlayerType == PlayerType.NotSelected)
             {
                 Debug.LogError("PlayerType is not selected");
@@ -243,26 +256,14 @@ namespace BeABachelor.Networking
         /// <param name="randNum"></param>
         private void SendAck2AllIpAddress()
         {
-            const string path = "config.json";
-            if(!File.Exists(path))
-            {
-                Debug.LogError("config.json is not found");
-                NetworkConfig config = new ();
-                config.defaultPort = NetworkProperties.DefaultPort;
-                config.ipAddresses = new string[0];
-                File.WriteAllText(path, JsonUtility.ToJson(config));
-                return;
-            }
-            var json = File.ReadAllText(path);
-            var networkConfig = JsonUtility.FromJson<NetworkConfig>(json);
-            if (networkConfig.ipAddresses.Length == 0)
+            if (_networkConfig.ipAddresses.Length == 0)
             {
                 Debug.LogError("No IP Address");
                 return;
             }
-            foreach (var ip in networkConfig.ipAddresses)
+            foreach (var ip in _networkConfig.ipAddresses)
             {
-                SendACKOnceAsync(ip, networkConfig.defaultPort).Forget();
+                SendACKOnceAsync(ip, _networkConfig.defaultPort).Forget();
             }
         }
         
