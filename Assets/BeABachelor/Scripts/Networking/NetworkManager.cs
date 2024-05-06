@@ -94,90 +94,6 @@ namespace BeABachelor.Networking
             _isHost = isHost;
             await ConnectAsync(timeOut);
         }
-
-        // public async UniTask ConnectAsync(int timeOut = 5)
-        // {
-        //     NetworkState = NetworkState.Connecting;
-        //     if (IPAddress.TryParse(_ip, out var ipAddress))
-        //     {
-        //         _endpoint = new IPEndPoint(ipAddress, _remoteEndpointPort);
-        //     }
-        //     else
-        //     {
-        //         Debug.LogError("Invalid IP Address");
-        //         // ちょっと待たないと UI が更新されない
-        //         await UniTask.Delay(500);
-        //         NetworkState = NetworkState.Disconnected;
-        //         return;
-        //     }
-        //     
-        //     _client = new UdpClient(_clientPort);
-        //     if (_client == null)
-        //     {
-        //         Debug.LogError("Failed to create UdpClient");
-        //         NetworkState = NetworkState.Disconnected;
-        //         return;
-        //     }
-        //     _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
-        //     _isConnected = false;
-        //     var timeController = new TimeoutController();
-        //     var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
-        //     var cancellationTokenSource = new CancellationTokenSource();
-        //     var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
-        //     UdpReceiveResult result;
-        //     var ack = (byte)(_isHost ? 0xff : 0xfe);
-        //     var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
-        //         .Subscribe(_ => _client.Send(new byte[] { ack }, 1, _ip, _remoteEndpointPort));
-        //
-        //     var receiveTask = _client.ReceiveAsync();
-        //     await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
-        //     // ちょっと待たないと相手が受信できない
-        //     await UniTask.Delay(TimeSpan.FromSeconds(1));
-        //     if (timeoutToken.IsCancellationRequested)
-        //     {
-        //         sendTask.Dispose();
-        //         _client.Dispose();
-        //         Debug.LogError("Connection timed out");
-        //         NetworkState = NetworkState.Disconnected;
-        //         return;
-        //     }
-        //
-        //     if (!receiveTask.IsCompleted)
-        //     {
-        //         Debug.LogError("Receive Task is not completed");
-        //         NetworkState = NetworkState.Disconnected;
-        //         return;
-        //     }
-        //
-        //     result = receiveTask.Result;
-        //     if (result.Buffer[0] == (_isHost ? 0xfe : 0xff) && result.RemoteEndPoint.Equals(_endpoint) &&
-        //                                              !timeoutToken.IsCancellationRequested)
-        //     {
-        //         _isConnected = true;
-        //         _client.Connect(_ip, _remoteEndpointPort);
-        //         cancellationTokenSource.Cancel();
-        //         Debug.Log("Connected");
-        //         NetworkState = NetworkState.Connected;
-        //         ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
-        //         return;
-        //     }
-        //     
-        //     Debug.LogError("Connection Failed");
-        //     if (_isHost)
-        //     {
-        //         Debug.LogError(result.Buffer[0] == 0xff
-        //             ? "Host is me"
-        //             : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
-        //     }
-        //     else
-        //     {
-        //         Debug.LogError(result.Buffer[0] == 0xfe
-        //             ? "I'm not host"
-        //             : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
-        //     }
-        //     NetworkState = NetworkState.Disconnected;
-        // }
-        //
         
         public async UniTask ConnectAsync(int timeout = 5)
         {
@@ -188,6 +104,7 @@ namespace BeABachelor.Networking
             }
             _isHost = _gameManager.PlayerType == PlayerType.Hakken;
             _clientPort = NetworkProperties.DefaultPort;
+            _remoteEndpointPort = NetworkProperties.DefaultPort;
             _isConnected = false;
             // すでに接続中か接続済みの場合はエラー
             if (NetworkState != NetworkState.Disconnected)
@@ -226,6 +143,7 @@ namespace BeABachelor.Networking
             }
             
             // ちょっと待たないと相手が受信できない
+            Debug.Log("Wait 1 sec");
             await UniTask.Delay(TimeSpan.FromSeconds(1));
             cancellationTokenSource.Cancel();
             NetworkState = NetworkState.Connected;
