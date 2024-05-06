@@ -181,6 +181,8 @@ namespace BeABachelor.Networking
         
         public async UniTask ConnectAsync(int timeout = 5)
         {
+            _isHost = _gameManager.PlayerType == PlayerType.Hakken;
+            _clientPort = NetworkProperties.DefaultPort;
             _isConnected = false;
             // すでに接続中か接続済みの場合はエラー
             if (NetworkState != NetworkState.Disconnected)
@@ -232,6 +234,7 @@ namespace BeABachelor.Networking
         {
             while(true)
             {
+                Debug.Log("Receive ACK");
                 var receiveTask = _client.ReceiveAsync();
                 await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
                 if (token.IsCancellationRequested)
@@ -263,6 +266,7 @@ namespace BeABachelor.Networking
                 {
                     // 接続失敗
                     var randNum = result.Buffer[1] | (result.Buffer[2] << 8) | (result.Buffer[3] << 16) | (result.Buffer[4] << 24);
+                    Debug.Log($"header:{result.Buffer[0]:X2} randNum:{randNum} _randNum:{_randNum}");
                     if (randNum == _randNum)
                     {
                         // 乱数が一致した場合は再送信
