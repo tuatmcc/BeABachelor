@@ -1,6 +1,7 @@
 using System;
 using Zenject;
 using BeABachelor.Interface;
+using BeABachelor.Networking.Interface;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
@@ -50,6 +51,8 @@ namespace BeABachelor
         private GameState _gameState;
         private int _score;
         private int _tick;
+        
+        [Inject] private INetworkManager _networkManager;
 
         public void Initialize()
         {
@@ -82,7 +85,7 @@ namespace BeABachelor
                         {
                             ResultState = 30 <= _score ? ResultState.Win : ResultState.Lose;
                         }
-
+                        _networkManager.Disconnect();
                         SceneManager.LoadScene("Result");
                         break;
                     case GameState.CountDown:
