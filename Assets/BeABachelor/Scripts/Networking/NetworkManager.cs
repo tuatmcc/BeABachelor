@@ -181,6 +181,11 @@ namespace BeABachelor.Networking
         
         public async UniTask ConnectAsync(int timeout = 5)
         {
+            if (_gameManager.PlayerType == PlayerType.NotSelected)
+            {
+                Debug.LogError("PlayerType is not selected");
+                _gameManager.PlayerType = PlayerType.Hakken;
+            }
             _isHost = _gameManager.PlayerType == PlayerType.Hakken;
             _clientPort = NetworkProperties.DefaultPort;
             _isConnected = false;
@@ -234,7 +239,7 @@ namespace BeABachelor.Networking
         {
             while(true)
             {
-                Debug.Log("Receive ACK");
+                Debug.Log($"Receive ACK isHost{_isHost}");
                 var receiveTask = _client.ReceiveAsync();
                 await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
                 if (token.IsCancellationRequested)
@@ -271,6 +276,7 @@ namespace BeABachelor.Networking
                     {
                         // 乱数が一致した場合は再送信
                         _randNum = Random.Range(int.MinValue, int.MaxValue);
+                        Debug.Log("Same randNum");
                         continue;
                     }
                     if (randNum < _randNum)
