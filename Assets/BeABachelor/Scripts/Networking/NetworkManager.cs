@@ -159,6 +159,7 @@ namespace BeABachelor.Networking
             Debug.Log("Wait 1 sec");
             await UniTask.Delay(2000);
             cancellationTokenSource.Cancel();
+            _client.Connect(_ip, _remoteEndpointPort);
             NetworkState = NetworkState.Connected;
             Debug.Log("Connected");
             
@@ -188,14 +189,13 @@ namespace BeABachelor.Networking
                 }
 
                 var result = receiveTask.Result;
-                var endPoint = result.RemoteEndPoint;
+                _endpoint = result.RemoteEndPoint;
 
                 if (result.Buffer[0] == (_isHost ? 0xfe : 0xff))
                 {
                     // 接続成功
                     _isConnected = true;
-                    Debug.Log($"Connected to IP:{endPoint.Address} Port:{endPoint.Port}");
-                    _client.Connect(endPoint);
+                    _ip = result.RemoteEndPoint.ToString();
                     return true;
                 }
                 else if (result.Buffer[0] == (_isHost ? 0xff : 0xfe))
