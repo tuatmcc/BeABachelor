@@ -119,12 +119,6 @@ namespace BeABachelor.Networking
             _clientPort = NetworkProperties.DefaultPort;
             _remoteEndpointPort = NetworkProperties.DefaultPort;
             _isConnected = false;
-            // すでに接続中か接続済みの場合はエラー
-            if (NetworkState != NetworkState.Disconnected)
-            {
-                Debug.LogError("Already connected or connecting");
-                return;
-            }
             
             NetworkState = NetworkState.Connecting;
             _client ??= new UdpClient(_clientPort);
@@ -134,6 +128,7 @@ namespace BeABachelor.Networking
                 NetworkState = NetworkState.Disconnected;
                 return;
             }
+            Debug.Log($"IsConnected : {_client.Client.Connected}");
             
             // キャンセルトークン生成
             var timeController = new TimeoutController();
