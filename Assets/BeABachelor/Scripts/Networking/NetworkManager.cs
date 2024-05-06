@@ -221,6 +221,7 @@ namespace BeABachelor.Networking
                     if (randNum < _randNum)
                     {
                         // 自分の方が大きい場合はホスト
+                        _isHost = true;
                         continue;
                     }
                     else
