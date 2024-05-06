@@ -314,7 +314,7 @@ namespace BeABachelor.Networking
         private void SearchOpponent(CancellationToken token)
         {
             _randNum = Random.Range(int.MinValue, int.MinValue);
-            Observable.Interval(TimeSpan.FromSeconds(1.0f), cancellationToken: token)
+            Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
                 .Subscribe(_ => SendAck2AllIpAddress());
         }
 
