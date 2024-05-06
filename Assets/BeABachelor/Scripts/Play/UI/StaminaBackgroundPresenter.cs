@@ -8,37 +8,36 @@ namespace BeABachelor.Play.UI
 {
     public class StaminaBackgroundPresenter : MonoBehaviour
     {
-        [SerializeField] Image image;
-        [SerializeField] Sprite green;
-        [SerializeField] Sprite red;
-
         [Inject] IGameManager gameManager;
         [Inject] PlaySceneManager playSceneManager;
 
         private KeyControlledPlayer player;
+        private Image image;
 
         void Start()
         {
-            image.enabled = false;
+            gameObject.SetActive(false);
+            image = GetComponent<Image>();
+            // image.enabled = false;
             player = playSceneManager.GetKeyControlledPlayer();
             gameManager.OnGameStateChanged += EnableImage;
-            player.OnRunnableChanged += OnRunnableChanged;
+            player.OnStaminaChanged += OnStaminaChanged;
         }
 
         private void OnDestroy()
         {
             gameManager.OnGameStateChanged -= EnableImage;
-            player.OnRunnableChanged -= OnRunnableChanged;
+            player.OnStaminaChanged -= OnStaminaChanged;    
         }
-
-        private void OnRunnableChanged(bool runnable)
+        
+        private void OnStaminaChanged(long stamina)
         {
-            image.sprite = runnable ? green : red;
+            image.enabled = !player.IsStaminaFull;
         }
 
         private void EnableImage(GameState gameState)
         {
-            if(gameState == GameState.Playing) image.enabled = true;
+            if(gameState == GameState.Playing) gameObject.SetActive(true);
         }
     }
 }
