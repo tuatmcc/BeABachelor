@@ -14,12 +14,9 @@ namespace BeABachelor.PlaySetting
     {
         [SerializeField] private PlayerInput playerInput;
         [SerializeField] private PlaySettingUIBase playModeTypeUI;
-        [SerializeField] private PlaySettingUIBase playerTypeUI;
-        [SerializeField] private PlaySettingUIBase multiplaySettingUI;
+        [SerializeField] private PlaySettingUIBase connectingUI;
+        [SerializeField] private PlaySettingUIBase conectFailedUI;
         [SerializeField] private PlaySettingUIBase confirmUI;
-        
-        [SerializeField] private GameObject hakken;
-        [SerializeField] private GameObject kouken;
         
         [Inject] private IGameManager _gameManager;
         [Inject] private INetworkManager _networkManager;
@@ -41,6 +38,10 @@ namespace BeABachelor.PlaySetting
                 if (_state != PlaySettingState.Confirm)
                 {
                     _ignoreBack = false;
+                }
+                else if(_state == PlaySettingState.Connecting)
+                {
+                    _ignoreBack = true;
                 }
             }
         }
@@ -85,32 +86,40 @@ namespace BeABachelor.PlaySetting
                     break;
                 case "Space":
                     _activeUI.Space();
-                    NextState();
                     break;
                 case "Back":
-                    if (!_ignoreBack)
-                        BackState();
+                    _activeUI.Back();
                     break;
             }
         }
 
-        private void NextState()
+        public void NextState()
         {
-            Debug.Log(_state);
             switch (_state)
             {
                 case PlaySettingState.PlayMode:
-                    State = PlaySettingState.PlayerType;
+                    State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.Confirm : PlaySettingState.Connecting;
                     break;
-                case PlaySettingState.PlayerType:
-                    State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.Confirm : PlaySettingState.MultiplaySetting;
+                case PlaySettingState.Connecting:
+                    switch (_networkManager.NetworkState)
+                    {
+                        case NetworkState.Connected:
+                            State = PlaySettingState.Confirm;
+                            break;
+                        case NetworkState.Disconnected:
+                            State = PlaySettingState.ConnectionFailed;
+                            break;
+                        case NetworkState.Connecting:
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                     break;
-                case PlaySettingState.MultiplaySetting:
-                    _ignoreBack = true;
-                    State = PlaySettingState.Confirm;
+                case PlaySettingState.ConnectionFailed:
+                    State = PlaySettingState.PlayMode;
                     break;
                 case PlaySettingState.Confirm:
-                    StateChangeWaitFade().Forget();
+                    ReadyStateChangeWaitFadeAsync().Forget();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -125,8 +134,13 @@ namespace BeABachelor.PlaySetting
                 State = PlaySettingState.Confirm;
             }
         }
+
+        public void ReadyStateChangeWaitFade()
+        {
+            ReadyStateChangeWaitFadeAsync().Forget();
+        }
         
-        private async UniTask StateChangeWaitFade()
+        private async UniTask ReadyStateChangeWaitFadeAsync()
         {
             if (_sceneChangeFlag) return;
             _sceneChangeFlag = true;
@@ -151,15 +165,16 @@ namespace BeABachelor.PlaySetting
             switch (_state)
             {
                 case PlaySettingState.PlayMode:
+                    _gameManager.GameState = GameState.Title;
                     break;
-                case PlaySettingState.PlayerType:
+                case PlaySettingState.Connecting:
+                    break;
+                case PlaySettingState.ConnectionFailed:
                     State = PlaySettingState.PlayMode;
                     break;
-                case PlaySettingState.MultiplaySetting:
-                    State = PlaySettingState.PlayerType;
-                    break;
                 case PlaySettingState.Confirm:
-                    State = _gameManager.PlayType == PlayType.Solo ? PlaySettingState.PlayerType : PlaySettingState.MultiplaySetting;
+                    if (_gameManager.PlayType == PlayType.Solo)
+                        State = PlaySettingState.PlayMode;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -168,34 +183,33 @@ namespace BeABachelor.PlaySetting
 
         private void OnPlaySettingStateChange(PlaySettingState state)
         {
-            Debug.Log($"OnPlaySettingStateChange: {state}");
             switch (state)
             {
                 case PlaySettingState.PlayMode:
                     playModeTypeUI.Activate();
-                    playerTypeUI.Deactivate();
-                    multiplaySettingUI.Deactivate();
+                    connectingUI.Deactivate();
+                    conectFailedUI.Deactivate();
                     confirmUI.Deactivate();
                     _activeUI = playModeTypeUI;
                     break;
-                case PlaySettingState.PlayerType:
+                case PlaySettingState.Connecting:
                     playModeTypeUI.Deactivate();
-                    playerTypeUI.Activate();
-                    multiplaySettingUI.Deactivate();
+                    connectingUI.Activate();
+                    conectFailedUI.Deactivate();
                     confirmUI.Deactivate();
-                    _activeUI = playerTypeUI;
+                    _activeUI = connectingUI;
                     break;
-                case PlaySettingState.MultiplaySetting:
+                case PlaySettingState.ConnectionFailed:
                     playModeTypeUI.Deactivate();
-                    playerTypeUI.Deactivate();
-                    multiplaySettingUI.Activate();
+                    connectingUI.Deactivate();
+                    conectFailedUI.Activate();
                     confirmUI.Deactivate();
-                    _activeUI = multiplaySettingUI;
+                    _activeUI = conectFailedUI;
                     break;
                 case PlaySettingState.Confirm:
                     playModeTypeUI.Deactivate();
-                    playerTypeUI.Deactivate();
-                    multiplaySettingUI.Deactivate();
+                    connectingUI.Deactivate();
+                    conectFailedUI.Deactivate();
                     confirmUI.Activate();
                     _activeUI = confirmUI;
                     break;

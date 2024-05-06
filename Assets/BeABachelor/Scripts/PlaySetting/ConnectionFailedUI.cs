@@ -1,38 +1,28 @@
-﻿using System;
-using System.Net;
-using BeABachelor.Interface;
-using BeABachelor.Networking;
-using BeABachelor.Networking.Interface;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.Serialization;
-using Zenject;
+﻿using UnityEngine;
 
 namespace BeABachelor.PlaySetting
 {
-    public class ConfirmUI : PlaySettingUIBase
+    public class ConnectionFailedUI : PlaySettingUIBase
     {
         [SerializeField] private PlaySettingManager playSettingManager;
-        
         public override void Left()
         {
+            
         }
 
         public override void Right()
         {
+            
         }
 
         public override void Space()
         {
-            playSettingManager.ReadyStateChangeWaitFade();
+            playSettingManager.State = PlaySettingState.PlayMode;
         }
 
         public override void Back()
         {
-            if(GameManager.PlayType == PlayType.Solo)
-            {
-                playSettingManager.State = PlaySettingState.PlayMode;
-            }
+            playSettingManager.State = PlaySettingState.PlayMode;
         }
 
         public override void Activate()

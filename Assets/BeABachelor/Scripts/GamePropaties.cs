@@ -8,7 +8,7 @@ namespace BeABachelor
         /// <summary>
         /// ポート
         /// </summary>
-        public const int DEFAULT_PORT = 8888;
+        public const int DefaultPort = 8888;
     }
 
     /// <summary>

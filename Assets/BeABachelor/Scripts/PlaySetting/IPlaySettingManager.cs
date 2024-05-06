@@ -9,5 +9,7 @@ namespace BeABachelor.PlaySetting
         PlaySettingState State { get; set; }
         PlayerType PlayerType { get; set; }
         PlayType PlayType { get; set; }
+        void NextState();
+        void ReadyStateChangeWaitFade();
     }
 }

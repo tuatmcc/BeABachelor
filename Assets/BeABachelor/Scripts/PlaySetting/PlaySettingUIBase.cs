@@ -6,10 +6,11 @@ namespace BeABachelor.PlaySetting
 {
     public abstract class PlaySettingUIBase : MonoBehaviour
     {
-        [Inject] protected IGameManager _gameManager;
+        [Inject] protected IGameManager GameManager;
         public abstract void Left();
         public abstract void Right();
         public abstract void Space();
+        public abstract void Back();
         public abstract void Activate();
         public abstract void Deactivate();
     }
