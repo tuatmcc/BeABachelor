@@ -121,13 +121,23 @@ namespace BeABachelor.Networking
             _isConnected = false;
             
             NetworkState = NetworkState.Connecting;
-            _client ??= new UdpClient(_clientPort);
-            if (_client == null)
+            Debug.Log($"Connecting");
+            try
             {
-                Debug.LogError("Failed to create UdpClient");
+                _client ??= new UdpClient(_clientPort);
+                if (_client == null)
+                {
+                    Debug.LogError("Failed to create UdpClient");
+                    NetworkState = NetworkState.Disconnected;
+                    return;
+                }
+            }catch (Exception ex)
+            {
+                Debug.LogError(ex.Message);
                 NetworkState = NetworkState.Disconnected;
                 return;
             }
+
             Debug.Log($"IsConnected : {_client.Client.Connected}");
             
             // キャンセルトークン生成
@@ -315,6 +325,7 @@ namespace BeABachelor.Networking
         
         public void Disconnect()
         {
+            _disposeCancellationTokenSource?.Cancel();
             _client?.Dispose();
             _isConnected = false;
             NetworkState = NetworkState.Disconnected;
