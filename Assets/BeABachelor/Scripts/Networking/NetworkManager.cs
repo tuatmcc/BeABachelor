@@ -169,6 +169,7 @@ namespace BeABachelor.Networking
             Debug.Log($"Connect to {_ip}:{_remoteEndpointPort}");
             _client.Connect(_ip, _remoteEndpointPort);
             NetworkState = NetworkState.Connected;
+            _gameManager.PlayerType = _isHost ? PlayerType.Hakken : PlayerType.Kouken;
             Debug.Log("Connected");
             
             // 受信タスク開始
