@@ -187,6 +187,7 @@ namespace BeABachelor.Networking
                     if (receiveTask.Result.Buffer.Length <= 0) continue;
                 }catch (Exception ex)
                 {
+                    Debug.LogError(ex);
                     return;
                 }
                 var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));

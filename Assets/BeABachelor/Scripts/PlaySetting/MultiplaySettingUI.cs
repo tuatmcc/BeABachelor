@@ -14,7 +14,6 @@ namespace BeABachelor.PlaySetting
         [SerializeField] private InputField localPortInputField;
         
         [Inject] private INetworkManager _networkManager;
-        [Inject] private IGameManager _gameManager;
         public override void Left()
         {
         }

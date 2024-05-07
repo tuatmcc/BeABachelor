@@ -23,6 +23,7 @@ namespace BeABachelor.Play.UI
                 waitOpponentPanel.SetActive(false);
             } catch(Exception e)
             {
+                Debug.LogError(e);
                 return; 
             }
         }

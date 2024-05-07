@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
 
@@ -21,7 +22,7 @@ namespace BeABachelor.Play.Items
                 _itemnum = value;
                 if(_itemnum == 0)
                 {
-                    playSceneManager.FinishPlay();
+                    playSceneManager.FinishPlay().Forget();
                 }
             }
         }

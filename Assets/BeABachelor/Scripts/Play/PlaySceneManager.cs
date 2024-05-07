@@ -185,7 +185,7 @@ namespace BeABachelor.Play
                 MainTimer--;
             }
 
-            FinishPlay();
+            await FinishPlay();
         }
 
         public GameObject GetPlayerObject()
