@@ -14,7 +14,7 @@ namespace BeABachelor.Networking
                     rb.isKinematic = UseReceivedData;
                 }
         }
-        private void Start()
+        private new void Start()
         {
             _networkManager.OnConnected += OnConnect;
             base.Start();

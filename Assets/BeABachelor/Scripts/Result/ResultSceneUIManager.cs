@@ -25,7 +25,8 @@ namespace BeABachelor.Result
             {
                 ResultState.Win => gokokau,
                 ResultState.Lose => ryunen,
-                ResultState.Draw => nakayokuGokaku
+                ResultState.Draw => nakayokuGokaku,
+                _ => throw new ArgumentOutOfRangeException()
             };
             scoreText.text = _resultManager.ScoreText;
             playerInput.actions["Space"].performed += ToTile;
