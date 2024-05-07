@@ -170,7 +170,7 @@ namespace BeABachelor.Networking
             _client.Connect(_ip, _remoteEndpointPort);
             NetworkState = NetworkState.Connected;
             _gameManager.PlayerType = _isHost ? PlayerType.Hakken : PlayerType.Kouken;
-            Debug.Log("Connected");
+            Debug.Log($"Connected _isHost{_isHost} plyerType:{_gameManager.PlayerType}");
             
             // 受信タスク開始
             ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
