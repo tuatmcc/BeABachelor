@@ -20,8 +20,11 @@ namespace BeABachelor.Util
             // エディタで実行していない場合のみ、ゲーム画面内のログを表示
             showLogInGame = !Application.isEditor;
             
-            // DontDestroyOnLoadでシーン遷移してもオブジェクトが破棄されないようにする
-            DontDestroyOnLoad(gameObject);
+            // このコードがついたオブジェクトがなければ、DontDestroyOnLoadでシーン遷移してもオブジェクトが破棄されないようにする
+            if (FindObjectsOfType<DebugLogDisplay>().Length == 0)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
         }
 
         private void OnGUI()
