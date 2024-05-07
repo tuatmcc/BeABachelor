@@ -35,7 +35,7 @@ namespace BeABachelor.Util
         {
             // ゲーム画面中にログを表示（Windowsのビルド時のみ有効かつエディタで実行していない場合のみ有効かつ0キーで表示/非表示を切り替え）
 #if UNITY_STANDALONE_WIN
-            if (showLogInGame && Input.GetKeyDown(KeyCode.Alpha0))
+            if (showLogInGame && Input.GetKeyDown(KeyCode.L))
             {
                 showLogInGame = !showLogInGame;
             }
