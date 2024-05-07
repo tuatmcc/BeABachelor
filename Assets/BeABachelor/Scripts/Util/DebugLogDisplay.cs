@@ -25,6 +25,10 @@ namespace BeABachelor.Util
             {
                 DontDestroyOnLoad(gameObject);
             }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
         private void OnGUI()
