@@ -4,9 +4,9 @@ namespace BeABachelor.Util
 {
     public class DebugLogDisplay : MonoBehaviour
     {
-        private const int MaxLogLines = 10; // 表示するログの最大行数
+        private const int MaxLogLines = 40; // 表示するログの最大行数
         private string logText = "";
-        private GUIStyle guiStyle = new GUIStyle();
+        private GUIStyle guiStyle;
         private bool showLogInGame = false;
 
         private float lastLogTime = 0f;
@@ -14,37 +14,40 @@ namespace BeABachelor.Util
         private void Start()
         {
             // ログのテキストをスタイルに設定
+            guiStyle ??= new GUIStyle();
             guiStyle.fontSize = 20;
             guiStyle.normal.textColor = Color.white;
 
             // エディタで実行していない場合のみ、ゲーム画面内のログを表示
-            showLogInGame = !Application.isEditor;
+            showLogInGame = false;//!Application.isEditor;
             
             // このコードがついたオブジェクトがなければ、DontDestroyOnLoadでシーン遷移してもオブジェクトが破棄されないようにする
-            if (FindObjectsOfType<DebugLogDisplay>().Length == 0)
+            if (FindObjectsOfType<DebugLogDisplay>().Length >= 2)
             {
-                DontDestroyOnLoad(gameObject);
+                Destroy(gameObject);
             }
             else
             {
-                Destroy(gameObject);
+                DontDestroyOnLoad(gameObject);
             }
         }
 
         private void OnGUI()
         {
             // ゲーム画面中にログを表示（Windowsのビルド時のみ有効かつエディタで実行していない場合のみ有効かつ0キーで表示/非表示を切り替え）
-#if UNITY_STANDALONE_WIN
-            if (showLogInGame && Input.GetKeyDown(KeyCode.L))
-            {
-                showLogInGame = !showLogInGame;
-            }
+//#if UNITY_STANDALONE_WIN
 
             if (showLogInGame)
             {
                 GUI.Label(new Rect(10, 10, Screen.width, Screen.height), logText, guiStyle);
             }
-#endif
+//#endif
+        }
+
+        private void FixedUpdate()
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+                showLogInGame = !showLogInGame; 
         }
 
         private void OnEnable()
@@ -62,7 +65,7 @@ namespace BeABachelor.Util
         private void Update()
         {
             // ゲーム画面内のログ表示が有効な場合のみ、3秒ごとにログのテキストをクリア
-            if (showLogInGame && Time.time - lastLogTime > 3f)
+            if (showLogInGame && Time.time - lastLogTime > 10f)
             {
                 logText = "";
             }
