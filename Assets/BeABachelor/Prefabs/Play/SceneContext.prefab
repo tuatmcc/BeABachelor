@@ -51,6 +51,7 @@ MonoBehaviour:
   _monoInstallers:
   - {fileID: 4784108288725325565}
   - {fileID: 6653736372242865120}
+  - {fileID: 4480147849461306574}
   _installerPrefabs: []
   _findSiblingMonoInstallers: 0
   _autoRun: 1
@@ -82,6 +83,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playSceneManager: {fileID: 0}
+  _playSceneAudioManager: {fileID: 0}
 --- !u!114 &6653736372242865120
 MonoBehaviour:
   m_ObjectHideFlags: 0
