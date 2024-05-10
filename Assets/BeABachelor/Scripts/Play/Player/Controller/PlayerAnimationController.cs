@@ -7,6 +7,8 @@ namespace BeABachelor.Play.Player
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerAnimationController : MonoBehaviour
     {
+        public static readonly float AminSpeedMultiplier = 0.1f;
+
         [SerializeField] Animator animator;
         [SerializeField] Rigidbody rigidbody;
         [SerializeField] private PlayerAnimationSynchronization playerAnimationSynchronization;
@@ -24,7 +26,9 @@ namespace BeABachelor.Play.Player
         {
             if (playerAnimationSynchronization.UseReceivedData) return;
             animator.SetFloat(_animIDSpeed, rigidbody.velocity.magnitude);
-            animator.SetFloat(_animIDMotionSpeed, rigidbody.velocity.magnitude * 0.1f);
+            animator.SetFloat(_animIDMotionSpeed, rigidbody.velocity.magnitude * AminSpeedMultiplier);
         }
+
+        private void OnFootstep() { }
     }
 }
