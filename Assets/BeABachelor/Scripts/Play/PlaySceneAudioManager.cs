@@ -1,10 +1,11 @@
+using BeABachelor.Interface;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace BeABachelor.Play
 {
-    public class PlaySceneAudioManager : MonoBehaviour
+    public class PlaySceneAudioManager : MonoBehaviour, IAudioManager
     {
         [SerializeField] private AudioSource _playSceneAudioSource;
         [SerializeField] private AudioClip _itemSE;

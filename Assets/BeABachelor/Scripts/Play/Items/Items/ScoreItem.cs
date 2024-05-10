@@ -31,7 +31,7 @@ namespace BeABachelor.Play.Items
         {
             if(other.TryGetComponent(out IItemCollectable _))
             {
-                _audioManager?.PlayItemSE();
+                ((PlaySceneAudioManager)_audioManager)?.PlayItemSE();
             }
         }
     }

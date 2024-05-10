@@ -20,8 +20,8 @@ namespace BeABachelor.Play.Items
         public event Action<Collider> OnItemCollectorHit;
 
         [Inject] protected IGameManager _gameManager;
+        [Inject] protected IAudioManager _audioManager;
         [Inject] protected PlaySceneManager _sceneManager;
-        [Inject] protected PlaySceneAudioManager _audioManager;
         [Inject] private ItemManager _itemManager;
 
         private bool used = false;

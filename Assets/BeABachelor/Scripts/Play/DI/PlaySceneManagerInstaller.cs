@@ -1,3 +1,4 @@
+using BeABachelor.Interface;
 using UnityEngine;
 using Zenject;
 
@@ -16,7 +17,7 @@ namespace BeABachelor.Play.DI
                 .FromInstance(_playSceneManager)
                 .AsSingle();
             Container
-                .Bind<PlaySceneAudioManager>()
+                .Bind<IAudioManager>()
                 .To<PlaySceneAudioManager>()
                 .FromInstance(_playSceneAudioManager)
                 .AsSingle();
