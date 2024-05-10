@@ -5277,7 +5277,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 2733415267320665088}
   animator: {fileID: 6091545665927502590}
-  walkSE: {fileID: 8300000, guid: cf364045411ee80ea880899d69a2138a, type: 3}
+  walkSE: {fileID: 8300000, guid: c2d334ebaa9b8ff4cb2594fc328a1ee1, type: 3}
   runSE: {fileID: 8300000, guid: 1bdf6e087ec667cdbbfde7ad8ed1f56a, type: 3}
 --- !u!4 &1220758961813251770 stripped
 Transform:
