@@ -24,6 +24,7 @@ namespace BeABachelor.PlaySetting
         
         [Inject] private IGameManager _gameManager;
         [Inject] private INetworkManager _networkManager;
+        [Inject] private IAudioManager _audioManager;
         private PlaySettingState _state;
         private PlaySettingUIBase _activeUI;
         private bool _sceneChangeFlag;
@@ -83,6 +84,14 @@ namespace BeABachelor.PlaySetting
                     break;
                 case "Back":
                     
+                    break;
+            }
+            switch (context.action.name)
+            {
+                case "Left":
+                case "Right":
+                case "Space":
+                    ((SettingAudioManager)_audioManager).PlaySelectSE();
                     break;
             }
         }
