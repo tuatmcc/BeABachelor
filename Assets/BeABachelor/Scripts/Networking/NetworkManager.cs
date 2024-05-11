@@ -252,10 +252,11 @@ namespace BeABachelor.Networking
 
         private async UniTask ReceiveTask()
         {
+            Debug.Log("ReceiveTask start");
             while (IsConnected)
             {
                 var task = _client.ReceiveAsync();
-                await UniTask.WaitUntil(() => task.IsCompleted || IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
+                await UniTask.WaitUntil(() => task.IsCompleted || !IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
                 if (!task.IsCompleted)
                 { 
                     Debug.Log("ReceiveTask is cancelled");
