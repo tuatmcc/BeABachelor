@@ -158,10 +158,11 @@ namespace BeABachelor.Play
             if(_gameManager.PlayType == PlayType.Multi)
             {
                 // 相手まち
-                while (!_networkManager.OpponentReady && !token.IsCancellationRequested)
+                await UniTask.WaitUntil(() => !_networkManager.OpponentReady || token.IsCancellationRequested);
+                if (token.IsCancellationRequested)
                 {
-                    await UniTask.Delay(100);
-                    Debug.Log("Wait for connection established");
+                    Debug.Log("Cancel waiting connection");
+                    return;
                 }
             }
             _gameManager.GameState = GameState.CountDown;

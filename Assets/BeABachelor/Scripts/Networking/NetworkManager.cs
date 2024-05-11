@@ -269,7 +269,6 @@ namespace BeABachelor.Networking
                 {
                     var length = reader.ReadInt32();
                     var data = reader.ReadBytes(length);
-                    Debug.Log($"Receive data: {data.Length}, {synchronization.GetType()}");
                     synchronization.FromBytes(data);
                 }
             }
