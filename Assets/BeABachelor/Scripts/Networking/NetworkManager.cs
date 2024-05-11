@@ -262,13 +262,14 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
-                if (task.Result.Buffer[0] != 0xaa) continue;
-                OpponentReady = true;
                 var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
+                if (reader.ReadByte() != 0xaa) continue;
+                OpponentReady = true;
                 foreach (var synchronization in SynchronizationController.MonoSynchronizations)
                 {
                     var length = reader.ReadInt32();
                     var data = reader.ReadBytes(length);
+                    Debug.Log($"Receive data: {data.Length}, {synchronization.GetType()}");
                     synchronization.FromBytes(data);
                 }
             }
