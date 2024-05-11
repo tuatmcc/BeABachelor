@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using BeABachelor.Interface;
+using BeABachelor.Networking.Config;
 using BeABachelor.Networking.Interface;
 using BeABachelor.Util;
 using Cysharp.Threading.Tasks;
@@ -77,11 +78,8 @@ namespace BeABachelor.Networking
         }
         public async UniTask ConnectAsync(int timeOut = 5)
         {
-            foreach (var ipAddress in NetworkingUtil.GetDirectedBroadcast())
-            {
-                Debug.Log($"DirectedBroadcast: {ipAddress}");
-            }
             NetworkState = NetworkState.Searching;
+            _client = new UdpClient(8888);
             
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
@@ -100,16 +98,15 @@ namespace BeABachelor.Networking
                 // false        true        タイムアウトなど
                 // false        false       未受診
                 
-                Debug.Log("WaitUntil");
                 // 受信待ち
-                await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted, cancellationToken: token);
-                Debug.Log("WaitUntil End");
+                await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted || token.IsCancellationRequested);
+
                 if (!broadcastReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
                 {
                     // タイムアウト
                     Debug.LogError("Connection timed out");
                     _client.Close();
-                    broadcastReceiveTask.Dispose();
+                    // broadcastReceiveTask.Dispose();
                     broadcastCancellationTokenSource.Cancel();  // ブロードキャストを止める
                     NetworkState = NetworkState.Disconnected;
                     return;
@@ -152,10 +149,15 @@ namespace BeABachelor.Networking
 
         private void SearchPlayer(CancellationToken token)
         {
-            var broadEndpoint = new IPEndPoint(IPAddress.Broadcast, 8888);
-            _client.EnableBroadcast = true;
             Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
-                .Subscribe(_ => _client.Send(new byte[] { 0x01 }, 1, broadEndpoint));
+                .Subscribe(_ =>
+                {
+                    foreach (var ip in JsonConfigure.NetworkConfig.ipAddresses)
+                    {
+                        Debug.Log($"Send broadcast to {ip}");
+                        _client.Send(new byte[] { 0x01 }, 1, ip, 8888);
+                    }
+                });
             // _client.Connect(IPAddress.Broadcast, 8888);
             // _client.EnableBroadcast = true;
             // Debug.Log(_client.Client.LocalEndPoint);
@@ -165,10 +167,7 @@ namespace BeABachelor.Networking
         
         private bool ValidAck(UdpReceiveResult result)
         {
-            var myIp = BitConverter.ToUInt32(((IPEndPoint)_client.Client.LocalEndPoint).Address.GetAddressBytes().Reverse().ToArray(), 0);
-            var opponentIp = BitConverter.ToUInt32(result.RemoteEndPoint.Address.GetAddressBytes().Reverse().ToArray(), 0);
-            Debug.Log($"ValidAck My IP: {((IPEndPoint)_client.Client.LocalEndPoint).Address}, Opponent IP: {result.RemoteEndPoint.Address}");
-            return myIp != opponentIp && result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
+            return result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
         }
         
         private bool IsWaitNegotiation(IPEndPoint endPoint)
@@ -251,7 +250,6 @@ namespace BeABachelor.Networking
             IsConnected = false;
             _disposeCancellationTokenSource = new CancellationTokenSource();
             NetworkState = NetworkState.Disconnected;
-            _client = new UdpClient(8888);
         }
 
         public void Dispose()

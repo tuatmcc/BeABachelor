@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 
@@ -7,9 +8,9 @@ namespace BeABachelor.Util
 {
     public static class NetworkingUtil
     {
-        public static IPAddress[] GetDirectedBroadcast()
+        public static (IPAddress, IPAddress)[] GetDirectedBroadcast()
         {
-            List<IPAddress> directedBroadcasts = new ();
+            List<(IPAddress, IPAddress)> ips = new();
             // ネットワークインターフェースを取得
             NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
@@ -25,14 +26,14 @@ namespace BeABachelor.Util
                         if (ip.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
                             IPAddress directedBroadcast = CalculateDirectedBroadcast(ip.Address, ip.IPv4Mask);
-                            directedBroadcasts.Add(directedBroadcast);
+                            ips.Add((directedBroadcast, ip.Address));
                             //Console.WriteLine($"Interface: {networkInterface.Name}, Directed Broadcast: {directedBroadcast}");
                         }
                     }
                 }
             }
             
-            return directedBroadcasts.ToArray();
+            return ips.ToArray();
         }
         
         // ディレクティッドブロードキャストアドレスを計算
