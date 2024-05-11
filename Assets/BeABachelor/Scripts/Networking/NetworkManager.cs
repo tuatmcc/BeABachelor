@@ -129,10 +129,12 @@ namespace BeABachelor.Networking
             bool success;
             if (IsWaitNegotiation((IPEndPoint)_endpoint))
             {
+                Debug.Log("Receive negotiation");
                 success = await ReceiveNegotiationAsync(timeOut);
             }
             else
             {
+                Debug.Log("Send negotiation");
                 success = await SendNegotiationAsync(timeOut);
             }
             
@@ -181,7 +183,7 @@ namespace BeABachelor.Networking
         private async UniTask<bool> SendNegotiationAsync(int timeOut)
         {
             var random = Random.Range(0, 2);
-            _client.Send(new byte[] { 0x02, (byte)random }, 2);
+            await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
             _gameManager.PlayerType = random == 0 ? PlayerType.Kouken : PlayerType.Hakken;
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
@@ -221,7 +223,7 @@ namespace BeABachelor.Networking
             do
             {
                 var negotiationReceiveTask = _client.ReceiveAsync();
-                await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted, cancellationToken: token);
+                await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted || token.IsCancellationRequested);
                 if (!negotiationReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
                 {
                     // タイムアウト
@@ -237,6 +239,7 @@ namespace BeABachelor.Networking
             
             negotiationCancellationTokenSource.Cancel();
             _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
+            await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
             return true;
         }
 
