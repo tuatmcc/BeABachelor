@@ -2457,9 +2457,13 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1594720520}
     - target: {fileID: 5547645348679563769, guid: 91c391955e6fda741bde6707ed7fa047, type: 3}
-      propertyPath: _itemSE
+      propertyPath: _seAudioSource
       value: 
-      objectReference: {fileID: 8300000, guid: 83dcbfa7eb3f01018bc594a3376a9e95, type: 3}
+      objectReference: {fileID: 1106431255589542461}
+    - target: {fileID: 5547645348679563769, guid: 91c391955e6fda741bde6707ed7fa047, type: 3}
+      propertyPath: _bgmAudioSource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5547645348679563769, guid: 91c391955e6fda741bde6707ed7fa047, type: 3}
       propertyPath: _playSceneAudioSource
       value: 
