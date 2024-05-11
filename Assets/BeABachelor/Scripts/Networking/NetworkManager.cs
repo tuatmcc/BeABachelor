@@ -42,7 +42,7 @@ namespace BeABachelor.Networking
             get => _opponentReady;
             private set
             {
-                if (value)
+                if (!_opponentReady && value)
                     OpponentReadyEvent?.Invoke();
             }
         }
@@ -147,6 +147,8 @@ namespace BeABachelor.Networking
             }
             
             NetworkState = NetworkState.Connected;
+            
+            ReceiveTask().Forget();
         }
 
         private void SearchPlayer(CancellationToken token)
@@ -247,7 +249,29 @@ namespace BeABachelor.Networking
         {
             return data.Count == 2 && data[0] == 0x02;
         }
-        
+
+        private async UniTask ReceiveTask()
+        {
+            while (IsConnected)
+            {
+                var task = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() => task.IsCompleted || IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
+                if (!task.IsCompleted)
+                { 
+                    Debug.Log("ReceiveTask is cancelled");
+                    return;
+                }
+                if (task.Result.Buffer[0] != 0xaa) continue;
+                OpponentReady = true;
+                var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
+                foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                {
+                    var length = reader.ReadInt32();
+                    var data = reader.ReadBytes(length);
+                    synchronization.FromBytes(data);
+                }
+            }
+        }
         public void Initialize()
         {
             _disposeCancellationTokenSource = new CancellationTokenSource();
@@ -265,6 +289,7 @@ namespace BeABachelor.Networking
         {
             _client.Close();
             NetworkState = NetworkState.Disconnected;
+            OpponentReady = false;
         }
 
         public void FixedTick()
