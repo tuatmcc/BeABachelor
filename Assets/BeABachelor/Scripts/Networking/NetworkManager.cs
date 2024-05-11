@@ -36,7 +36,7 @@ namespace BeABachelor.Networking
         public event Action OnDisconnected;
         public event Action OpponentReadyEvent;
         public event Action<NetworkState> OnNetworkStateChanged;
-        public bool IsConnected { get; private set; }
+        public bool IsConnected => _networkState == NetworkState.Connected;
         public bool OpponentReady
         {
             get => _opponentReady;
@@ -250,7 +250,6 @@ namespace BeABachelor.Networking
         
         public void Initialize()
         {
-            IsConnected = false;
             _disposeCancellationTokenSource = new CancellationTokenSource();
             NetworkState = NetworkState.Disconnected;
         }
@@ -265,7 +264,6 @@ namespace BeABachelor.Networking
         public void Disconnect()
         {
             _client.Close();
-            IsConnected = false;
             NetworkState = NetworkState.Disconnected;
         }
 
