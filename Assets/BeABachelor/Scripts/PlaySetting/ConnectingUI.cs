@@ -4,7 +4,7 @@ namespace BeABachelor.PlaySetting
 {
     public class ConnectingUI : PlaySettingUIBase
     {
-        public void Start()
+        public void OnEnable()
         {
             _networkManager.OnConnected += OnConnected;
             _networkManager.OnDisconnected += OnDisconnected;
