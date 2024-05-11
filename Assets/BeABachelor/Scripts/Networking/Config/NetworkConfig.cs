@@ -8,5 +8,10 @@ namespace BeABachelor.Networking.Config
     {
         public int port = 8888;
         public string[] ipAddresses = Array.Empty<string>();
+        
+        public override string ToString()
+        {
+            return $"Port: {port}, IP Addresses: {string.Join(", ", ipAddresses)}";
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace BeABachelor.Networking.Config
                 Debug.LogError($"File not found: {path}");
                 var instance = new T();
                 File.WriteAllText(path, JsonUtility.ToJson(instance));
+                Debug.Log($"File created: {path}");
                 return instance;
             }
             var json = File.ReadAllText(path);
