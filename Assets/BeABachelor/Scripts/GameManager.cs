@@ -50,6 +50,7 @@ namespace BeABachelor
         private GameState _gameState;
         private int _score;
         private int _tick;
+        [Inject] private AudioSource _audioSource;
 
         public void Initialize()
         {
@@ -117,6 +118,7 @@ namespace BeABachelor
                     _tick = 0;
                 }
             };
+            _audioSource.Stop();
         }
 
         public void FixedTick()

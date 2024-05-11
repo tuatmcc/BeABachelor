@@ -59,3 +59,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aef49d5cdbfd6f4682ced6d5499a456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playSceneAudioSource: {fileID: 0}
+  _itemSE: {fileID: 8300000, guid: 83dcbfa7eb3f01018bc594a3376a9e95, type: 3}
+  _bgmClip: {fileID: 8300000, guid: 745ecbcfff62b4cb79ff22c83486f2fc, type: 3}
