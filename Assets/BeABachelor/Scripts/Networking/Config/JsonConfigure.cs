@@ -19,7 +19,9 @@ namespace BeABachelor.Networking.Config
                 return instance;
             }
             var json = File.ReadAllText(path);
-            return JsonUtility.FromJson<T>(json);
+            var obj = JsonUtility.FromJson<T>(json);
+            Debug.Log($"File loaded: {path}");
+            return obj;
         }
     }
 }
