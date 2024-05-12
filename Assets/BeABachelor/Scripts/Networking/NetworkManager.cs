@@ -152,6 +152,8 @@ namespace BeABachelor.Networking
             NetworkState = NetworkState.Connected;
             _sendTickCancellationTokenSource = new CancellationTokenSource();
             StartSendTick(_sendTickCancellationTokenSource.Token);
+            
+            ReceiveTask().Forget();
         }
 
         private void SearchPlayer(CancellationToken token)
@@ -320,7 +322,7 @@ namespace BeABachelor.Networking
                 _client.Close();
                 NetworkState = NetworkState.Disconnected;
                 OpponentReady = false;
-                _disposeCancellationTokenSource.Cancel();
+                _sendTickCancellationTokenSource?.Cancel();
                 return UniTask.CompletedTask;
             }).Forget();
         }
