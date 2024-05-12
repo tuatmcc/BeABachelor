@@ -28,7 +28,7 @@ namespace BeABachelor.Networking
         private bool _isHost;
         private bool _opponentReady;
         private NetworkState _networkState;
-        
+
         [Inject] private IGameManager _gameManager;
 
         public event Action OnSearching;
@@ -38,6 +38,7 @@ namespace BeABachelor.Networking
         public event Action OpponentReadyEvent;
         public event Action<NetworkState> OnNetworkStateChanged;
         public bool IsConnected => _networkState == NetworkState.Connected;
+
         public bool OpponentReady
         {
             get => _opponentReady;
@@ -48,7 +49,9 @@ namespace BeABachelor.Networking
                 OpponentReadyEvent?.Invoke();
             }
         }
+
         public ISynchronizationController SynchronizationController { get; set; }
+
         public NetworkState NetworkState
         {
             get => _networkState;
@@ -78,19 +81,21 @@ namespace BeABachelor.Networking
                 }
             }
         }
+
         public async UniTask ConnectAsync(int timeOut = 5)
         {
             OpponentReady = false;
             NetworkState = NetworkState.Searching;
             _client = new UdpClient(8888);
-            
+
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
             var broadcastCancellationTokenSource = new CancellationTokenSource();
-            var token = CancellationTokenSource.CreateLinkedTokenSource(broadcastCancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
+            var token = CancellationTokenSource.CreateLinkedTokenSource(broadcastCancellationTokenSource.Token,
+                timeoutToken, _disposeCancellationTokenSource.Token).Token;
             UdpReceiveResult result;
             SearchPlayer(token);
-            
+
             do
             {
                 var broadcastReceiveTask = _client.ReceiveAsync();
@@ -100,7 +105,7 @@ namespace BeABachelor.Networking
                 // true         false       受信成功
                 // false        true        タイムアウトなど
                 // false        false       未受診
-                
+
                 // 受信待ち
                 await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted || token.IsCancellationRequested);
 
@@ -110,25 +115,25 @@ namespace BeABachelor.Networking
                     Debug.LogError("Connection timed out");
                     _client.Close();
                     // broadcastReceiveTask.Dispose();
-                    broadcastCancellationTokenSource.Cancel();  // ブロードキャストを止める
+                    broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
                     NetworkState = NetworkState.Disconnected;
                     return;
                 }
 
                 // 受信成功
                 result = broadcastReceiveTask.Result;
-                
+
                 // 有効なデータでないときは再受信する
-            }while (!ValidAck(result));
+            } while (!ValidAck(result));
 
             // ちょっと待たないと相手が受信できない
             await UniTask.Delay(TimeSpan.FromSeconds(1));
-            broadcastCancellationTokenSource.Cancel();  // ブロードキャストを止める
-            
+            broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
+
             _endpoint = result.RemoteEndPoint;
-            _client.Connect((IPEndPoint) _endpoint);
+            _client.Connect((IPEndPoint)_endpoint);
             NetworkState = NetworkState.Connecting;
-            
+
             bool success;
             if (IsWaitNegotiation((IPEndPoint)_endpoint))
             {
@@ -140,7 +145,7 @@ namespace BeABachelor.Networking
                 Debug.Log("Send negotiation");
                 success = await SendNegotiationAsync(timeOut);
             }
-            
+
             if (!success)
             {
                 Debug.LogError("Connection failed");
@@ -148,11 +153,12 @@ namespace BeABachelor.Networking
                 NetworkState = NetworkState.Disconnected;
                 return;
             }
-            
+
             NetworkState = NetworkState.Connected;
             _sendTickCancellationTokenSource = new CancellationTokenSource();
-            StartSendTick(CancellationTokenSource.CreateLinkedTokenSource(_sendTickCancellationTokenSource.Token, _disposeCancellationTokenSource.Token).Token);
-            
+            StartSendTick(CancellationTokenSource.CreateLinkedTokenSource(_sendTickCancellationTokenSource.Token,
+                _disposeCancellationTokenSource.Token).Token);
+
             ReceiveTask().Forget();
         }
 
@@ -173,17 +179,19 @@ namespace BeABachelor.Networking
             // Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
             //     .Subscribe(_ => _client.Send(new byte[] { 0x01 }, 1));
         }
-        
+
         private bool ValidAck(UdpReceiveResult result)
         {
             return result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
         }
-        
+
         private bool IsWaitNegotiation(IPEndPoint endPoint)
         {
-            var myIp = BitConverter.ToUInt32(((IPEndPoint)_client.Client.LocalEndPoint).Address.GetAddressBytes().Reverse().ToArray(), 0);
+            var myIp = BitConverter.ToUInt32(
+                ((IPEndPoint)_client.Client.LocalEndPoint).Address.GetAddressBytes().Reverse().ToArray(), 0);
             var opponentIp = BitConverter.ToUInt32(endPoint.Address.GetAddressBytes().Reverse().ToArray(), 0);
-            Debug.Log($"IsWaitNegotiation My IP: {myIp}, Opponent IP: {opponentIp} {((IPEndPoint)_client.Client.LocalEndPoint).Address}");
+            Debug.Log(
+                $"IsWaitNegotiation My IP: {myIp}, Opponent IP: {opponentIp} {((IPEndPoint)_client.Client.LocalEndPoint).Address}");
             return opponentIp < myIp;
         }
 
@@ -195,7 +203,8 @@ namespace BeABachelor.Networking
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
             var negotiationCancellationTokenSource = new CancellationTokenSource();
-            var token = CancellationTokenSource.CreateLinkedTokenSource(negotiationCancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
+            var token = CancellationTokenSource.CreateLinkedTokenSource(negotiationCancellationTokenSource.Token,
+                timeoutToken, _disposeCancellationTokenSource.Token).Token;
             UdpReceiveResult result;
             do
             {
@@ -210,10 +219,10 @@ namespace BeABachelor.Networking
                     negotiationCancellationTokenSource.Cancel();
                     return false;
                 }
-                
+
                 result = negotiationReceiveTask.Result;
-            }while (!ValidNegotiation(result.Buffer));
-            
+            } while (!ValidNegotiation(result.Buffer));
+
             negotiationCancellationTokenSource.Cancel();
             return true;
         }
@@ -242,8 +251,8 @@ namespace BeABachelor.Networking
                 }
 
                 result = negotiationReceiveTask.Result;
-            }while (!ValidNegotiation(result.Buffer));
-            
+            } while (!ValidNegotiation(result.Buffer));
+
             negotiationCancellationTokenSource.Cancel();
             _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
             await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
@@ -268,13 +277,13 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
-                
+
                 if (_disposeCancellationTokenSource.Token.IsCancellationRequested)
                 {
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
-                
+
                 ReflectReceivedData(task.Result.Buffer).Forget();
             }
         }
@@ -296,10 +305,10 @@ namespace BeABachelor.Networking
                 if (synchronization == null) continue;
                 synchronization.FromBytes(data);
             }
-            
+
             return UniTask.CompletedTask;
         }
-        
+
         public void Initialize()
         {
             _opponentReady = false;
@@ -313,7 +322,7 @@ namespace BeABachelor.Networking
             _disposeCancellationTokenSource?.Cancel();
             NetworkState = NetworkState.Disconnected;
         }
-        
+
         public void Disconnect()
         {
             UniTask.Create(async () =>
@@ -333,25 +342,35 @@ namespace BeABachelor.Networking
 
         private void StartSendTick(CancellationToken token)
         {
-            Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
-                .Subscribe(_ =>
+            UniTask.Create(async () =>
+            {
+                while (IsConnected)
                 {
-                    Debug.Log("SendTick");
+                    await UniTask.Delay(100);
                     if (!IsConnected || SynchronizationController == null) return;
-                    var writer = new BinaryWriter(new MemoryStream());
-                    // 0xaa はプレイ中
-                    writer.Write((byte) 0xaa);
-                    foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                    try
                     {
-                        var monoSynchronization = synchronization.Value;
-                        var hashCode = monoSynchronization.GetHashCode();
-                        var data = monoSynchronization.ToBytes();
-                        writer.Write(hashCode);
-                        writer.Write(data.Length);
-                        writer.Write(data);
+                        var writer = new BinaryWriter(new MemoryStream());
+                        // 0xaa はプレイ中
+                        writer.Write((byte)0xaa);
+                        foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                        {
+                            var monoSynchronization = synchronization.Value;
+                            var hashCode = monoSynchronization.GetHashCode();
+                            var data = monoSynchronization.ToBytes();
+                            writer.Write(hashCode);
+                            writer.Write(data.Length);
+                            writer.Write(data);
+                        }
+
+                        _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
                     }
-                    _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
-                });
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
+                }
+            });
         }
     }
 }
