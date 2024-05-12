@@ -271,8 +271,17 @@ namespace BeABachelor.Networking
                 }
 
                 var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
-                if (reader.ReadByte() != 0xaa || _gameManager.GameState == GameState.Setting) continue;
-                if (SynchronizationController == null) continue;
+                if (reader.ReadByte() != 0xaa)
+                {
+                    Debug.Log("Invalid data");
+                    continue;
+                }
+
+                if (SynchronizationController == null)
+                {
+                    Debug.Log("SynchronizationController is null");
+                    continue;
+                }
                 // これ以降 PlayScene での処理
                 OpponentReady = true;
 
