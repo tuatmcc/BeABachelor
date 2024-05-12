@@ -54,7 +54,6 @@ namespace BeABachelor.Networking
                 var id = reader.ReadInt32();
                 if(_itemManager.TryGetItemFromID(id, out var item))
                 {
-                    _itemManager.ItemHitNotify(id);
                     Debug.Log($"ID : {id}");
                     var scrollItem = item.GetComponent<ScoreItem>();
                     scrollItem.DeleteEffect();
