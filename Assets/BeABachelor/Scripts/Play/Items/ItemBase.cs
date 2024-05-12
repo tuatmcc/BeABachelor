@@ -32,13 +32,13 @@ namespace BeABachelor.Play.Items
             if (_gameManager.GameState != GameState.Playing) return;
             if (!other.TryGetComponent(out IItemCollectable _)) return;
             ItemHit(other.gameObject);
+            _itemManager.ItemHitNotify(ItemID);
         }
 
         public void ItemHit(GameObject hitObj)
         {
             if (used) return;
             used = true;
-            _itemManager.ItemHitNotify(ItemID);
             OnItemCollectorHit?.Invoke(hitObj);
 
             if(DestroyOnItemCollectorHit)
