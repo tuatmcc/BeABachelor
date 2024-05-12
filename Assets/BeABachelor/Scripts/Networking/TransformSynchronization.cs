@@ -14,6 +14,9 @@ namespace BeABachelor.Networking
                     rb.isKinematic = UseReceivedData;
                 }
         }
+
+        public override int ObjectID => nameof(TransformSynchronization).GetHashCode();
+
         private new void Start()
         {
             _networkManager.OnConnected += OnConnect;
