@@ -42,8 +42,8 @@ namespace BeABachelor.Networking
             get => _opponentReady;
             private set
             {
-                if (_opponentReady || !value) return;
-                _opponentReady = true;
+                if (_opponentReady ^ value) return;
+                _opponentReady = value;
                 OpponentReadyEvent?.Invoke();
             }
         }
