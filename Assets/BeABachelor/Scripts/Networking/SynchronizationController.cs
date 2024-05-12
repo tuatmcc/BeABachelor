@@ -26,6 +26,21 @@ namespace BeABachelor.Networking
 
         public void Dispose()
         {
+            foreach (var monoSynchronization in _monoSynchronizations)
+            {
+                switch (monoSynchronization)
+                {
+                    case ScrollItemSynchronization scrollItemSynchronization:
+                        Debug.Log("ScrollItemSynchronization");
+                        break;
+                    case TransformSynchronization transformSynchronization:
+                        Debug.Log("TransformSynchronization");
+                        break;
+                    case PlayerAnimationSynchronization playerAnimationSynchronization:
+                        Debug.Log("PlayerAnimationSynchronization");
+                        break;
+                }
+            }
             _networkManager.SynchronizationController = null;
         }
     }
