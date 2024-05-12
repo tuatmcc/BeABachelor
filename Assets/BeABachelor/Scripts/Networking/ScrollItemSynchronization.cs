@@ -30,6 +30,7 @@ namespace BeABachelor.Networking
         
         public override byte[] ToBytes()
         {
+            int a = _sendDeletedItemIDs.Count;
             if (_sendDeletedItemIDs.Count == 0)
             {
                 return new byte[]{0x00, 0x00, 0x00, 0x00};
@@ -38,6 +39,7 @@ namespace BeABachelor.Networking
             _sendDeletedItemIDs.Clear();
             var writer = new BinaryWriter(new MemoryStream(4 + ids.Length * 4));
             writer.Write(ids.Length);
+            Debug.Log($"Send Item Count : {ids.Length} items : {string.Join(", ", ids)}");
             foreach (var id in ids)
             {
                 writer.Write(id);
