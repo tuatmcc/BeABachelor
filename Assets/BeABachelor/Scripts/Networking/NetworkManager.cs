@@ -151,7 +151,7 @@ namespace BeABachelor.Networking
             
             NetworkState = NetworkState.Connected;
             _sendTickCancellationTokenSource = new CancellationTokenSource();
-            StartSendTick(_sendTickCancellationTokenSource.Token);
+            StartSendTick(CancellationTokenSource.CreateLinkedTokenSource(_sendTickCancellationTokenSource.Token, _disposeCancellationTokenSource.Token).Token);
             
             ReceiveTask().Forget();
         }
@@ -336,6 +336,7 @@ namespace BeABachelor.Networking
             Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
                 .Subscribe(_ =>
                 {
+                    Debug.Log("SendTick");
                     if (!IsConnected || SynchronizationController == null) return;
                     var writer = new BinaryWriter(new MemoryStream());
                     // 0xaa はプレイ中
