@@ -344,10 +344,8 @@ namespace BeABachelor.Networking
         {
             UniTask.Create(async () =>
             {
-                Debug.Log("StartSendTick");
                 while (IsConnected)
                 {
-                    Debug.Log("SendTick");
                     await UniTask.Delay(100);
                     if (!IsConnected || SynchronizationController == null) continue;
                     try
