@@ -158,7 +158,7 @@ namespace BeABachelor.Play
             if(_gameManager.PlayType == PlayType.Multi)
             {
                 // 相手まち
-                await UniTask.WaitUntil(() => !_networkManager.OpponentReady || token.IsCancellationRequested);
+                await UniTask.WaitUntil(() => _networkManager.OpponentReady || token.IsCancellationRequested);
                 if (token.IsCancellationRequested)
                 {
                     Debug.Log("Cancel waiting connection");
