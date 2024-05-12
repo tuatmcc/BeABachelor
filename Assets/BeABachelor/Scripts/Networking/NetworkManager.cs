@@ -271,24 +271,32 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
-
-                var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
-                if (reader.ReadByte() != 0xaa) continue;
-                if (SynchronizationController == null) continue;
-                // これ以降 PlayScene での処理
-                OpponentReady = true;
-
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
-                {
-                    var hashCode = reader.ReadInt32();
-                    var length = reader.ReadInt32();
-                    var data = reader.ReadBytes(length);
-                    var synchronization = SynchronizationController.MonoSynchronizations[hashCode];
-                    if (synchronization == null) continue;
-                    synchronization.FromBytes(data);
-                }
+                
+                ReflectReceivedData(task.Result.Buffer).Forget();
             }
         }
+
+        private UniTask ReflectReceivedData(byte[] receiveData)
+        {
+            var reader = new BinaryReader(new MemoryStream(receiveData));
+            if (reader.ReadByte() != 0xaa) return UniTask.CompletedTask;
+            if (SynchronizationController == null) return UniTask.CompletedTask;
+            // これ以降 PlayScene での処理
+            OpponentReady = true;
+
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                var hashCode = reader.ReadInt32();
+                var length = reader.ReadInt32();
+                var data = reader.ReadBytes(length);
+                var synchronization = SynchronizationController.MonoSynchronizations[hashCode];
+                if (synchronization == null) continue;
+                synchronization.FromBytes(data);
+            }
+            
+            return UniTask.CompletedTask;
+        }
+        
         public void Initialize()
         {
             _opponentReady = false;
