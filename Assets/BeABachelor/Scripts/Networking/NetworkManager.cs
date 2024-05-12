@@ -43,7 +43,6 @@ namespace BeABachelor.Networking
             private set
             {
                 if (!(_opponentReady ^ value)) return;
-                Debug.Log($"OpponentReady: {_opponentReady} -> {value}");
                 _opponentReady = value;
                 OpponentReadyEvent?.Invoke();
             }
@@ -80,6 +79,7 @@ namespace BeABachelor.Networking
         }
         public async UniTask ConnectAsync(int timeOut = 5)
         {
+            OpponentReady = false;
             NetworkState = NetworkState.Searching;
             _client = new UdpClient(8888);
             
