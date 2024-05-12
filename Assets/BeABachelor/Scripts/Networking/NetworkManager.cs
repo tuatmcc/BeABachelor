@@ -278,7 +278,19 @@ namespace BeABachelor.Networking
                     }
                     catch (Exception e)
                     {
-                        Debug.LogError(e);
+                        // up class synchronization
+                        switch (synchronization)
+                        {
+                            case ScrollItemSynchronization scrollItemSynchronization:
+                                Debug.LogError($"{e}\nType is ScrollItemSynchronization");
+                                break;
+                            case PlayerAnimationSynchronization playerAnimationSynchronization:
+                                Debug.LogError("${e}\nType is PlayerAnimationSynchronization");
+                                break;
+                            case TransformSynchronization transformSynchronization:
+                                Debug.LogError($"{e}\nTransformSynchronization");
+                                break;
+                        }
                     }
 
                 }
