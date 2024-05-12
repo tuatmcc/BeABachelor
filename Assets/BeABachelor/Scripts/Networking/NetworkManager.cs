@@ -24,6 +24,7 @@ namespace BeABachelor.Networking
         private UdpClient _client;
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
+        private CancellationTokenSource _sendTickCancellationTokenSource;
         private bool _isHost;
         private bool _opponentReady;
         private NetworkState _networkState;
@@ -149,8 +150,8 @@ namespace BeABachelor.Networking
             }
             
             NetworkState = NetworkState.Connected;
-            
-            ReceiveTask().Forget();
+            _sendTickCancellationTokenSource = new CancellationTokenSource();
+            StartSendTick(_sendTickCancellationTokenSource.Token);
         }
 
         private void SearchPlayer(CancellationToken token)
@@ -319,26 +320,35 @@ namespace BeABachelor.Networking
                 _client.Close();
                 NetworkState = NetworkState.Disconnected;
                 OpponentReady = false;
+                _disposeCancellationTokenSource.Cancel();
                 return UniTask.CompletedTask;
             }).Forget();
         }
 
         public void FixedTick()
         {
-            if (!IsConnected || SynchronizationController == null) return;
-            var writer = new BinaryWriter(new MemoryStream());
-            // 0xaa はプレイ中
-            writer.Write((byte) 0xaa);
-            foreach (var synchronization in SynchronizationController.MonoSynchronizations)
-            {
-                var monoSynchronization = synchronization.Value;
-                var hashCode = monoSynchronization.GetHashCode();
-                var data = monoSynchronization.ToBytes();
-                writer.Write(hashCode);
-                writer.Write(data.Length);
-                writer.Write(data);
-            }
-            _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
+        }
+
+        private void StartSendTick(CancellationToken token)
+        {
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
+                .Subscribe(_ =>
+                {
+                    if (!IsConnected || SynchronizationController == null) return;
+                    var writer = new BinaryWriter(new MemoryStream());
+                    // 0xaa はプレイ中
+                    writer.Write((byte) 0xaa);
+                    foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                    {
+                        var monoSynchronization = synchronization.Value;
+                        var hashCode = monoSynchronization.GetHashCode();
+                        var data = monoSynchronization.ToBytes();
+                        writer.Write(hashCode);
+                        writer.Write(data.Length);
+                        writer.Write(data);
+                    }
+                    _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
+                });
         }
     }
 }
