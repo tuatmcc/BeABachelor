@@ -36,9 +36,10 @@ namespace BeABachelor.Play.Items
 
         public void ItemHit(GameObject hitObj)
         {
+            if (used) return;
+            used = true;
             _itemManager.ItemHitNotify(ItemID);
             OnItemCollectorHit?.Invoke(hitObj);
-            used = true;
 
             if(DestroyOnItemCollectorHit)
             {
