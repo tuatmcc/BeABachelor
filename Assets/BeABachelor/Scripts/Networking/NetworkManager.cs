@@ -42,8 +42,9 @@ namespace BeABachelor.Networking
             get => _opponentReady;
             private set
             {
-                if (!_opponentReady && value)
-                    OpponentReadyEvent?.Invoke();
+                if (_opponentReady || !value) return;
+                _opponentReady = true;
+                OpponentReadyEvent?.Invoke();
             }
         }
         public ISynchronizationController SynchronizationController { get; set; }
