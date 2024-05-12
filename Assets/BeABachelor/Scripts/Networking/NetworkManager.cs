@@ -271,7 +271,9 @@ namespace BeABachelor.Networking
                 }
 
                 var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
-                if (reader.ReadByte() != 0xaa) continue;
+                if (reader.ReadByte() != 0xaa || _gameManager.GameState == GameState.Setting) continue;
+                
+                // これ以降 PlayScene での処理
                 OpponentReady = true;
 
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
