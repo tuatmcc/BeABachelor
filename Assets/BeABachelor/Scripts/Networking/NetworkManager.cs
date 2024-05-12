@@ -307,7 +307,7 @@ namespace BeABachelor.Networking
                 NetworkState = NetworkState.Disconnected;
                 OpponentReady = false;
                 return UniTask.CompletedTask;
-            });
+            }).Forget();
         }
 
         public void FixedTick()
