@@ -26,7 +26,10 @@ namespace BeABachelor.Networking
         
         public override byte[] ToBytes()
         {
-            if (_sendDeletedItemIDs.Count == 0) return BitConverter.GetBytes(0);
+            if (_sendDeletedItemIDs.Count == 0)
+            {
+                return new byte[]{0x00, 0x00, 0x00, 0x00};
+            }
             var ids = _sendDeletedItemIDs.ToArray();
             _sendDeletedItemIDs.Clear();
             var writer = new BinaryWriter(new MemoryStream(4 + ids.Length * 4));
@@ -42,6 +45,7 @@ namespace BeABachelor.Networking
         {
             var reader = new BinaryReader(new MemoryStream(bytes));
             var count = reader.ReadInt32();
+            Debug.Log($"Count : {count}");
             for (var i = 0; i < count; i++)
             {
                 var id = reader.ReadInt32();
