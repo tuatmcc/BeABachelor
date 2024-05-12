@@ -267,32 +267,15 @@ namespace BeABachelor.Networking
                 var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
                 if (reader.ReadByte() != 0xaa) continue;
                 OpponentReady = true;
-                foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
-                    try
-                    {
-                        var length = reader.ReadInt32();
-                        var data = reader.ReadBytes(length);
-                        synchronization.FromBytes(data);
-
-                    }
-                    catch (Exception e)
-                    {
-                        // up class synchronization
-                        switch (synchronization)
-                        {
-                            case ScrollItemSynchronization scrollItemSynchronization:
-                                Debug.LogError($"{e}\nType is ScrollItemSynchronization");
-                                break;
-                            case PlayerAnimationSynchronization playerAnimationSynchronization:
-                                Debug.LogError("${e}\nType is PlayerAnimationSynchronization");
-                                break;
-                            case TransformSynchronization transformSynchronization:
-                                Debug.LogError($"{e}\nTransformSynchronization");
-                                break;
-                        }
-                    }
-
+                    var hashCode = reader.ReadInt32();
+                    var length = reader.ReadInt32();
+                    var data = reader.ReadBytes(length);
+                    var synchronization = SynchronizationController.MonoSynchronizations[hashCode];
+                    if (synchronization == null) continue;
+                    synchronization.FromBytes(data);
                 }
             }
         }
@@ -324,9 +307,12 @@ namespace BeABachelor.Networking
             writer.Write((byte) 0xaa);
             foreach (var synchronization in SynchronizationController.MonoSynchronizations)
             {
-                var data = synchronization.ToBytes();
+                var monoSynchronization = synchronization.Value;
+                var hashCode = monoSynchronization.GetHashCode();
+                var data = monoSynchronization.ToBytes();
+                writer.Write(hashCode);
                 writer.Write(data.Length);
-                writer.Write(synchronization.ToBytes());
+                writer.Write(monoSynchronization.ToBytes());
             }
             _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
         }

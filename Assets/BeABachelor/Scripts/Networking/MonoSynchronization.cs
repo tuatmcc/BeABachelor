@@ -11,11 +11,6 @@ namespace BeABachelor.Networking
         [Inject] protected INetworkManager _networkManager;
         [Inject] protected ISynchronizationController _synchronizationController;
 
-        public abstract int ObjectID
-        {
-            get;
-        }
-
         protected void Start()
         {
             _synchronizationController.Register(this);

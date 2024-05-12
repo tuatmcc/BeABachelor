@@ -15,7 +15,10 @@ namespace BeABachelor.Networking
                 }
         }
 
-        public override int ObjectID => nameof(TransformSynchronization).GetHashCode();
+        public override int GetHashCode()
+        {
+            return (gameObject.name + "trans").GetHashCode();
+        }
 
         private new void Start()
         {

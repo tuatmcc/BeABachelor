@@ -11,9 +11,13 @@ namespace BeABachelor.Networking
         private List<int> _sendDeletedItemIDs;
         [SerializeField] private ItemManager _itemManager;
 
-        public override int ObjectID => nameof(ScrollItemSynchronization).GetHashCode();
+        public override int GetHashCode()
+        {
+            // ascii "item"
+            return 1835365481;
+        }
 
-        private void Start()
+        private new void Start()
         {
             _sendDeletedItemIDs = new List<int>();
             _itemManager.OnItemHit += id => _sendDeletedItemIDs.Add(id);
