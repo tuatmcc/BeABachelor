@@ -312,7 +312,7 @@ namespace BeABachelor.Networking
                 var data = monoSynchronization.ToBytes();
                 writer.Write(hashCode);
                 writer.Write(data.Length);
-                writer.Write(monoSynchronization.ToBytes());
+                writer.Write(data);
             }
             _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
         }
