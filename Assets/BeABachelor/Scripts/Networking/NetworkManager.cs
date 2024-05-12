@@ -346,7 +346,7 @@ namespace BeABachelor.Networking
             {
                 while (IsConnected)
                 {
-                    await UniTask.Delay(20);
+                    await UniTask.Delay(33);
                     if (!IsConnected || SynchronizationController == null) continue;
                     try
                     {
