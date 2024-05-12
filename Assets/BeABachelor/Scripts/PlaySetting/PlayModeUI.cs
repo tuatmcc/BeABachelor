@@ -30,8 +30,9 @@ namespace BeABachelor.PlaySetting
 
         public override void Space()
         {
-            
-            
+            _playSettingManager.State = _gameManager.PlayType == PlayType.Solo
+                ? PlaySettingState.Confirm
+                : PlaySettingState.Searching;
         }
 
         public override void Activate()

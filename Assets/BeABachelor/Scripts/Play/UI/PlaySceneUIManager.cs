@@ -16,16 +16,10 @@ namespace BeABachelor.Play.UI
         [Inject] private IGameManager _gameManager;
         [Inject] private PlaySceneManager _playSceneManager;
         
-        private void OnOpponentReady()
+        private void OnOpponentReady(GameState state)
         {
-            try
-            {
+            if (state == GameState.CountDown)
                 waitOpponentPanel.SetActive(false);
-            } catch(Exception e)
-            {
-                Debug.LogError(e);
-                return; 
-            }
         }
         
         private void EnableFinishImage(GameState state)
@@ -44,14 +38,14 @@ namespace BeABachelor.Play.UI
             // これ以降はマルチプレイのみ
             
             if(!_networkManager.OpponentReady) waitOpponentPanel?.SetActive(true);
-            _networkManager.OpponentReadyEvent += OnOpponentReady;
+            _gameManager.OnGameStateChanged += OnOpponentReady;
         }
         private void OnDestroy()
         {
             _gameManager.OnGameStateChanged -= EnableFinishImage;
             _playSceneManager.OnCountChanged -= countDownText.CountText;
             if (_gameManager.PlayType != PlayType.Multi) return;
-            _networkManager.OpponentReadyEvent -= OnOpponentReady;
+            _gameManager.OnGameStateChanged -= OnOpponentReady;
         }
     }
 }

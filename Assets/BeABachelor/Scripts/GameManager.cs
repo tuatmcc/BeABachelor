@@ -26,6 +26,7 @@ namespace BeABachelor
             set 
             {
                 if(_gameState == value) return;
+                Debug.Log($"GameState changed : {_gameState} -> {value}");
                 _gameState = value;
                 OnGameStateChanged?.Invoke(_gameState);
             }

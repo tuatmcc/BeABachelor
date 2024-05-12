@@ -2,6 +2,7 @@
 {
     public enum NetworkState
     {
+        Searching,
         Connecting,
         Connected,
         Disconnected

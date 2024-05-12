@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace BeABachelor.Play.Items
     public class ItemManager : MonoBehaviour
     {
         [Inject] PlaySceneManager playSceneManager;
+        
+        public Action<int> OnItemHit;
     
         private List<GameObject> items = new List<GameObject>();
 
@@ -43,14 +46,17 @@ namespace BeABachelor.Play.Items
             }
         }
 
-        // IDからGameObjectを削除
-        // 相手からのデータを処理する際の呼び出しを想定
-        public void DestroyItem(int ID)
+        private void OnDisable()
         {
-            if (TryGetItemFromID(ID, out var item)) Destroy(item);
+            OnItemHit = null;
         }
 
-        private bool TryGetItemFromID(int ID, out GameObject found)
+        public void ItemHitNotify(int itemID)
+        {
+            OnItemHit?.Invoke(itemID);
+        }
+
+        public bool TryGetItemFromID(int ID, out GameObject found)
         {
             foreach (GameObject item in items)
             {

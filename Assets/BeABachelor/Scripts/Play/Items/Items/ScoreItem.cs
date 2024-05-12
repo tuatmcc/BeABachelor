@@ -12,22 +12,28 @@ namespace BeABachelor.Play.Items
             OnItemCollectorHit += PlaySE;
         }
 
-        private void NotifyItemHit(Collider other)
+        private void NotifyItemHit(GameObject other)
         {
             // ItemIDを基にNetworkManagerに衝突を通知
             Debug.Log($"ID : {ItemID}");
 
             if(other.TryGetComponent(out IItemCollectable _))
             {
-                _gameManager.Score += score;
-            }
-            else if(other.TryGetComponent(out IEnemyItemCollectable _))
-            {
-                _gameManager.EnemyScore += score;
+                GetScore();
             }
         }
+        
+        public void GetScore()
+        {
+            _gameManager.Score += score;
+        }
+        
+        public void GetScore2Enemy()
+        {
+            _gameManager.EnemyScore += score;
+        }
 
-        private void PlaySE(Collider other)
+        private void PlaySE(GameObject other)
         {
             if(other.TryGetComponent(out IItemCollectable _))
             {

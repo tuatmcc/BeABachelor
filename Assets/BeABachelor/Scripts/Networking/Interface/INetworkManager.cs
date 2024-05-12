@@ -7,20 +7,17 @@ namespace BeABachelor.Networking.Interface
 {
     public interface INetworkManager
     {
+        event Action OnSearching;
+        event Action OnConnecting;
         event Action<EndPoint> OnConnected;
-        event Action<EndPoint> OnConnecting; 
         event Action OnDisconnected;
         event Action OpponentReadyEvent; 
+        event Action<NetworkState> OnNetworkStateChanged;
         bool IsConnected { get; }
-        EndPoint RemoteEndPoint { get; }
-        int ClientPort { get; }
-        bool IsHost { get; }
-        bool OpponentReady { get; set; }
+        bool OpponentReady { get; }
         ISynchronizationController SynchronizationController { get; set;}
         NetworkState NetworkState { get; }
-        UniTask ConnectAsync(bool isHost, string ip, int remotePort = 8888, int clientPort = 8888, int timeOut = 5);
         UniTask ConnectAsync(int timeOut = 5);
-        void SetRemoteEndPointAndClientPort(bool isHost, string ip, int remotePort, int clientPort);
         void Disconnect();
     }
 }

@@ -14,6 +14,12 @@ namespace BeABachelor.Networking
                     rb.isKinematic = UseReceivedData;
                 }
         }
+
+        public override int GetHashCode()
+        {
+            return (gameObject.name + "trans").GetHashCode();
+        }
+
         private new void Start()
         {
             _networkManager.OnConnected += OnConnect;

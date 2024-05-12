@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7864956825841774411}
   - component: {fileID: 398450565579930225}
+  - component: {fileID: 5202868841258964037}
   m_Layer: 0
   m_Name: Props
   m_TagString: Untagged
@@ -59,6 +60,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbbdfef5f203eed4680eaa3d958f8267, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5202868841258964037
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1461558700819830876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd27644df9194435b5735bfc4f1db48c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UseReceivedData: 1
+  _itemManager: {fileID: 398450565579930225}
 --- !u!1001 &544702110249544383
 PrefabInstance:
   m_ObjectHideFlags: 0

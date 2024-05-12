@@ -3,8 +3,9 @@ namespace BeABachelor.PlaySetting
     public enum PlaySettingState
     {
         PlayMode,
-        PlayerType,
-        MultiplaySetting,
+        Searching,
+        Connecting,
+        Failed,
         Confirm
     };
 }

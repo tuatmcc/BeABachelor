@@ -1,64 +1,76 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using BeABachelor.Interface;
+using BeABachelor.Networking.Config;
 using BeABachelor.Networking.Interface;
+using BeABachelor.Util;
 using Cysharp.Threading.Tasks;
 using R3;
 using UnityEngine;
 using Zenject;
+using Random = UnityEngine.Random;
 
 namespace BeABachelor.Networking
 {
     public class NetworkManager : INetworkManager, IInitializable, IDisposable, IFixedTickable
     {
-        private string _ip;
         private int _clientPort;
         private int _remoteEndpointPort;
         private UdpClient _client;
-        private bool _isConnected;
         private EndPoint _endpoint;
         private CancellationTokenSource _disposeCancellationTokenSource;
+        private CancellationTokenSource _sendTickCancellationTokenSource;
         private bool _isHost;
         private bool _opponentReady;
         private NetworkState _networkState;
 
-        public bool IsConnected => _isConnected;
-        public EndPoint RemoteEndPoint => _endpoint;
-        public int ClientPort => _clientPort;
+        [Inject] private IGameManager _gameManager;
+
+        public event Action OnSearching;
+        public event Action OnConnecting;
         public event Action<EndPoint> OnConnected;
-        public event Action<EndPoint> OnConnecting;
         public event Action OnDisconnected;
         public event Action OpponentReadyEvent;
-        public bool IsHost => _isHost;
+        public event Action<NetworkState> OnNetworkStateChanged;
+        public bool IsConnected => _networkState == NetworkState.Connected;
 
         public bool OpponentReady
         {
             get => _opponentReady;
-            set
+            private set
             {
-                if (_opponentReady == value) return;
+                if (!(_opponentReady ^ value)) return;
                 _opponentReady = value;
                 OpponentReadyEvent?.Invoke();
             }
         }
+
+        public ISynchronizationController SynchronizationController { get; set; }
 
         public NetworkState NetworkState
         {
             get => _networkState;
             private set
             {
+                Debug.Log($"NetworkState: {_networkState} -> {value}");
                 switch (value)
                 {
+                    case NetworkState.Searching:
+                        OnSearching?.Invoke();
+                        _networkState = NetworkState.Searching;
+                        break;
+                    case NetworkState.Connecting:
+                        OnConnecting?.Invoke();
+                        _networkState = NetworkState.Connecting;
+                        break;
                     case NetworkState.Connected:
                         OnConnected?.Invoke(_endpoint);
                         _networkState = NetworkState.Connected;
-                        break;
-                    case NetworkState.Connecting:
-                        OnConnecting?.Invoke(_endpoint);
-                        _networkState = NetworkState.Connecting;
                         break;
                     case NetworkState.Disconnected:
                         OnDisconnected?.Invoke();
@@ -69,148 +81,237 @@ namespace BeABachelor.Networking
                 }
             }
         }
-        public ISynchronizationController SynchronizationController { get; set; }
-
-        public void SetRemoteEndPointAndClientPort(bool isHost, string ip, int remotePort, int clientPort)
-        {
-            _ip = ip;
-            _remoteEndpointPort = remotePort;
-            _clientPort = clientPort;
-            _isHost = isHost;
-        }
-        
-        public async UniTask ConnectAsync(bool isHost, string ip, int remotePort, int clientPort, int timeOut = 5)
-        {
-            _ip = ip;
-            _clientPort = clientPort;
-            _remoteEndpointPort = remotePort;
-            _isHost = isHost;
-            await ConnectAsync(timeOut);
-        }
 
         public async UniTask ConnectAsync(int timeOut = 5)
         {
-            NetworkState = NetworkState.Connecting;
-            if (IPAddress.TryParse(_ip, out var ipAddress))
-            {
-                _endpoint = new IPEndPoint(ipAddress, _remoteEndpointPort);
-            }
-            else
-            {
-                Debug.LogError("Invalid IP Address");
-                // ちょっと待たないと UI が更新されない
-                await UniTask.Delay(500);
-                NetworkState = NetworkState.Disconnected;
-                return;
-            }
-            
-            _client = new UdpClient(_clientPort);
-            if (_client == null)
-            {
-                Debug.LogError("Failed to create UdpClient");
-                NetworkState = NetworkState.Disconnected;
-                return;
-            }
-            _endpoint = new IPEndPoint(IPAddress.Parse(_ip), _remoteEndpointPort);
-            _isConnected = false;
+            OpponentReady = false;
+            NetworkState = NetworkState.Searching;
+            _client = new UdpClient(8888);
+
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
-            var cancellationTokenSource = new CancellationTokenSource();
-            var token = CancellationTokenSource.CreateLinkedTokenSource(cancellationTokenSource.Token, timeoutToken, _disposeCancellationTokenSource.Token).Token;
+            var broadcastCancellationTokenSource = new CancellationTokenSource();
+            var token = CancellationTokenSource.CreateLinkedTokenSource(broadcastCancellationTokenSource.Token,
+                timeoutToken, _disposeCancellationTokenSource.Token).Token;
             UdpReceiveResult result;
-            var ack = (byte)(_isHost ? 0xff : 0xfe);
-            var sendTask = Observable.Interval(TimeSpan.FromSeconds(0.2f), cancellationToken: token)
-                .Subscribe(_ => _client.Send(new byte[] { ack }, 1, _ip, _remoteEndpointPort));
+            SearchPlayer(token);
 
-            var receiveTask = _client.ReceiveAsync();
-            await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
+            do
+            {
+                var broadcastReceiveTask = _client.ReceiveAsync();
+                // ちょっと待たないと相手が受信できない
+                // taskComplete tokenCancel
+                // true         true        受信成功
+                // true         false       受信成功
+                // false        true        タイムアウトなど
+                // false        false       未受診
+
+                // 受信待ち
+                await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted || token.IsCancellationRequested);
+
+                if (!broadcastReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
+                {
+                    // タイムアウト
+                    Debug.LogError("Connection timed out");
+                    _client.Close();
+                    // broadcastReceiveTask.Dispose();
+                    broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
+                    NetworkState = NetworkState.Disconnected;
+                    return;
+                }
+
+                // 受信成功
+                result = broadcastReceiveTask.Result;
+
+                // 有効なデータでないときは再受信する
+            } while (!ValidAck(result));
+
             // ちょっと待たないと相手が受信できない
             await UniTask.Delay(TimeSpan.FromSeconds(1));
-            if (timeoutToken.IsCancellationRequested)
-            {
-                sendTask.Dispose();
-                _client.Dispose();
-                Debug.LogError("Connection timed out");
-                NetworkState = NetworkState.Disconnected;
-                return;
-            }
+            broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
 
-            if (!receiveTask.IsCompleted)
-            {
-                Debug.LogError("Receive Task is not completed");
-                NetworkState = NetworkState.Disconnected;
-                return;
-            }
+            _endpoint = result.RemoteEndPoint;
+            _client.Connect((IPEndPoint)_endpoint);
+            NetworkState = NetworkState.Connecting;
 
-            result = receiveTask.Result;
-            if (result.Buffer[0] == (_isHost ? 0xfe : 0xff) && result.RemoteEndPoint.Equals(_endpoint) &&
-                                                     !timeoutToken.IsCancellationRequested)
+            bool success;
+            if (IsWaitNegotiation((IPEndPoint)_endpoint))
             {
-                _isConnected = true;
-                _client.Connect(_ip, _remoteEndpointPort);
-                cancellationTokenSource.Cancel();
-                Debug.Log("Connected");
-                NetworkState = NetworkState.Connected;
-                ReceiveAsync(_disposeCancellationTokenSource.Token).Forget();
-                return;
-            }
-            
-            Debug.LogError("Connection Failed");
-            if (_isHost)
-            {
-                Debug.LogError(result.Buffer[0] == 0xff
-                    ? "Host is me"
-                    : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
+                Debug.Log("Receive negotiation");
+                success = await ReceiveNegotiationAsync(timeOut);
             }
             else
             {
-                Debug.LogError(result.Buffer[0] == 0xfe
-                    ? "I'm not host"
-                    : $"Received invalid data length:{result.Buffer.Length} data:{result.Buffer.Aggregate("", (current, b) => current + $"{b:X2} ")}");
+                Debug.Log("Send negotiation");
+                success = await SendNegotiationAsync(timeOut);
             }
-            NetworkState = NetworkState.Disconnected;
-        }
-        
-        private async UniTask ReceiveAsync(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
+
+            if (!success)
             {
-                var receiveTask = _client.ReceiveAsync();
-                await UniTask.WaitUntil(() => receiveTask.IsCompleted || token.IsCancellationRequested);
-                if (token.IsCancellationRequested)
-                {
-                    receiveTask.Dispose();
-                    return;
-                }
-                try
-                {
-                    if (receiveTask.Result.Buffer.Length <= 0) continue;
-                }catch (Exception ex)
-                {
-                    Debug.LogError(ex);
-                    return;
-                }
-                var reader = new BinaryReader(new MemoryStream(receiveTask.Result.Buffer));
-                if (reader.ReadByte() != 0xaa)
-                {
-                    OpponentReady = false;
-                    continue;
-                }
-                OpponentReady = true;
-                if (SynchronizationController == null) continue;
-                
-                foreach(var synchronization in SynchronizationController.MonoSynchronizations)
-                {
-                    var length = reader.ReadInt32();
-                    var data = reader.ReadBytes(length);
-                    synchronization.FromBytes(data);
-                }
+                Debug.LogError("Connection failed");
+                _client.Close();
+                NetworkState = NetworkState.Disconnected;
+                return;
             }
+
+            NetworkState = NetworkState.Connected;
+            _sendTickCancellationTokenSource = new CancellationTokenSource();
+            StartSendTick(CancellationTokenSource.CreateLinkedTokenSource(_sendTickCancellationTokenSource.Token,
+                _disposeCancellationTokenSource.Token).Token);
+
+            ReceiveTask().Forget();
+        }
+
+        private void SearchPlayer(CancellationToken token)
+        {
+            Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
+                .Subscribe(_ =>
+                {
+                    foreach (var ip in JsonConfigure.NetworkConfig.ipAddresses)
+                    {
+                        Debug.Log($"Send broadcast to {ip}");
+                        _client.Send(new byte[] { 0x01 }, 1, ip, 8888);
+                    }
+                });
+            // _client.Connect(IPAddress.Broadcast, 8888);
+            // _client.EnableBroadcast = true;
+            // Debug.Log(_client.Client.LocalEndPoint);
+            // Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
+            //     .Subscribe(_ => _client.Send(new byte[] { 0x01 }, 1));
+        }
+
+        private bool ValidAck(UdpReceiveResult result)
+        {
+            return result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
+        }
+
+        private bool IsWaitNegotiation(IPEndPoint endPoint)
+        {
+            var myIp = BitConverter.ToUInt32(
+                ((IPEndPoint)_client.Client.LocalEndPoint).Address.GetAddressBytes().Reverse().ToArray(), 0);
+            var opponentIp = BitConverter.ToUInt32(endPoint.Address.GetAddressBytes().Reverse().ToArray(), 0);
+            Debug.Log(
+                $"IsWaitNegotiation My IP: {myIp}, Opponent IP: {opponentIp} {((IPEndPoint)_client.Client.LocalEndPoint).Address}");
+            return opponentIp < myIp;
+        }
+
+        private async UniTask<bool> SendNegotiationAsync(int timeOut)
+        {
+            var random = Random.Range(0, 2);
+            await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
+            _gameManager.PlayerType = random == 0 ? PlayerType.Kouken : PlayerType.Hakken;
+            var timeController = new TimeoutController();
+            var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
+            var negotiationCancellationTokenSource = new CancellationTokenSource();
+            var token = CancellationTokenSource.CreateLinkedTokenSource(negotiationCancellationTokenSource.Token,
+                timeoutToken, _disposeCancellationTokenSource.Token).Token;
+            UdpReceiveResult result;
+            do
+            {
+                var negotiationReceiveTask = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted, cancellationToken: token);
+                if (!negotiationReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
+                {
+                    // タイムアウト
+                    Debug.LogError("Connection timed out");
+                    _client.Close();
+                    negotiationReceiveTask.Dispose();
+                    negotiationCancellationTokenSource.Cancel();
+                    return false;
+                }
+
+                result = negotiationReceiveTask.Result;
+            } while (!ValidNegotiation(result.Buffer));
+
+            negotiationCancellationTokenSource.Cancel();
+            return true;
+        }
+
+        private async UniTask<bool> ReceiveNegotiationAsync(int timeOut)
+        {
+            var timeController = new TimeoutController();
+            var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
+            var negotiationCancellationTokenSource = new CancellationTokenSource();
+            var token = CancellationTokenSource.CreateLinkedTokenSource(negotiationCancellationTokenSource.Token,
+                timeoutToken, _disposeCancellationTokenSource.Token).Token;
+            UdpReceiveResult result;
+
+            do
+            {
+                var negotiationReceiveTask = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted || token.IsCancellationRequested);
+                if (!negotiationReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
+                {
+                    // タイムアウト
+                    Debug.LogError("Connection timed out");
+                    _client.Close();
+                    negotiationReceiveTask.Dispose();
+                    negotiationCancellationTokenSource.Cancel();
+                    return false;
+                }
+
+                result = negotiationReceiveTask.Result;
+            } while (!ValidNegotiation(result.Buffer));
+
+            negotiationCancellationTokenSource.Cancel();
+            _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
+            await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
+            return true;
+        }
+
+        private static bool ValidNegotiation(IReadOnlyList<byte> data)
+        {
+            return data.Count == 2 && data[0] == 0x02;
+        }
+
+        private async UniTask ReceiveTask()
+        {
+            Debug.Log("ReceiveTask start");
+            while (IsConnected)
+            {
+                var task = _client.ReceiveAsync();
+                await UniTask.WaitUntil(() =>
+                    task.IsCompleted || !IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
+                if (!task.IsCompleted)
+                {
+                    Debug.Log("ReceiveTask is cancelled");
+                    return;
+                }
+
+                if (_disposeCancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Debug.Log("ReceiveTask is cancelled");
+                    return;
+                }
+
+                ReflectReceivedData(task.Result.Buffer).Forget();
+            }
+        }
+
+        private UniTask ReflectReceivedData(byte[] receiveData)
+        {
+            var reader = new BinaryReader(new MemoryStream(receiveData));
+            if (reader.ReadByte() != 0xaa) return UniTask.CompletedTask;
+            if (SynchronizationController == null) return UniTask.CompletedTask;
+            // これ以降 PlayScene での処理
+            OpponentReady = true;
+
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                var hashCode = reader.ReadInt32();
+                var length = reader.ReadInt32();
+                var data = reader.ReadBytes(length);
+                var synchronization = SynchronizationController.MonoSynchronizations[hashCode];
+                if (synchronization == null) continue;
+                synchronization.FromBytes(data);
+            }
+
+            return UniTask.CompletedTask;
         }
 
         public void Initialize()
         {
-            _isConnected = false;
+            _opponentReady = false;
             _disposeCancellationTokenSource = new CancellationTokenSource();
             NetworkState = NetworkState.Disconnected;
         }
@@ -221,27 +322,55 @@ namespace BeABachelor.Networking
             _disposeCancellationTokenSource?.Cancel();
             NetworkState = NetworkState.Disconnected;
         }
-        
+
         public void Disconnect()
         {
-            _client?.Dispose();
-            _isConnected = false;
-            NetworkState = NetworkState.Disconnected;
+            UniTask.Create(async () =>
+            {
+                await UniTask.Delay(1000);
+                _client.Close();
+                NetworkState = NetworkState.Disconnected;
+                OpponentReady = false;
+                _sendTickCancellationTokenSource?.Cancel();
+                return UniTask.CompletedTask;
+            }).Forget();
         }
 
         public void FixedTick()
         {
-            if (!_isConnected || SynchronizationController == null) return;
-            var writer = new BinaryWriter(new MemoryStream());
-            // 0xaa はプレイ中
-            writer.Write((byte) 0xaa);
-            foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+        }
+
+        private void StartSendTick(CancellationToken token)
+        {
+            UniTask.Create(async () =>
             {
-                var data = synchronization.ToBytes();
-                writer.Write(data.Length);
-                writer.Write(synchronization.ToBytes());
-            }
-            _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
+                while (IsConnected)
+                {
+                    await UniTask.Delay(20);
+                    if (!IsConnected || SynchronizationController == null) continue;
+                    try
+                    {
+                        var writer = new BinaryWriter(new MemoryStream());
+                        // 0xaa はプレイ中
+                        writer.Write((byte)0xaa);
+                        foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                        {
+                            var monoSynchronization = synchronization.Value;
+                            var hashCode = monoSynchronization.GetHashCode();
+                            var data = monoSynchronization.ToBytes();
+                            writer.Write(hashCode);
+                            writer.Write(data.Length);
+                            writer.Write(data);
+                        }
+
+                        _client.Send(((MemoryStream)writer.BaseStream).ToArray(), (int)writer.BaseStream.Length);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
+                }
+            });
         }
     }
 }

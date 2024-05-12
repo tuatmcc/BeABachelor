@@ -9,7 +9,12 @@ namespace BeABachelor.Networking
         
         private int _animIDSpeed = Animator.StringToHash("Speed");
         private int _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
-        
+
+        public override int GetHashCode()
+        {
+            return (gameObject.name + "anim").GetHashCode();
+        }
+
         public override byte[] ToBytes()
         {
             using BinaryWriter writer = new (new MemoryStream(8));
