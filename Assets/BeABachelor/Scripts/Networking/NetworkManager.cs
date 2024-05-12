@@ -263,6 +263,12 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
+                
+                if (_disposeCancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Debug.Log("ReceiveTask is cancelled");
+                    return;
+                }
 
                 var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
                 if (reader.ReadByte() != 0xaa) continue;
