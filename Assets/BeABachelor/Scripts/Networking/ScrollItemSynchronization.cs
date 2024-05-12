@@ -20,7 +20,11 @@ namespace BeABachelor.Networking
         private new void Start()
         {
             _sendDeletedItemIDs = new List<int>();
-            _itemManager.OnItemHit += id => _sendDeletedItemIDs.Add(id);
+            _itemManager.OnItemHit += id =>
+            {
+                Debug.Log($"Send Item ID : {id}");
+                _sendDeletedItemIDs.Add(id);
+            };
             base.Start();
         }
         
@@ -45,7 +49,6 @@ namespace BeABachelor.Networking
         {
             var reader = new BinaryReader(new MemoryStream(bytes));
             var count = reader.ReadInt32();
-            Debug.Log($"Count : {count}");
             for (var i = 0; i < count; i++)
             {
                 var id = reader.ReadInt32();
