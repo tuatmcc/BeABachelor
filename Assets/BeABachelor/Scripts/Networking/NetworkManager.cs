@@ -287,6 +287,7 @@ namespace BeABachelor.Networking
         }
         public void Initialize()
         {
+            _opponentReady = false;
             _disposeCancellationTokenSource = new CancellationTokenSource();
             NetworkState = NetworkState.Disconnected;
         }
