@@ -256,28 +256,31 @@ namespace BeABachelor.Networking
             while (IsConnected)
             {
                 var task = _client.ReceiveAsync();
-                await UniTask.WaitUntil(() => task.IsCompleted || !IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
+                await UniTask.WaitUntil(() =>
+                    task.IsCompleted || !IsConnected || _disposeCancellationTokenSource.Token.IsCancellationRequested);
                 if (!task.IsCompleted)
-                { 
+                {
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
 
-                try
+                var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
+                if (reader.ReadByte() != 0xaa) continue;
+                OpponentReady = true;
+                foreach (var synchronization in SynchronizationController.MonoSynchronizations)
                 {
-                    var reader = new BinaryReader(new MemoryStream(task.Result.Buffer));
-                    if (reader.ReadByte() != 0xaa) continue;
-                    OpponentReady = true;
-                    foreach (var synchronization in SynchronizationController.MonoSynchronizations)
+                    try
                     {
                         var length = reader.ReadInt32();
                         var data = reader.ReadBytes(length);
                         synchronization.FromBytes(data);
+
                     }
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError(e);
+                    catch (Exception e)
+                    {
+                        Debug.LogError(e);
+                    }
+
                 }
             }
         }
