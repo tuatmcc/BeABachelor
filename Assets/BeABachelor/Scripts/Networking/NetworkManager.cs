@@ -300,9 +300,14 @@ namespace BeABachelor.Networking
         
         public void Disconnect()
         {
-            _client.Close();
-            NetworkState = NetworkState.Disconnected;
-            OpponentReady = false;
+            UniTask.Create(async () =>
+            {
+                await UniTask.Delay(1000);
+                _client.Close();
+                NetworkState = NetworkState.Disconnected;
+                OpponentReady = false;
+                return UniTask.CompletedTask;
+            });
         }
 
         public void FixedTick()
