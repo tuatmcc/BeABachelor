@@ -42,6 +42,7 @@ namespace BeABachelor.Networking
             get => _opponentReady;
             private set
             {
+                Debug.Log($"OpponentReady: {_opponentReady} -> {value}");
                 if (!_opponentReady && value)
                     OpponentReadyEvent?.Invoke();
             }
