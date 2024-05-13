@@ -28,6 +28,7 @@ namespace BeABachelor.Networking
         private bool _isHost;
         private bool _opponentReady;
         private NetworkState _networkState;
+        private float _packetSendInterval;
 
         [Inject] private IGameManager _gameManager;
 
@@ -155,6 +156,7 @@ namespace BeABachelor.Networking
             }
 
             NetworkState = NetworkState.Connected;
+            _packetSendInterval = 1f / JsonConfigure.NetworkConfig.packetSendRate;
             _sendTickCancellationTokenSource = new CancellationTokenSource();
             StartSendTick(CancellationTokenSource.CreateLinkedTokenSource(_sendTickCancellationTokenSource.Token,
                 _disposeCancellationTokenSource.Token).Token);
@@ -346,7 +348,7 @@ namespace BeABachelor.Networking
             {
                 while (IsConnected)
                 {
-                    await UniTask.Delay(20);
+                    await UniTask.Delay(TimeSpan.FromSeconds(_packetSendInterval));
                     if (!IsConnected || SynchronizationController == null) continue;
                     try
                     {
