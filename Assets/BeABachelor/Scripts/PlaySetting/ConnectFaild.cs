@@ -1,8 +1,8 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Zenject;
 
 namespace BeABachelor.PlaySetting
 {
-    public class ConfirmUI : PlaySettingUIBase
+    public class ConnectFailed : PlaySettingUIBase
     {
         public override void Left()
         {
@@ -14,7 +14,7 @@ namespace BeABachelor.PlaySetting
 
         public override void Space()
         {
-            _playSettingManager.StateChangeWaitFade().Forget();
+            _playSettingManager.State = PlaySettingState.PlayMode;
         }
 
         public override void Activate()

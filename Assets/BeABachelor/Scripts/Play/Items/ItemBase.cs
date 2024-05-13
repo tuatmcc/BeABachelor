@@ -17,7 +17,7 @@ namespace BeABachelor.Play.Items
 
         public virtual bool DestroyOnItemCollectorHit => true;
 
-        public event Action<Collider> OnItemCollectorHit;
+        public event Action<GameObject> OnItemCollectorHit;
 
         [Inject] protected IGameManager _gameManager;
         [Inject] protected IAudioManager _audioManager;
@@ -30,31 +30,42 @@ namespace BeABachelor.Play.Items
         {
             if(used) return;
             if (_gameManager.GameState != GameState.Playing) return;
-            if (!(other.TryGetComponent(out IItemCollectable _) || other.TryGetComponent(out IEnemyItemCollectable _))) return;
+            if (!other.TryGetComponent(out IItemCollectable _)) return;
+            ItemHit(other.gameObject);
+            _itemManager.ItemHitNotify(ItemID);
+        }
 
-            OnItemCollectorHit?.Invoke(other);
+        public void ItemHit(GameObject hitObj)
+        {
+            if (used) return;
             used = true;
+            OnItemCollectorHit?.Invoke(hitObj);
 
             if(DestroyOnItemCollectorHit)
             {
-                if(effect != null)
-                {
-                    effect.SetActive(false);
-                }
-                if(deleteEffect != null)
-                {
-                    deleteEffect.SetActive(true);
-                }
-
-                UniTask.Create(async () =>
-                {
-                    await UniTask.Delay(1000);
-                    deleteEffect.SetActive(false);
-                    return UniTask.CompletedTask;
-                }).Forget();
-                gameObject.SetActive(false);
-               _itemManager.ItemNum--;
+                DeleteEffect();
             }
+        }
+
+        public void DeleteEffect()
+        {
+            if(effect != null)
+            {
+                effect.SetActive(false);
+            }
+            if(deleteEffect != null)
+            {
+                deleteEffect.SetActive(true);
+            }
+
+            UniTask.Create(async () =>
+            {
+                await UniTask.Delay(1000);
+                deleteEffect.SetActive(false);
+                return UniTask.CompletedTask;
+            }).Forget();
+            gameObject.SetActive(false);
+            _itemManager.ItemNum--;
         }
     }
 }
