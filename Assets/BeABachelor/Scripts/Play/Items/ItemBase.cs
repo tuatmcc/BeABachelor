@@ -3,6 +3,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
+using System.Threading;
 
 namespace BeABachelor.Play.Items
 {
@@ -25,6 +26,14 @@ namespace BeABachelor.Play.Items
         [Inject] private ItemManager _itemManager;
 
         private bool used = false;
+        private CancellationTokenSource _cts;
+        private CancellationToken _ct;
+
+        private void Start()
+        {
+            _cts = new CancellationTokenSource();
+            _ct = _cts.Token;
+        }
 
         private void OnTriggerEnter(Collider other)
         {
@@ -60,12 +69,17 @@ namespace BeABachelor.Play.Items
 
             UniTask.Create(async () =>
             {
-                await UniTask.Delay(1000);
+                await UniTask.Delay(1000,cancellationToken: _ct);
                 deleteEffect.SetActive(false);
                 return UniTask.CompletedTask;
             }).Forget();
-            gameObject.SetActive(false);
+            gameObject?.SetActive(false);
             _itemManager.ItemNum--;
+        }
+
+        private void OnDestroy()
+        {
+            _cts.Cancel();
         }
     }
 }

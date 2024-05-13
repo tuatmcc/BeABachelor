@@ -32,5 +32,10 @@ namespace BeABachelor.Play.UI
             await UniTask.Delay(2000, cancellationToken:token);
             gameObject.SetActive(false);
         }
+
+        private void OnDestroy()
+        {
+            _cts.Cancel();
+        }
     }
 }

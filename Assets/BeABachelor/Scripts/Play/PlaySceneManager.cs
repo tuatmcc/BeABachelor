@@ -203,9 +203,9 @@ namespace BeABachelor.Play
             {
                 _sceneChangeFlag = true;
                 _gameManager.GameState = GameState.Finished;
-                await UniTask.Delay(3000);
+                await UniTask.Delay(3000, cancellationToken: _cts.Token);
                 PlayFadeOut?.Invoke();
-                await UniTask.Delay(1500);
+                await UniTask.Delay(1500, cancellationToken: _cts.Token);
                 _gameManager.GameState = GameState.Result;
             }
             else if(_gameManager.GameState == GameState.Playing && _sceneChangeFlag)

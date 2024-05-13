@@ -19,6 +19,7 @@ namespace BeABachelor.Util
 
         public void PlayFadeOut()
         {
+            if (Image == null) return;
             Image.enabled = true;
             Animator.SetBool(FadeOut, true);
         }
@@ -31,6 +32,7 @@ namespace BeABachelor.Util
         private async UniTask DisableImageAsync()
         {
             await UniTask.Delay(500);
+            if(Image == null) return;
             Image.enabled = false;
         }
     }
