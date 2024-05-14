@@ -16,7 +16,7 @@ namespace BeABachelor
         [Inject] IGameManager _gameManager;
         [Inject] AudioSource _bgmAudioSource;
 
-        private void Start()
+        private void Awake()
         {
             _gameManager.OnGameStateChanged += OnGameStateChanged;
             _bgmAudioSource.loop = true;
@@ -27,6 +27,7 @@ namespace BeABachelor
             switch (gameState)
             {
                 case GameState.Title:
+                    _bgmAudioSource.Stop();
                     AudioFader.AudioFadeIn(_bgmAudioSource, menuClip, 0.1f);
                     break;
                 case GameState.Ready:

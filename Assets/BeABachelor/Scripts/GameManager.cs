@@ -61,6 +61,7 @@ namespace BeABachelor
             inputActions.System.Exit.performed += ToTitle;
             inputActions.Enable();
             Reset();
+            OnGameStateChanged.Invoke(GameState.Title);
             OnGameStateChanged += state =>
             {
                 switch (state)
@@ -121,7 +122,6 @@ namespace BeABachelor
                     _tick = 0;
                 }
             };
-            _audioSource.Stop();
             _networkManager.Disconnect();
         }
 
