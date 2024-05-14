@@ -121,6 +121,7 @@ namespace BeABachelor.Networking
                 }
 
                 // 受信成功
+                if (NetworkState == NetworkState.Disconnected) return;
                 result = broadcastReceiveTask.Result;
 
                 // 有効なデータでないときは再受信する
@@ -328,7 +329,7 @@ namespace BeABachelor.Networking
             UniTask.Create(async () =>
             {
                 await UniTask.Delay(1000);
-                _client.Close();
+                _client?.Close();
                 NetworkState = NetworkState.Disconnected;
                 OpponentReady = false;
                 _sendTickCancellationTokenSource?.Cancel();
