@@ -1,3 +1,5 @@
-# TanniCollecter
+# Be A Bachelor
+
+単位を集めて留年を回避しよう！2024年度新歓・工学部祭ゲーム
 
 Unity 2022.3.21.f1
