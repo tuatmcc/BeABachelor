@@ -197,6 +197,7 @@ namespace BeABachelor.Play
         public async UniTask FinishPlay()
         {
             _cts?.Cancel();
+            _cts = new CancellationTokenSource();
             if (_gameManager.PlayType == PlayType.Multi)
                 _networkManager.Disconnect();
             if(_gameManager.GameState == GameState.Playing && !_sceneChangeFlag)
