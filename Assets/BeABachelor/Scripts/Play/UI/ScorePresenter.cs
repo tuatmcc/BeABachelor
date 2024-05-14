@@ -15,7 +15,6 @@ namespace BeABachelor.Play.UI
         [Inject] IGameManager gameManager;
 
         private CancellationTokenSource _cts;
-        private CancellationToken _ct;
 
         void Start()
         {
@@ -24,7 +23,6 @@ namespace BeABachelor.Play.UI
             gameManager.OnScoreChanged += OnScoreChanged;
             gameManager.OnGameStateChanged += EnaleText;
             _cts = new CancellationTokenSource();
-            _ct = _cts.Token;
         }
 
         private void OnDestroy()
@@ -39,7 +37,7 @@ namespace BeABachelor.Play.UI
             Debug.Log($"Score : {score}");
             UniTask.Create(async () =>
             {
-                await UniTask.Delay(500, cancellationToken: _ct);
+                await UniTask.Delay(500, cancellationToken: _cts.Token);
                 text.text = $"{score :00}/30単位";
                 return UniTask.CompletedTask;
             }).Forget();

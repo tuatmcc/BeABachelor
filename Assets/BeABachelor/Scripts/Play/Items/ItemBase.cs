@@ -18,7 +18,7 @@ namespace BeABachelor.Play.Items
 
         public virtual bool DestroyOnItemCollectorHit => true;
 
-        public event Action<GameObject> OnItemCollectorHit;
+        public event Action<Collider> OnItemCollectorHit;
 
         [Inject] protected IGameManager _gameManager;
         [Inject] protected IAudioManager _audioManager;
@@ -27,12 +27,10 @@ namespace BeABachelor.Play.Items
 
         private bool used = false;
         private CancellationTokenSource _cts;
-        private CancellationToken _ct;
 
         private void Start()
         {
             _cts = new CancellationTokenSource();
-            _ct = _cts.Token;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -40,15 +38,15 @@ namespace BeABachelor.Play.Items
             if(used) return;
             if (_gameManager.GameState != GameState.Playing) return;
             if (!other.TryGetComponent(out IItemCollectable _)) return;
-            ItemHit(other.gameObject);
+            ItemHit(other);
             _itemManager.ItemHitNotify(ItemID);
         }
 
-        public void ItemHit(GameObject hitObj)
+        private void ItemHit(Collider other)
         {
             if (used) return;
             used = true;
-            OnItemCollectorHit?.Invoke(hitObj);
+            OnItemCollectorHit?.Invoke(other);
 
             if(DestroyOnItemCollectorHit)
             {
@@ -69,7 +67,7 @@ namespace BeABachelor.Play.Items
 
             UniTask.Create(async () =>
             {
-                await UniTask.Delay(1000,cancellationToken: _ct);
+                await UniTask.Delay(1000,cancellationToken: _cts.Token);
                 deleteEffect.SetActive(false);
                 return UniTask.CompletedTask;
             }).Forget();

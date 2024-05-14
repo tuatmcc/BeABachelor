@@ -1,15 +1,19 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using BeABachelor.Interface;
 using BeABachelor.Play.Items;
 using UnityEngine;
+using Zenject;
 
 namespace BeABachelor.Networking
 {
     public class ScrollItemSynchronization : MonoSynchronization
     {
         private List<int> _sendDeletedItemIDs;
-        [SerializeField] private ItemManager _itemManager;
+
+        [Inject] private ItemManager _itemManager;
+        [Inject] private IGameManager _gameManager;
 
         public override int GetHashCode()
         {
@@ -52,13 +56,7 @@ namespace BeABachelor.Networking
             for (var i = 0; i < count; i++)
             {
                 var id = reader.ReadInt32();
-                if(_itemManager.TryGetItemFromID(id, out var item))
-                {
-                    Debug.Log($"ID : {id}");
-                    var scrollItem = item.GetComponent<ScoreItem>();
-                    scrollItem.DeleteEffect();
-                    scrollItem.GetScore2Enemy();
-                }
+                _itemManager.EnemyGetItem(id);
             }
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BeABachelor.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
@@ -11,7 +12,8 @@ namespace BeABachelor.Play.Items
     /// </summary>
     public class ItemManager : MonoBehaviour
     {
-        [Inject] PlaySceneManager playSceneManager;
+        [Inject] private PlaySceneManager playSceneManager;
+        [Inject] private IGameManager gameManager;
         
         public Action<int> OnItemHit;
     
@@ -56,7 +58,23 @@ namespace BeABachelor.Play.Items
             OnItemHit?.Invoke(itemID);
         }
 
-        public bool TryGetItemFromID(int ID, out GameObject found)
+        public bool EnemyGetItem(int ID)
+        {
+            if(TryGetItemFromID(ID, out var item))
+            {
+                Debug.Log($"Enemy got item. ID : {ID}");
+                var scoreItem = item.GetComponent<ScoreItem>();
+                gameManager.EnemyScore += scoreItem.GetScore();
+                scoreItem.DeleteEffect();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private bool TryGetItemFromID(int ID, out GameObject found)
         {
             foreach (GameObject item in items)
             {
