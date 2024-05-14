@@ -9,7 +9,7 @@ namespace BeABachelor.Result
 {
     public class ResultSceneUIManager : MonoBehaviour
     {
-        [SerializeField] private Image resultImage;
+        // [SerializeField] private Image resultImage;
         [SerializeField] private Sprite gokokau;
         [SerializeField] private Sprite nakayokuGokaku;
         [SerializeField] private Sprite ryunen;
@@ -21,13 +21,13 @@ namespace BeABachelor.Result
 
         private void Start()
         {
-            resultImage.sprite = _gameManager.ResultState switch
-            {
-                ResultState.Win => gokokau,
-                ResultState.Lose => ryunen,
-                ResultState.Draw => nakayokuGokaku,
-                _ => throw new ArgumentOutOfRangeException()
-            };
+            // resultImage.sprite = _gameManager.ResultState switch
+            // {
+            //     ResultState.Win => gokokau,
+            //     ResultState.Lose => ryunen,
+            //     ResultState.Draw => nakayokuGokaku,
+            //     _ => throw new ArgumentOutOfRangeException()
+            // };
             scoreText.text = _resultManager.ScoreText;
             playerInput.actions["Space"].performed += ToTile;
         }
