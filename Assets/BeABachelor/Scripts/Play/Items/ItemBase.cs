@@ -25,17 +25,18 @@ namespace BeABachelor.Play.Items
         [Inject] protected PlaySceneManager _sceneManager;
         [Inject] private ItemManager _itemManager;
 
-        private bool used = false;
+        public bool Used { get; private set }
         private CancellationTokenSource _cts;
 
         private void Start()
         {
+            Used = false;
             _cts = new CancellationTokenSource();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if(used) return;
+            if(Used) return;
             if (_gameManager.GameState != GameState.Playing) return;
             if (!other.TryGetComponent(out IItemCollectable _)) return;
             ItemHit(other);
@@ -44,8 +45,8 @@ namespace BeABachelor.Play.Items
 
         private void ItemHit(Collider other)
         {
-            if (used) return;
-            used = true;
+            if (Used) return;
+            Used = true;
             OnItemCollectorHit?.Invoke(other);
 
             if(DestroyOnItemCollectorHit)
