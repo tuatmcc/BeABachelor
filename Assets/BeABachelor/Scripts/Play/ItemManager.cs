@@ -65,6 +65,7 @@ namespace BeABachelor.Play.Items
                 Debug.Log($"Enemy got item. ID : {ID}");
                 var scoreItem = item.GetComponent<ScoreItem>();
                 if (scoreItem.Used) return false;
+                scoreItem.Used = true;
                 gameManager.EnemyScore += scoreItem.GetScore();
                 scoreItem.DeleteEffect();
                 return true;
