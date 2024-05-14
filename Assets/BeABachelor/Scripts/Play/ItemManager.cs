@@ -25,6 +25,7 @@ namespace BeABachelor.Play.Items
             set
             {
                 _itemnum = value;
+                Debug.Log($"ItemNum changed: {value}");
                 if(_itemnum == 0)
                 {
                     playSceneManager.FinishPlay().Forget();
