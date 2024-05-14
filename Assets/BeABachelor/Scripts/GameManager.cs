@@ -4,6 +4,7 @@ using BeABachelor.Interface;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using BeABachelor.Networking.Interface;
 
 namespace BeABachelor
 {
@@ -52,6 +53,7 @@ namespace BeABachelor
         private int _score;
         private int _tick;
         [Inject] private AudioSource _audioSource;
+        [Inject] private INetworkManager _networkManager;
 
         public void Initialize()
         {
@@ -59,6 +61,7 @@ namespace BeABachelor
             inputActions.System.Exit.performed += ToTitle;
             inputActions.Enable();
             Reset();
+            OnGameStateChanged.Invoke(GameState.Title);
             OnGameStateChanged += state =>
             {
                 switch (state)
@@ -119,7 +122,7 @@ namespace BeABachelor
                     _tick = 0;
                 }
             };
-            _audioSource.Stop();
+            _networkManager.Disconnect();
         }
 
         public void FixedTick()

@@ -8,37 +8,32 @@ namespace BeABachelor.Play.Items
 
         private void Awake()
         {
-            OnItemCollectorHit += NotifyItemHit;
+            OnItemCollectorHit += AddScore;
             OnItemCollectorHit += PlaySE;
         }
 
-        private void NotifyItemHit(GameObject other)
+        private void AddScore(Collider other)
         {
             // ItemIDを基にNetworkManagerに衝突を通知
             Debug.Log($"ID : {ItemID}");
 
             if(other.TryGetComponent(out IItemCollectable _))
             {
-                GetScore();
+                _gameManager.Score += score;
             }
         }
         
-        public void GetScore()
-        {
-            _gameManager.Score += score;
-        }
-        
-        public void GetScore2Enemy()
-        {
-            _gameManager.EnemyScore += score;
-        }
-
-        private void PlaySE(GameObject other)
+        private void PlaySE(Collider other)
         {
             if(other.TryGetComponent(out IItemCollectable _))
             {
                 ((PlaySceneAudioManager)_audioManager)?.PlayItemSE();
             }
+        }
+
+        public int GetScore()
+        {
+            return score;
         }
     }
 }

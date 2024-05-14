@@ -3,6 +3,7 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Zenject;
+using System.Threading;
 
 namespace BeABachelor.Play.Items
 {
@@ -17,29 +18,36 @@ namespace BeABachelor.Play.Items
 
         public virtual bool DestroyOnItemCollectorHit => true;
 
-        public event Action<GameObject> OnItemCollectorHit;
+        public event Action<Collider> OnItemCollectorHit;
 
         [Inject] protected IGameManager _gameManager;
         [Inject] protected IAudioManager _audioManager;
         [Inject] protected PlaySceneManager _sceneManager;
         [Inject] private ItemManager _itemManager;
 
-        private bool used = false;
+        public bool Used { get; set; }
+        private CancellationTokenSource _cts;
+
+        private void Start()
+        {
+            Used = false;
+            _cts = new CancellationTokenSource();
+        }
 
         private void OnTriggerEnter(Collider other)
         {
-            if(used) return;
+            if(Used) return;
             if (_gameManager.GameState != GameState.Playing) return;
             if (!other.TryGetComponent(out IItemCollectable _)) return;
-            ItemHit(other.gameObject);
+            ItemHit(other);
             _itemManager.ItemHitNotify(ItemID);
         }
 
-        public void ItemHit(GameObject hitObj)
+        private void ItemHit(Collider other)
         {
-            if (used) return;
-            used = true;
-            OnItemCollectorHit?.Invoke(hitObj);
+            if (Used) return;
+            Used = true;
+            OnItemCollectorHit?.Invoke(other);
 
             if(DestroyOnItemCollectorHit)
             {
@@ -60,12 +68,17 @@ namespace BeABachelor.Play.Items
 
             UniTask.Create(async () =>
             {
-                await UniTask.Delay(1000);
+                await UniTask.Delay(1000,cancellationToken: _cts.Token);
                 deleteEffect.SetActive(false);
                 return UniTask.CompletedTask;
             }).Forget();
-            gameObject.SetActive(false);
+            gameObject?.SetActive(false);
             _itemManager.ItemNum--;
+        }
+
+        private void OnDestroy()
+        {
+            _cts.Cancel();
         }
     }
 }

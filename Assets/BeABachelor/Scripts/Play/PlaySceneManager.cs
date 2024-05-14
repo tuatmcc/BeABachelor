@@ -197,15 +197,16 @@ namespace BeABachelor.Play
         public async UniTask FinishPlay()
         {
             _cts?.Cancel();
+            _cts = new CancellationTokenSource();
             if (_gameManager.PlayType == PlayType.Multi)
                 _networkManager.Disconnect();
             if(_gameManager.GameState == GameState.Playing && !_sceneChangeFlag)
             {
                 _sceneChangeFlag = true;
                 _gameManager.GameState = GameState.Finished;
-                await UniTask.Delay(3000);
+                await UniTask.Delay(3000, cancellationToken: _cts.Token);
                 PlayFadeOut?.Invoke();
-                await UniTask.Delay(1500);
+                await UniTask.Delay(1500, cancellationToken: _cts.Token);
                 _gameManager.GameState = GameState.Result;
             }
             else if(_gameManager.GameState == GameState.Playing && _sceneChangeFlag)
