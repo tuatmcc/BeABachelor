@@ -86,7 +86,7 @@ namespace BeABachelor.Networking
         {
             OpponentReady = false;
             NetworkState = NetworkState.Searching;
-            _client = new UdpClient(8888);
+            _client = new UdpClient();
 
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
@@ -165,25 +165,32 @@ namespace BeABachelor.Networking
 
         private void SearchPlayer(CancellationToken token)
         {
-            Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
-                .Subscribe(_ =>
+            IPAddress selfIPAddress = null;
+            var hostName = "";
+            var ip = Dns.GetHostEntry(hostName);
+            foreach(var address in ip.AddressList)
+            {
+                if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    foreach (var ip in JsonConfigure.NetworkConfig.ipAddresses)
-                    {
-                        Debug.Log($"Send broadcast to {ip}");
-                        _client.Send(new byte[] { 0x01 }, 1, ip, 8888);
-                    }
-                });
-            // _client.Connect(IPAddress.Broadcast, 8888);
-            // _client.EnableBroadcast = true;
-            // Debug.Log(_client.Client.LocalEndPoint);
-            // Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
-            //     .Subscribe(_ => _client.Send(new byte[] { 0x01 }, 1));
+                    selfIPAddress = address;
+                    break;
+                }
+            }
+            var networkConfig = JsonConfigure.NetworkConfig;
+            _clientPort = networkConfig.port;
+            Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
+                .Subscribe(_ => 
+                    _client.Send(
+                        selfIPAddress.GetAddressBytes(), 
+                        selfIPAddress.GetAddressBytes().Length, 
+                        new IPEndPoint(IPAddress.Broadcast, _clientPort))
+                    );
         }
 
         private bool ValidAck(UdpReceiveResult result)
         {
-            return result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
+            // Received length == IPv4 length and it is not loopback address
+            return result.Buffer.Length == 4 && !IPAddress.IsLoopback(IPAddress.Parse(result.Buffer.ToString()));
         }
 
         private bool IsWaitNegotiation(IPEndPoint endPoint)
