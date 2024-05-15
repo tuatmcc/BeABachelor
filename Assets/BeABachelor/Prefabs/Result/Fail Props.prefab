@@ -142,6 +142,8 @@ PlayableDirector:
     value: {fileID: 1521061118540001691}
   - key: {fileID: 1379655309334563250, guid: 68a43557d0a5fa845a570a2b1a587181, type: 2}
     value: {fileID: 1566186469518418666}
+  - key: {fileID: 7433712085629811805, guid: 68a43557d0a5fa845a570a2b1a587181, type: 2}
+    value: {fileID: 1566186469518418666}
   m_ExposedReferences:
     m_References: []
 --- !u!1 &3474802417059848937
@@ -2372,13 +2374,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8660737420594286719, guid: 726a9846ac370bb07abb6aaa9c7ea1d9, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660737420594286719, guid: 726a9846ac370bb07abb6aaa9c7ea1d9, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'ring_finger.002.R'\n\tTransform 'little_finger.001.R'\n\tTransform
-        'little_finger.003.L'\n\tTransform 'index_finger.003.L'\n\tTransform 'shoulder.R'\n\tTransform
-        'foot.R'\n\tTransform 'forearm.R.003'\n\tTransform 'forearm.R'\n\tTransform
-        'ring_finger.001.R'\n\tTransform 'middle_finger.002.R'\n\tand more ..."
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5706153342023883878, guid: 726a9846ac370bb07abb6aaa9c7ea1d9, type: 3}

@@ -78,6 +78,10 @@ PrefabInstance:
       propertyPath: m_CameraCutEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 2803991269193026761, guid: fff72a9a32ca16ac4965560c8940c6d8, type: 3}
+      propertyPath: m_RenderPostProcessing
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3413943602402813357, guid: fff72a9a32ca16ac4965560c8940c6d8, type: 3}
       propertyPath: field of view
       value: 40
@@ -144,6 +148,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6160786862601958398}
     m_Modifications:
+    - target: {fileID: 1566186469518418666, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
+      propertyPath: m_WarningMessage
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1700725477598142871, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_Name
       value: Fail Props
@@ -292,6 +300,26 @@ PrefabInstance:
     - target: {fileID: 1935236614666016300, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_Name
       value: Success Props
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7328796
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.0011826701
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6803565
+      objectReference: {fileID: 0}
+    - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.0010979122
+      objectReference: {fileID: 0}
+    - target: {fileID: 4772878039633126707, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_Controller
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5342711715714360577, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_LocalPosition.x
