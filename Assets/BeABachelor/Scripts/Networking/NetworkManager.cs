@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using BeABachelor.Interface;
 using BeABachelor.Networking.Config;
@@ -23,6 +24,7 @@ namespace BeABachelor.Networking
         private int _remoteEndpointPort;
         private UdpClient _client;
         private EndPoint _endpoint;
+        private IPAddress _selfIPAddress;
         private CancellationTokenSource _disposeCancellationTokenSource;
         private CancellationTokenSource _sendTickCancellationTokenSource;
         private bool _isHost;
@@ -86,13 +88,18 @@ namespace BeABachelor.Networking
         {
             OpponentReady = false;
             NetworkState = NetworkState.Searching;
-            _client = new UdpClient(8888);
 
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
             var broadcastCancellationTokenSource = new CancellationTokenSource();
             var token = CancellationTokenSource.CreateLinkedTokenSource(broadcastCancellationTokenSource.Token,
                 timeoutToken, _disposeCancellationTokenSource.Token).Token;
+
+            var networkConfig = JsonConfigure.NetworkConfig;
+            _clientPort = networkConfig.port;
+            _client = new UdpClient(_clientPort);
+            _client.EnableBroadcast = true;
+
             UdpReceiveResult result;
             SearchPlayer(token);
 
@@ -132,7 +139,9 @@ namespace BeABachelor.Networking
             broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
 
             _endpoint = result.RemoteEndPoint;
+            Debug.Log($"Start connection with {_endpoint}");
             _client.Connect((IPEndPoint)_endpoint);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             NetworkState = NetworkState.Connecting;
 
             bool success;
@@ -165,25 +174,32 @@ namespace BeABachelor.Networking
 
         private void SearchPlayer(CancellationToken token)
         {
-            Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
-                .Subscribe(_ =>
+            _selfIPAddress = null;
+            var hostName = "";
+            var ip = Dns.GetHostEntry(hostName);
+            foreach(var address in ip.AddressList)
+            {
+                if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    foreach (var ip in JsonConfigure.NetworkConfig.ipAddresses)
-                    {
-                        Debug.Log($"Send broadcast to {ip}");
-                        _client.Send(new byte[] { 0x01 }, 1, ip, 8888);
-                    }
-                });
-            // _client.Connect(IPAddress.Broadcast, 8888);
-            // _client.EnableBroadcast = true;
-            // Debug.Log(_client.Client.LocalEndPoint);
-            // Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
-            //     .Subscribe(_ => _client.Send(new byte[] { 0x01 }, 1));
+                    _selfIPAddress = address;
+                    break;
+                }
+            }
+            Debug.Log($"This IP is {_selfIPAddress}");
+            Debug.Log($"Start broadcast to {IPAddress.Broadcast}:{_clientPort}");
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
+                .Subscribe(_ => 
+                    _client.Send(
+                        _selfIPAddress.GetAddressBytes(), 
+                        _selfIPAddress.GetAddressBytes().Length, 
+                        new IPEndPoint(IPAddress.Broadcast, _clientPort))
+                    );
         }
 
         private bool ValidAck(UdpReceiveResult result)
         {
-            return result.Buffer.Length == 1 && result.Buffer[0] == 0x01;
+            // Received length == IPv4 length and the remote endpoint address is not the same as _selfIPAddress
+            return result.Buffer.Length == 4 && !result.RemoteEndPoint.Address.Equals(_selfIPAddress);
         }
 
         private bool IsWaitNegotiation(IPEndPoint endPoint)
