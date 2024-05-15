@@ -141,6 +141,7 @@ namespace BeABachelor.Networking
             _endpoint = result.RemoteEndPoint;
             Debug.Log($"Start connection with {_endpoint}");
             _client.Connect((IPEndPoint)_endpoint);
+            await UniTask.Delay(TimeSpan.FromSeconds(1));
             NetworkState = NetworkState.Connecting;
 
             bool success;
@@ -186,7 +187,7 @@ namespace BeABachelor.Networking
             }
             Debug.Log($"This IP is {_selfIPAddress}");
             Debug.Log($"Start broadcast to {IPAddress.Broadcast}:{_clientPort}");
-            Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
+            Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
                 .Subscribe(_ => 
                     _client.Send(
                         _selfIPAddress.GetAddressBytes(), 
