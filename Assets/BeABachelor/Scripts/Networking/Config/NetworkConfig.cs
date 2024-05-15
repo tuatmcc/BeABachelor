@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine.Serialization;
 
 namespace BeABachelor.Networking.Config
@@ -8,11 +8,5 @@ namespace BeABachelor.Networking.Config
     {
         public int packetSendRate = 50;
         public int port = 8888;
-        public string[] ipAddresses = Array.Empty<string>();
-        
-        public override string ToString()
-        {
-            return $"Port: {port}, IP Addresses: {string.Join(", ", ipAddresses)}";
-        }
     }
 }
