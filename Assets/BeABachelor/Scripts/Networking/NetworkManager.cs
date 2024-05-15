@@ -24,6 +24,7 @@ namespace BeABachelor.Networking
         private int _remoteEndpointPort;
         private UdpClient _client;
         private EndPoint _endpoint;
+        private IPAddress _selfIPAddress;
         private CancellationTokenSource _disposeCancellationTokenSource;
         private CancellationTokenSource _sendTickCancellationTokenSource;
         private bool _isHost;
@@ -138,6 +139,7 @@ namespace BeABachelor.Networking
             broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
 
             _endpoint = result.RemoteEndPoint;
+            Debug.Log($"Start connection with {_endpoint}");
             _client.Connect((IPEndPoint)_endpoint);
             NetworkState = NetworkState.Connecting;
 
@@ -171,32 +173,32 @@ namespace BeABachelor.Networking
 
         private void SearchPlayer(CancellationToken token)
         {
-            IPAddress selfIPAddress = null;
+            _selfIPAddress = null;
             var hostName = "";
             var ip = Dns.GetHostEntry(hostName);
             foreach(var address in ip.AddressList)
             {
                 if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    selfIPAddress = address;
+                    _selfIPAddress = address;
                     break;
                 }
             }
-            Debug.Log($"{selfIPAddress}, {_clientPort}");
-            Debug.Log($"{IPAddress.Broadcast}, {_clientPort}");
+            Debug.Log($"This IP is {_selfIPAddress}");
+            Debug.Log($"Start broadcast to {IPAddress.Broadcast}:{_clientPort}");
             Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
                 .Subscribe(_ => 
                     _client.Send(
-                        selfIPAddress.GetAddressBytes(), 
-                        selfIPAddress.GetAddressBytes().Length, 
+                        _selfIPAddress.GetAddressBytes(), 
+                        _selfIPAddress.GetAddressBytes().Length, 
                         new IPEndPoint(IPAddress.Broadcast, _clientPort))
                     );
         }
 
         private bool ValidAck(UdpReceiveResult result)
         {
-            // Received length == IPv4 length and it is not loopback address
-            return result.Buffer.Length == 4 && !IPAddress.IsLoopback(new IPAddress(result.Buffer));
+            // Received length == IPv4 length and the remote endpoint address is not the same as _selfIPAddress
+            return result.Buffer.Length == 4 && !result.RemoteEndPoint.Address.Equals(_selfIPAddress);
         }
 
         private bool IsWaitNegotiation(IPEndPoint endPoint)
