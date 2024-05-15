@@ -31,6 +31,7 @@ namespace BeABachelor.Networking
         private bool _opponentReady;
         private NetworkState _networkState;
         private float _packetSendInterval;
+        private int _lanPortNumber;
 
         [Inject] private IGameManager _gameManager;
 
@@ -98,6 +99,7 @@ namespace BeABachelor.Networking
 
             var networkConfig = JsonConfigure.NetworkConfig;
             _clientPort = networkConfig.port;
+            _lanPortNumber = networkConfig.IPNumber;
             _client = new UdpClient(_clientPort);
             _client.EnableBroadcast = true;
 
@@ -179,10 +181,16 @@ namespace BeABachelor.Networking
             _selfIPAddress = null;
             var hostName = "";
             var ip = Dns.GetHostEntry(hostName);
+            var number = _lanPortNumber;
             foreach(var address in ip.AddressList)
             {
                 if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
+                    if (number != 0)
+                    {
+                        number--;
+                        continue;
+                    }
                     _selfIPAddress = address;
                     break;
                 }
