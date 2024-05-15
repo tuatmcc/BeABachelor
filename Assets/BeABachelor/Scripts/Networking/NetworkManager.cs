@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using BeABachelor.Interface;
 using BeABachelor.Networking.Config;
@@ -86,13 +87,18 @@ namespace BeABachelor.Networking
         {
             OpponentReady = false;
             NetworkState = NetworkState.Searching;
-            _client = new UdpClient();
 
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut));
             var broadcastCancellationTokenSource = new CancellationTokenSource();
             var token = CancellationTokenSource.CreateLinkedTokenSource(broadcastCancellationTokenSource.Token,
                 timeoutToken, _disposeCancellationTokenSource.Token).Token;
+
+            var networkConfig = JsonConfigure.NetworkConfig;
+            _clientPort = networkConfig.port;
+            _client = new UdpClient(_clientPort);
+            _client.EnableBroadcast = true;
+
             UdpReceiveResult result;
             SearchPlayer(token);
 
@@ -176,8 +182,8 @@ namespace BeABachelor.Networking
                     break;
                 }
             }
-            var networkConfig = JsonConfigure.NetworkConfig;
-            _clientPort = networkConfig.port;
+            Debug.Log($"{selfIPAddress}, {_clientPort}");
+            Debug.Log($"{IPAddress.Broadcast}, {_clientPort}");
             Observable.Interval(TimeSpan.FromSeconds(0.5f), token)
                 .Subscribe(_ => 
                     _client.Send(
@@ -190,7 +196,7 @@ namespace BeABachelor.Networking
         private bool ValidAck(UdpReceiveResult result)
         {
             // Received length == IPv4 length and it is not loopback address
-            return result.Buffer.Length == 4 && !IPAddress.IsLoopback(IPAddress.Parse(result.Buffer.ToString()));
+            return result.Buffer.Length == 4 && !IPAddress.IsLoopback(new IPAddress(result.Buffer));
         }
 
         private bool IsWaitNegotiation(IPEndPoint endPoint)
