@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -31,7 +32,7 @@ namespace BeABachelor.Networking
         private bool _opponentReady;
         private NetworkState _networkState;
         private float _packetSendInterval;
-        private int _lanPortNumber;
+        private int _IPIndex;
 
         [Inject] private IGameManager _gameManager;
 
@@ -99,7 +100,7 @@ namespace BeABachelor.Networking
 
             var networkConfig = JsonConfigure.NetworkConfig;
             _clientPort = networkConfig.port;
-            _lanPortNumber = networkConfig.IPNumber;
+            _IPIndex = networkConfig.IPv4Index;
             _client = new UdpClient(_clientPort);
             _client.EnableBroadcast = true;
 
@@ -181,12 +182,13 @@ namespace BeABachelor.Networking
             _selfIPAddress = null;
             var hostName = "";
             var ip = Dns.GetHostEntry(hostName);
-            var number = _lanPortNumber;
+            var number = _IPIndex;
+            IPAddress directedBroadcastAddress = null;
             foreach(var address in ip.AddressList)
             {
                 if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    if (number != 0)
+                    if (number > 0)
                     {
                         number--;
                         continue;
@@ -195,14 +197,26 @@ namespace BeABachelor.Networking
                     break;
                 }
             }
+            var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach(var info in interfaces)
+            {
+                var target = info.GetIPProperties().UnicastAddresses.Where(address => address.Address.AddressFamily == AddressFamily.InterNetwork);
+                if (target.Count() == 0) continue;
+                if (!target.First().Address.Equals(_selfIPAddress)) continue;
+                var address_bytes = target.First().Address.GetAddressBytes();
+                var mask_bites = target.First().IPv4Mask.GetAddressBytes();
+                var directedBroadcastAddressBit = BitConverter.ToUInt32(address_bytes) | ~BitConverter.ToUInt32(mask_bites);
+                directedBroadcastAddress = new IPAddress(directedBroadcastAddressBit);
+
+            }
             Debug.Log($"This IP is {_selfIPAddress}");
-            Debug.Log($"Start broadcast to {IPAddress.Broadcast}:{_clientPort}");
+            Debug.Log($"Start broadcast to {directedBroadcastAddress}:{_clientPort}");
             Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
                 .Subscribe(_ => 
                     _client.Send(
                         _selfIPAddress.GetAddressBytes(), 
                         _selfIPAddress.GetAddressBytes().Length, 
-                        new IPEndPoint(IPAddress.Broadcast, _clientPort))
+                        new IPEndPoint(directedBroadcastAddress, _clientPort))
                     );
         }
 
