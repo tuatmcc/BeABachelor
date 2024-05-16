@@ -22,6 +22,9 @@ namespace BeABachelor.Play
         [SerializeField] GameObject hakken;
         [SerializeField] GameObject kouken;
 
+        public GameObject Hakken => hakken;
+        public GameObject Kouken => kouken;
+        
         public int Count
         {
             get => _count;
