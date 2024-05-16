@@ -239,7 +239,11 @@ namespace BeABachelor.Networking
         private async UniTask<bool> SendNegotiationAsync(int timeOut)
         {
             var random = Random.Range(0, 2);
-            await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
+            for(int i = 0; i < 10 ; i++)
+            {
+                await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
+                await UniTask.WaitForSeconds(0.1f);
+            }
             _gameManager.PlayerType = random == 0 ? PlayerType.Kouken : PlayerType.Hakken;
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
@@ -296,7 +300,11 @@ namespace BeABachelor.Networking
 
             negotiationCancellationTokenSource.Cancel();
             _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
-            await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
+            for(int i = 0; i < 10; i++)
+            {
+                await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
+                await UniTask.WaitForSeconds(0.1f);
+            }
             return true;
         }
 
