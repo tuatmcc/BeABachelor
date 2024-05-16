@@ -46,11 +46,20 @@ namespace BeABachelor
             }
         }
 
-        public int EnemyScore {  get; set; }
+        public int EnemyScore 
+        {  
+            get => _enemyScore; 
+            set  
+            {
+                _enemyScore = value;
+                OnOpponentScoreChanged?.Invoke(_enemyScore);
+            }
+        }
         public ResultState ResultState { get; set; }
 
         private GameState _gameState;
         private int _score;
+        private int _enemyScore;
         private int _tick;
         [Inject] private AudioSource _audioSource;
         [Inject] private INetworkManager _networkManager;
