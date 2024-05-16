@@ -241,6 +241,7 @@ namespace BeABachelor.Networking
             var random = Random.Range(0, 2);
             for(int i = 0; i < 10 ; i++)
             {
+                if(NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
                 await UniTask.WaitForSeconds(0.1f);
             }
@@ -294,7 +295,7 @@ namespace BeABachelor.Networking
                     negotiationCancellationTokenSource.Cancel();
                     return false;
                 }
-
+                if (NetworkState == NetworkState.Disconnected) return false;
                 result = negotiationReceiveTask.Result;
             } while (!ValidNegotiation(result.Buffer));
 
@@ -302,6 +303,7 @@ namespace BeABachelor.Networking
             _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
             for(int i = 0; i < 10; i++)
             {
+                if (NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
                 await UniTask.WaitForSeconds(0.1f);
             }
@@ -332,7 +334,7 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
-
+                if (NetworkState == NetworkState.Disconnected) return;
                 ReflectReceivedData(task.Result.Buffer).Forget();
             }
         }
