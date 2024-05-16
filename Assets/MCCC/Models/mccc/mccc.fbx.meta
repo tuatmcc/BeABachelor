@@ -16,14 +16,14 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
+    rigImportErrors: "Avatar creation failed:\n\tTransform 'Root' not found in HumanDescription.\n"
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
-    importConstraints: 0
+    importConstraints: 1
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -72,11 +72,11 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 3
-    normalCalculationMode: 4
+    tangentImportMode: 2
+    normalCalculationMode: 1
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
-    blendShapeNormalImportMode: 1
-    normalSmoothingSource: 0
+    blendShapeNormalImportMode: 2
+    normalSmoothingSource: 3
   referencedClips: []
   importAnimation: 1
   humanDescription:
@@ -586,7 +586,7 @@ ModelImporter:
     - name: Hand.IK.L
       parentName: mccc_arm
       position: {x: -0.005495271, y: 0.00004556787, z: 0.012142505}
-      rotation: {x: -0.48382765, y: 0.5156655, z: 0.515666, w: 0.48382702}
+      rotation: {x: -0.48382762, y: 0.5156654, z: 0.51566595, w: 0.483827}
       scale: {x: 1, y: 1.0000001, z: 1}
     - name: Hand.IK.L_end
       parentName: Hand.IK.L
@@ -596,7 +596,7 @@ ModelImporter:
     - name: Hand.IK.R
       parentName: mccc_arm
       position: {x: 0.005495271, y: 0.00004556787, z: 0.012142505}
-      rotation: {x: 0.48382765, y: 0.5156655, z: 0.515666, w: -0.48382702}
+      rotation: {x: 0.48382762, y: 0.5156654, z: 0.51566595, w: -0.483827}
       scale: {x: 1, y: 1.0000001, z: 1}
     - name: Hand.IK.R_end
       parentName: Hand.IK.R
@@ -686,22 +686,22 @@ ModelImporter:
     - name: Hand.L
       parentName: forearm.L
       position: {x: 8.0468454e-10, y: 0.002032975, z: 0}
-      rotation: {x: 0.0018237176, y: 0.001556307, z: 0.06440141, w: 0.99792117}
+      rotation: {x: 0.0018237175, y: 0.001556307, z: 0.0644014, w: 0.99792117}
       scale: {x: 1, y: 0.9999998, z: 1}
     - name: forearm.L.002
       parentName: Hand.L
       position: {x: 0.000086502005, y: 0.00031375646, z: -0.000270767}
-      rotation: {x: 0.19860284, y: 0.8621304, z: -0.37551332, w: -0.2761847}
+      rotation: {x: 0.19860339, y: 0.86213034, z: -0.3755132, w: -0.2761845}
       scale: {x: 1, y: 1.0000001, z: 0.99999994}
     - name: forearm.L.003
       parentName: forearm.L.002
       position: {x: 7.357448e-10, y: 0.00022964794, z: -0.0000000011920929}
-      rotation: {x: -0.0326363, y: -0.14091693, z: -0.0037606042, w: 0.9894762}
+      rotation: {x: -0.03263631, y: -0.14091717, z: -0.003760708, w: 0.98947614}
       scale: {x: 1, y: 1, z: 1}
     - name: forearm.L.004
       parentName: forearm.L.003
       position: {x: 4.6231433e-10, y: 0.00018323526, z: -4.4703483e-10}
-      rotation: {x: 0.0062957937, y: -0.030002035, z: -0.035234354, w: 0.9989089}
+      rotation: {x: 0.0062957173, y: -0.030002307, z: -0.035239607, w: 0.9989086}
       scale: {x: 1, y: 0.99999994, z: 0.9999998}
     - name: forearm.L.004_end
       parentName: forearm.L.004
@@ -731,7 +731,7 @@ ModelImporter:
     - name: little_finger.001.L
       parentName: Hand.L
       position: {x: 0.000009090845, y: 0.0007475142, z: 0.00021083794}
-      rotation: {x: 0.0275902, y: 0.99945223, z: 0.014777538, w: 0.010758043}
+      rotation: {x: 0.027590677, y: 0.99945223, z: 0.014777698, w: 0.01075796}
       scale: {x: 0.99999994, y: 0.99999994, z: 1}
     - name: little_finger.002.L
       parentName: little_finger.001.L
@@ -741,7 +741,7 @@ ModelImporter:
     - name: little_finger.003.L
       parentName: little_finger.002.L
       position: {x: 0.0000000014243414, y: 0.00014070915, z: 1.8626451e-11}
-      rotation: {x: 0.024838272, y: 0.033573844, z: -0.032328807, w: 0.99860436}
+      rotation: {x: 0.024838306, y: 0.03357386, z: -0.0323289, w: 0.9986044}
       scale: {x: 1, y: 1, z: 1}
     - name: little_finger.003.L_end
       parentName: little_finger.003.L
@@ -756,7 +756,7 @@ ModelImporter:
     - name: middle_finger.002.L
       parentName: middle_finger.001.L
       position: {x: 6.5221684e-10, y: 0.00017929243, z: -9.3132255e-12}
-      rotation: {x: -0.017469754, y: -0.019154605, z: -0.036324997, w: 0.99900377}
+      rotation: {x: -0.017470686, y: -0.019154564, z: -0.036328092, w: 0.9990036}
       scale: {x: 1.0000001, y: 1.0000001, z: 1}
     - name: middle_finger.003.L
       parentName: middle_finger.002.L
@@ -781,7 +781,7 @@ ModelImporter:
     - name: ring_finger.003.L
       parentName: ring_finger.002.L
       position: {x: 4.150206e-10, y: 0.00022430901, z: 9.3132255e-12}
-      rotation: {x: 0.00034200575, y: 0.0052175988, z: -0.041036215, w: 0.99914396}
+      rotation: {x: 0.00034194885, y: 0.0052176313, z: -0.041036114, w: 0.9991441}
       scale: {x: 0.99999994, y: 0.99999976, z: 0.99999994}
     - name: ring_finger.003.L_end
       parentName: ring_finger.003.L
@@ -806,7 +806,7 @@ ModelImporter:
     - name: Hand.R
       parentName: forearm.R
       position: {x: -2.5993357e-10, y: 0.0020329752, z: -2.3283064e-12}
-      rotation: {x: 0.0015058799, y: 0.0049032248, z: -0.0426628, w: 0.99907637}
+      rotation: {x: 0.0015058798, y: 0.0049032248, z: -0.042662796, w: 0.99907637}
       scale: {x: 1.0000001, y: 1, z: 1}
     - name: forearm.R.002
       parentName: Hand.R
@@ -816,12 +816,12 @@ ModelImporter:
     - name: forearm.R.003
       parentName: forearm.R.002
       position: {x: 0.0000000015366822, y: 0.00022964785, z: 5.2154064e-10}
-      rotation: {x: -0.03263158, y: 0.1409155, z: 0.0037612892, w: 0.98947656}
+      rotation: {x: -0.03263148, y: 0.14091551, z: 0.0037612896, w: 0.9894766}
       scale: {x: 1, y: 1.0000001, z: 1}
     - name: forearm.R.004
       parentName: forearm.R.003
       position: {x: 3.9501172e-10, y: 0.0001832343, z: -1.11758706e-10}
-      rotation: {x: 0.006294163, y: 0.030002516, z: 0.03522675, w: 0.99890906}
+      rotation: {x: 0.006294171, y: 0.030002391, z: 0.03522678, w: 0.99890906}
       scale: {x: 1, y: 0.9999999, z: 0.99999994}
     - name: forearm.R.004_end
       parentName: forearm.R.004
@@ -851,7 +851,7 @@ ModelImporter:
     - name: little_finger.001.R
       parentName: Hand.R
       position: {x: -0.000009090994, y: 0.0007475153, z: 0.000210838}
-      rotation: {x: -0.027590191, y: 0.9994522, z: 0.014777852, w: -0.010758083}
+      rotation: {x: -0.027590243, y: 0.9994522, z: 0.014777854, w: -0.010758088}
       scale: {x: 0.99999994, y: 0.99999994, z: 1.0000001}
     - name: little_finger.002.R
       parentName: little_finger.001.R
@@ -861,7 +861,7 @@ ModelImporter:
     - name: little_finger.003.R
       parentName: little_finger.002.R
       position: {x: 0.0000000012957025, y: 0.0001407083, z: 5.5879353e-11}
-      rotation: {x: 0.024835296, y: -0.03357375, z: 0.03232316, w: 0.99860466}
+      rotation: {x: 0.02483351, y: -0.03357381, z: 0.03231931, w: 0.9986048}
       scale: {x: 0.99999994, y: 0.9999998, z: 0.99999994}
     - name: little_finger.003.R_end
       parentName: little_finger.003.R
@@ -876,7 +876,7 @@ ModelImporter:
     - name: middle_finger.002.R
       parentName: middle_finger.001.R
       position: {x: 7.420021e-10, y: 0.0001792921, z: 4.6566128e-12}
-      rotation: {x: -0.01746626, y: 0.019154582, z: 0.03631201, w: 0.99900424}
+      rotation: {x: -0.017466258, y: 0.019154582, z: 0.036312014, w: 0.99900424}
       scale: {x: 1.0000001, y: 1.0000001, z: 1}
     - name: middle_finger.003.R
       parentName: middle_finger.002.R
@@ -901,7 +901,7 @@ ModelImporter:
     - name: ring_finger.003.R
       parentName: ring_finger.002.R
       position: {x: -2.1856976e-10, y: 0.00022430955, z: -1.8626451e-11}
-      rotation: {x: 0.00034141788, y: -0.0052177245, z: 0.041039217, w: 0.99914384}
+      rotation: {x: 0.00034141788, y: -0.005217725, z: 0.041039217, w: 0.99914384}
       scale: {x: 0.9999999, y: 0.99999994, z: 0.99999994}
     - name: ring_finger.003.R_end
       parentName: ring_finger.003.R
@@ -1126,7 +1126,7 @@ ModelImporter:
     - name: under_arm.L
       parentName: spine.003
       position: {x: -0.0008302299, y: 0.00077482534, z: -0.000060373502}
-      rotation: {x: -0.0008629358, y: 0.6484296, z: 0.76127386, w: 0.0007349646}
+      rotation: {x: -0.00086293573, y: 0.6484295, z: 0.7612738, w: 0.00073496456}
       scale: {x: 1, y: 0.9999999, z: 0.9999999}
     - name: under_arm.L_end
       parentName: under_arm.L
