@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028328, g: 0.22571328, b: 0.3069218, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -425,6 +425,22 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.024588538
       objectReference: {fileID: 0}
+    - target: {fileID: 7866145068139649284, guid: 64ee798f653fdf6719e7af78933fba00, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7328796
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866145068139649284, guid: 64ee798f653fdf6719e7af78933fba00, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.0011826701
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866145068139649284, guid: 64ee798f653fdf6719e7af78933fba00, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6803565
+      objectReference: {fileID: 0}
+    - target: {fileID: 7866145068139649284, guid: 64ee798f653fdf6719e7af78933fba00, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.0010979122
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -506,13 +522,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5530456239362605180, guid: e7e3e5c8840ad9f4b9be6e0eb61dac21, type: 3}
+      propertyPath: sharedProfile
+      value: 
+      objectReference: {fileID: 11400000, guid: 537365a15b4031d2694c1fd1cfebb06d, type: 2}
     - target: {fileID: 6103624392936542608, guid: e7e3e5c8840ad9f4b9be6e0eb61dac21, type: 3}
       propertyPath: m_Name
       value: Global Volume
       objectReference: {fileID: 0}
     - target: {fileID: 6103624392936542608, guid: e7e3e5c8840ad9f4b9be6e0eb61dac21, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8121589048833998281, guid: e7e3e5c8840ad9f4b9be6e0eb61dac21, type: 3}
       propertyPath: m_LocalPosition.x
