@@ -117,12 +117,14 @@ namespace BeABachelor.Networking
                 // false        true        タイムアウトなど
                 // false        false       未受診
 
-                // 受信待ち
-                await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted || token.IsCancellationRequested);
-
-                if (!broadcastReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
+                try
                 {
-                    // タイムアウト
+                    // 受信待ち
+                    await UniTask.WaitUntil(() => broadcastReceiveTask.IsCompleted, cancellationToken: token);
+                }
+                catch (Exception e)
+                {
+                    // 強制タイムアウト
                     Debug.LogError("Connection timed out");
                     _client.Close();
                     // broadcastReceiveTask.Dispose();
@@ -139,13 +141,13 @@ namespace BeABachelor.Networking
             } while (!ValidAck(result));
 
             // ちょっと待たないと相手が受信できない
-            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
             broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
 
             _endpoint = result.RemoteEndPoint;
             Debug.Log($"Start connection with {_endpoint}");
             _client.Connect((IPEndPoint)_endpoint);
-            await UniTask.Delay(TimeSpan.FromSeconds(1));
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
             NetworkState = NetworkState.Connecting;
 
             bool success;
@@ -184,7 +186,7 @@ namespace BeABachelor.Networking
             var ip = Dns.GetHostEntry(hostName);
             var number = _IPIndex;
             IPAddress directedBroadcastAddress = null;
-            foreach(var address in ip.AddressList)
+            foreach (var address in ip.AddressList)
             {
                 if (address.AddressFamily == AddressFamily.InterNetwork)
                 {
@@ -193,31 +195,35 @@ namespace BeABachelor.Networking
                         number--;
                         continue;
                     }
+
                     _selfIPAddress = address;
                     break;
                 }
             }
+
             var interfaces = NetworkInterface.GetAllNetworkInterfaces();
-            foreach(var info in interfaces)
+            foreach (var info in interfaces)
             {
-                var target = info.GetIPProperties().UnicastAddresses.Where(address => address.Address.AddressFamily == AddressFamily.InterNetwork);
-                if (target.Count() == 0) continue;
+                var target = info.GetIPProperties().UnicastAddresses
+                    .Where(address => address.Address.AddressFamily == AddressFamily.InterNetwork);
+                if (!target.Any()) continue;
                 if (!target.First().Address.Equals(_selfIPAddress)) continue;
                 var address_bytes = target.First().Address.GetAddressBytes();
                 var mask_bites = target.First().IPv4Mask.GetAddressBytes();
-                var directedBroadcastAddressBit = BitConverter.ToUInt32(address_bytes) | ~BitConverter.ToUInt32(mask_bites);
+                var directedBroadcastAddressBit =
+                    BitConverter.ToUInt32(address_bytes) | ~BitConverter.ToUInt32(mask_bites);
                 directedBroadcastAddress = new IPAddress(directedBroadcastAddressBit);
-
             }
+
             Debug.Log($"This IP is {_selfIPAddress}");
             Debug.Log($"Start broadcast to {directedBroadcastAddress}:{_clientPort}");
             Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
-                .Subscribe(_ => 
+                .Subscribe(_ =>
                     _client.Send(
-                        _selfIPAddress.GetAddressBytes(), 
-                        _selfIPAddress.GetAddressBytes().Length, 
+                        _selfIPAddress.GetAddressBytes(),
+                        _selfIPAddress.GetAddressBytes().Length,
                         new IPEndPoint(directedBroadcastAddress, _clientPort))
-                    );
+                );
         }
 
         private bool ValidAck(UdpReceiveResult result)
@@ -239,12 +245,13 @@ namespace BeABachelor.Networking
         private async UniTask<bool> SendNegotiationAsync(int timeOut)
         {
             var random = Random.Range(0, 2);
-            for(int i = 0; i < 10 ; i++)
+            for (int i = 0; i < 10; i++)
             {
-                if(NetworkState == NetworkState.Disconnected) return false;
+                if (NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, (byte)random }, 2);
                 await UniTask.WaitForSeconds(0.1f);
             }
+
             _gameManager.PlayerType = random == 0 ? PlayerType.Kouken : PlayerType.Hakken;
             var timeController = new TimeoutController();
             var timeoutToken = timeController.Timeout(TimeSpan.FromSeconds(timeOut + 3));
@@ -285,8 +292,11 @@ namespace BeABachelor.Networking
             do
             {
                 var negotiationReceiveTask = _client.ReceiveAsync();
-                await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted || token.IsCancellationRequested);
-                if (!negotiationReceiveTask.IsCompleted && timeoutToken.IsCancellationRequested)
+                try
+                {
+                    await UniTask.WaitUntil(() => negotiationReceiveTask.IsCompleted, cancellationToken: token);
+                }
+                catch (Exception e)
                 {
                     // タイムアウト
                     Debug.LogError("Connection timed out");
@@ -295,18 +305,20 @@ namespace BeABachelor.Networking
                     negotiationCancellationTokenSource.Cancel();
                     return false;
                 }
+
                 if (NetworkState == NetworkState.Disconnected) return false;
                 result = negotiationReceiveTask.Result;
             } while (!ValidNegotiation(result.Buffer));
 
             negotiationCancellationTokenSource.Cancel();
             _gameManager.PlayerType = result.Buffer[1] == 0 ? PlayerType.Hakken : PlayerType.Kouken;
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 if (NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
-                await UniTask.WaitForSeconds(0.1f);
+                await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
             }
+
             return true;
         }
 
@@ -334,6 +346,7 @@ namespace BeABachelor.Networking
                     Debug.Log("ReceiveTask is cancelled");
                     return;
                 }
+
                 if (NetworkState == NetworkState.Disconnected) return;
                 ReflectReceivedData(task.Result.Buffer).Forget();
             }
@@ -395,9 +408,9 @@ namespace BeABachelor.Networking
         {
             UniTask.Create(async () =>
             {
-                while (IsConnected)
+                while (IsConnected && !token.IsCancellationRequested)
                 {
-                    await UniTask.Delay(TimeSpan.FromSeconds(_packetSendInterval));
+                    await UniTask.Delay(TimeSpan.FromSeconds(_packetSendInterval), cancellationToken: token);
                     if (!IsConnected || SynchronizationController == null) continue;
                     try
                     {
