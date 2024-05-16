@@ -10,7 +10,7 @@ namespace BeABachelor.Play.Player
         public static readonly float AminSpeedMultiplier = 0.1f;
 
         [SerializeField] Animator animator;
-        [SerializeField] Rigidbody rigidbody;
+        [SerializeField] new Rigidbody rigidbody;
         [SerializeField] private PlayerAnimationSynchronization playerAnimationSynchronization;
 
         private int _animIDSpeed = Animator.StringToHash("Speed");

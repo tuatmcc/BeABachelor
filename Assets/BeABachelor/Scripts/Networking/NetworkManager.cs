@@ -63,6 +63,7 @@ namespace BeABachelor.Networking
             private set
             {
                 Debug.Log($"NetworkState: {_networkState} -> {value}");
+                OnNetworkStateChanged?.Invoke(value);
                 switch (value)
                 {
                     case NetworkState.Searching:
