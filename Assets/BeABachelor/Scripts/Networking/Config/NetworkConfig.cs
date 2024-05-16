@@ -8,6 +8,7 @@ namespace BeABachelor.Networking.Config
     {
         public int IPv4Index = 0;
         public int packetSendRate = 50;
-        public int port = 8888;
+        public int clientPort = 8888;
+        public int remotePort = 8888;
     }
 }

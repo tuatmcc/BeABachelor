@@ -30,7 +30,7 @@ namespace BeABachelor.Play.UI.PlayerPos
             Vector2 pos;
             Vector2 screenPos = RectTransformUtility.WorldToScreenPoint(_playSceneManager.MainCamera, _targetPlayerTransform.position);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPos, null, out pos);
-            _arrowRect.anchoredPosition = pos / 9.0f + _offset;
+            _arrowRect.anchoredPosition = pos / 20.0f;// + _offset;
         }
     }
 }

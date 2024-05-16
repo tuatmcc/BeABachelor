@@ -99,7 +99,8 @@ namespace BeABachelor.Networking
                 timeoutToken, _disposeCancellationTokenSource.Token).Token;
 
             var networkConfig = JsonConfigure.NetworkConfig;
-            _clientPort = networkConfig.port;
+            _clientPort = networkConfig.clientPort;
+            _remoteEndpointPort = networkConfig.remotePort;
             _IPIndex = networkConfig.IPv4Index;
             _client = new UdpClient(_clientPort);
             _client.EnableBroadcast = true;
@@ -130,12 +131,15 @@ namespace BeABachelor.Networking
                     NetworkState = NetworkState.Disconnected;
                     return;
                 }
+                
+                Debug.Log("Receive broadcast");
 
                 // 受信成功
                 if (NetworkState == NetworkState.Disconnected) return;
                 result = broadcastReceiveTask.Result;
 
                 // 有効なデータでないときは再受信する
+                Debug.Log($"Received data: {result.Buffer.Length} bytes from {result.RemoteEndPoint} {result.RemoteEndPoint.Address} {result.RemoteEndPoint.Port}");
             } while (!ValidAck(result));
 
             // ちょっと待たないと相手が受信できない
@@ -210,20 +214,21 @@ namespace BeABachelor.Networking
 
             }
             Debug.Log($"This IP is {_selfIPAddress}");
-            Debug.Log($"Start broadcast to {directedBroadcastAddress}:{_clientPort}");
+            Debug.Log($"Start broadcast to {directedBroadcastAddress}:{_remoteEndpointPort}");
             Observable.Interval(TimeSpan.FromSeconds(0.1f), token)
                 .Subscribe(_ => 
                     _client.Send(
                         _selfIPAddress.GetAddressBytes(), 
                         _selfIPAddress.GetAddressBytes().Length, 
-                        new IPEndPoint(directedBroadcastAddress, _clientPort))
+                        new IPEndPoint(directedBroadcastAddress, _remoteEndpointPort))
                     );
         }
 
         private bool ValidAck(UdpReceiveResult result)
         {
             // Received length == IPv4 length and the remote endpoint address is not the same as _selfIPAddress
-            return result.Buffer.Length == 4 && !result.RemoteEndPoint.Address.Equals(_selfIPAddress);
+            Debug.Log($"ValidAck: {result.Buffer.Length} {result.RemoteEndPoint.Address} {_selfIPAddress} {_selfIPAddress} {result.RemoteEndPoint.Port} {_clientPort}");
+            return result.Buffer.Length == 4 && (result.RemoteEndPoint.Address.Equals(_selfIPAddress) ? result.RemoteEndPoint.Port != _clientPort : result.RemoteEndPoint.Port == _clientPort);
         }
 
         private bool IsWaitNegotiation(IPEndPoint endPoint)
