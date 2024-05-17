@@ -148,7 +148,7 @@ namespace BeABachelor.Networking
             _endpoint = result.RemoteEndPoint;
             Debug.Log($"Start connection with {_endpoint}");
             _client.Connect((IPEndPoint)_endpoint);
-            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: _disposeCancellationTokenSource.Token);
             NetworkState = NetworkState.Connecting;
 
             bool success;
@@ -317,7 +317,7 @@ namespace BeABachelor.Networking
             {
                 if (NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
-                await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
+                await UniTask.WaitForSeconds(0.1f, cancellationToken: _disposeCancellationTokenSource.Token);
             }
 
             return true;
