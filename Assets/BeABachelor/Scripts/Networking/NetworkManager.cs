@@ -317,7 +317,7 @@ namespace BeABachelor.Networking
             {
                 if (NetworkState == NetworkState.Disconnected) return false;
                 await _client.SendAsync(new byte[] { 0x02, result.Buffer[1] }, 2);
-                await UniTask.WaitForSeconds(0.1f, cancellationToken: token);
+                await UniTask.WaitForSeconds(0.1f, cancellationToken: _disposeCancellationTokenSource.Token);
             }
 
             return true;
