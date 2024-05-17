@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using UnityEngine;
 
 namespace BeABachelor.Networking.Config
@@ -6,7 +6,7 @@ namespace BeABachelor.Networking.Config
     public static class JsonConfigure
     {
         private static NetworkConfig _networkConfig;
-        public static NetworkConfig NetworkConfig => _networkConfig ??= LoadJson<NetworkConfig>("./NetworkConfig.json");
+        public static NetworkConfig NetworkConfig => LoadJson<NetworkConfig>("./NetworkConfig.json");
         
         private static T LoadJson<T>(string path) where T : new()
         {
