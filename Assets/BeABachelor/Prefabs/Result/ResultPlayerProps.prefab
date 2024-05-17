@@ -43,7 +43,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4400202286320552788}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b8b3ea750dcd496ba66182a46ed388bf, type: 3}
   m_Name: 
@@ -158,19 +158,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2179187597415260000, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.028144298
+      value: 0.028144294
       objectReference: {fileID: 0}
     - target: {fileID: 2179187597415260000, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.02461927
+      value: -0.024619265
       objectReference: {fileID: 0}
     - target: {fileID: 4300042448581247515, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.013594035
+      value: 0.013594044
       objectReference: {fileID: 0}
     - target: {fileID: 4300042448581247515, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.04900254
+      value: -0.049002565
       objectReference: {fileID: 0}
     - target: {fileID: 7000039141122556608, guid: c7302ed73f4d7747783dd3c54e7544d7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -319,23 +319,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1935236614666016300, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7328796
+      value: 0.73287976
       objectReference: {fileID: 0}
     - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0011826701
+      value: 0.0011826702
       objectReference: {fileID: 0}
     - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.6803565
+      value: 0.6803564
       objectReference: {fileID: 0}
     - target: {fileID: 2052206614943813176, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0010979122
+      value: -0.0010979117
+      objectReference: {fileID: 0}
+    - target: {fileID: 3719869688416093153, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4772878039633126707, guid: 9e938e854b08b66f699db792f623c53d, type: 3}
       propertyPath: m_Controller
