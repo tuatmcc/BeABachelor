@@ -43,9 +43,8 @@ namespace BeABachelor.Title
 
         private async UniTask StateChangeWaitFade()
         {
-            await UniTask.Delay(1000);
             PlayFadeOut?.Invoke();
-            await UniTask.Delay(1500);
+            await UniTask.Delay(500);
             _gameManager.GameState = GameState.Setting;
         }
         
