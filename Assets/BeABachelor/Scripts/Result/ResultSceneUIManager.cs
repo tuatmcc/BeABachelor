@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BeABachelor.Interface;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +15,8 @@ namespace BeABachelor.Result
         [SerializeField] private Sprite ryunen;
         [SerializeField] private Text scoreText;
         [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private AudioClip _confirmSE;
+        [SerializeField] private AudioSource _audioSource;
         
         [Inject] private IResultManager _resultManager;
         [Inject] private IGameManager _gameManager;
@@ -39,6 +41,7 @@ namespace BeABachelor.Result
 
         private void ToTile(InputAction.CallbackContext context)
         {
+            _audioSource.PlayOneShot(_confirmSE);
             _resultManager.ToTile();
         }
     }
