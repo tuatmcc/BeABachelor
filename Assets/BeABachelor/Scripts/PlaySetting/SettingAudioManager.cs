@@ -7,17 +7,23 @@ namespace BeABachelor.PlaySetting
 {
     public class SettingAudioManager : MonoBehaviour, IAudioManager
     {
-        [SerializeField] AudioSource audioSource;
-        [SerializeField] AudioClip selectSE;
+        [SerializeField] AudioSource _audioSource;
+        [SerializeField] AudioClip _selectSE;
+        [SerializeField] AudioClip _confirmSE;
 
         public void PlaySelectSE()
         {
-            audioSource?.PlayOneShot(selectSE);
+            _audioSource?.PlayOneShot(_selectSE);
+        }
+
+        public void playConfirmSE()
+        {
+            _audioSource?.PlayOneShot(_confirmSE);
         }
 
         public AudioSource GetAudioSource()
         {
-            return audioSource;
+            return _audioSource;
         }
     }
 }

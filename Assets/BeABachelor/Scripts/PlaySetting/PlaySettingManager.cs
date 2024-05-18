@@ -90,8 +90,10 @@ namespace BeABachelor.PlaySetting
             {
                 case "Left":
                 case "Right":
-                case "Space":
                     ((SettingAudioManager)_audioManager).PlaySelectSE();
+                    break;
+                case "Space":
+                    ((SettingAudioManager)_audioManager).playConfirmSE();
                     break;
             }
         }

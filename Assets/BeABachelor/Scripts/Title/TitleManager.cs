@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BeABachelor.Interface;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -15,6 +15,7 @@ namespace BeABachelor.Title
         public Action PlayFadeOut { get; set; }
         
         [Inject] private IGameManager _gameManager;
+        [Inject] private IAudioManager _audioManager;
         private PlayerInput _playerInput;
         private bool _sceneChangeFlag;
         
@@ -34,6 +35,7 @@ namespace BeABachelor.Title
             if (context.action.name == "Space" && !_sceneChangeFlag)
             {
                 _sceneChangeFlag = true;
+                ((TitleAudioManager)_audioManager).PlayConfirmSE();
                 StateChangeWaitFade().Forget();
                 Debug.Log("Space");
             }
