@@ -38,11 +38,13 @@ namespace BeABachelor.Play.UI
         
         private void OnMoveTrue(InputAction.CallbackContext _)
         {
+            if (_gameManager.GameState != GameState.Playing) return; 
             atsumeroPanelAnimator.SetBool(_isMovingHash, true);
         }
         
         private void OnMoveFalse(InputAction.CallbackContext _)
         {
+            if (_gameManager.GameState != GameState.Playing) return;
             atsumeroPanelAnimator.SetBool(_isMovingHash, false);
         }
         
