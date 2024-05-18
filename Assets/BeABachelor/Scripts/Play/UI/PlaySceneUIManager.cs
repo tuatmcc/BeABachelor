@@ -44,6 +44,7 @@ namespace BeABachelor.Play.UI
         
         private void OnMoveFalse(InputAction.CallbackContext _)
         {
+            if (_gameManager.GameState != GameState.Playing) return;
             atsumeroPanelAnimator.SetBool(_isMovingHash, false);
         }
         
