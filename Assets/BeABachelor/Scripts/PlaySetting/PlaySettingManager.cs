@@ -111,9 +111,9 @@ namespace BeABachelor.PlaySetting
                 }
             }
 
-            await UniTask.Delay(1000);
+            await UniTask.Delay(500);
             PlayFadeOut?.Invoke();
-            await UniTask.Delay(1500);
+            await UniTask.Delay(500);
             _gameManager.GameState = GameState.Ready;
         }
 

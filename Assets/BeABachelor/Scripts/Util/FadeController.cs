@@ -31,7 +31,7 @@ namespace BeABachelor.Util
         
         private async UniTask DisableImageAsync()
         {
-            await UniTask.Delay(500);
+            await UniTask.Delay(1000);
             if(Image == null) return;
             Image.enabled = false;
         }
