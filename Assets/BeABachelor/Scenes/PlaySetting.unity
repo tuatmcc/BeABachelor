@@ -562,8 +562,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerInput: {fileID: 0}
   playModeTypeUI: {fileID: 0}
-  playerTypeUI: {fileID: 0}
-  multiplaySettingUI: {fileID: 0}
+  searchUI: {fileID: 0}
+  connectingUI: {fileID: 0}
+  connectFailedUI: {fileID: 0}
   confirmUI: {fileID: 0}
   hakken: {fileID: 0}
   kouken: {fileID: 0}
@@ -1288,8 +1289,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584fc2f7775dcba46bb1086c25f6db08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 1512509712}
-  selectSE: {fileID: 8300000, guid: 0dba9d4ed8dc7851bb113cb3fafc43cd, type: 3}
+  _audioSource: {fileID: 1512509712}
+  _selectSE: {fileID: 8300000, guid: 0dba9d4ed8dc7851bb113cb3fafc43cd, type: 3}
+  _confirmSE: {fileID: 8300000, guid: 298e3360c59b08e4ca84c0d9dd362737, type: 3}
 --- !u!4 &1897863300
 Transform:
   m_ObjectHideFlags: 0
