@@ -142,7 +142,7 @@ namespace BeABachelor.Networking
             } while (!ValidAck(result));
 
             // ちょっと待たないと相手が受信できない
-            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: token);
+            await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: _disposeCancellationTokenSource.Token);
             broadcastCancellationTokenSource.Cancel(); // ブロードキャストを止める
 
             _endpoint = result.RemoteEndPoint;
