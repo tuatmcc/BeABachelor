@@ -194,12 +194,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91dae5a34ec343e396e9bee3c14b55fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resultImage: {fileID: 0}
   gokokau: {fileID: 1981908349, guid: 9552b6e4f5fb306408937a3e37a741e5, type: 3}
   nakayokuGokaku: {fileID: 869876605, guid: 9552b6e4f5fb306408937a3e37a741e5, type: 3}
   ryunen: {fileID: -313163293, guid: 9552b6e4f5fb306408937a3e37a741e5, type: 3}
   scoreText: {fileID: 2014924436355465605}
   playerInput: {fileID: 8253225824087411693}
+  _confirmSE: {fileID: 8300000, guid: 298e3360c59b08e4ca84c0d9dd362737, type: 3}
 --- !u!114 &8253225824087411693
 MonoBehaviour:
   m_ObjectHideFlags: 0
